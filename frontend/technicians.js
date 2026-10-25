@@ -1,5 +1,5 @@
 
-const TECHNICIANS_API = "http://localhost:3000/api/technicians";
+const TECHNICIANS_API = "https://fixtrack-backend.vercel.app/api/technicians";
 
 const token = localStorage.getItem("fixtrack_token");
 const userData = localStorage.getItem("fixtrack_user");
