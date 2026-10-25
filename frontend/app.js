@@ -1,5 +1,5 @@
-const API_URL = "http://localhost:3000/api/auth";
 
+const API_URL = "https://fixtrack-backend.vercel.app/api/auth";
 
 // =========================
 // PAGE ELEMENTS
@@ -17,7 +17,6 @@ const adminSetupBox =
 const initialSetupSection =
     document.getElementById("initial-setup-section");
 
-
 const showRegisterButton =
     document.getElementById("show-register");
 
@@ -30,7 +29,6 @@ const showAdminSetupButton =
 const cancelAdminSetupButton =
     document.getElementById("cancel-admin-setup");
 
-
 const loginForm =
     document.getElementById("login-form");
 
@@ -39,7 +37,6 @@ const registerForm =
 
 const adminSetupForm =
     document.getElementById("admin-setup-form");
-
 
 const loginMessage =
     document.getElementById("login-message");
@@ -50,15 +47,12 @@ const registerMessage =
 const adminSetupMessage =
     document.getElementById("admin-setup-message");
 
-
 // =========================
 // CHECK INITIAL SETUP
 // =========================
 
 async function checkSetupStatus() {
-
     try {
-
         const response = await fetch(
             `${API_URL}/setup-status`
         );
@@ -69,34 +63,27 @@ async function checkSetupStatus() {
             console.error(
                 "Unable to check FixTrack setup status."
             );
-
             return;
         }
 
-
         // Show Set Up Shop only if no admin exists
         if (data.adminExists === false) {
-
             initialSetupSection.classList.remove(
                 "hidden"
             );
-
         } else {
-
             initialSetupSection.classList.add(
                 "hidden"
             );
         }
 
     } catch (error) {
-
         console.error(
             "Setup status error:",
             error
         );
     }
 }
-
 
 // =========================
 // SWITCH TO REGISTER
@@ -105,40 +92,30 @@ async function checkSetupStatus() {
 showRegisterButton.addEventListener(
     "click",
     () => {
-
         loginBox.classList.add("hidden");
-
         adminSetupBox.classList.add("hidden");
-
         registerBox.classList.remove("hidden");
-
 
         loginMessage.textContent = "";
         adminSetupMessage.textContent = "";
     }
 );
 
-
 // =========================
-// SWITCH REGISTER → LOGIN
+// SWITCH REGISTER TO LOGIN
 // =========================
 
 showLoginButton.addEventListener(
     "click",
     () => {
-
         registerBox.classList.add("hidden");
-
         adminSetupBox.classList.add("hidden");
-
         loginBox.classList.remove("hidden");
-
 
         registerMessage.textContent = "";
         adminSetupMessage.textContent = "";
     }
 );
-
 
 // =========================
 // SWITCH TO ADMIN SETUP
@@ -147,20 +124,15 @@ showLoginButton.addEventListener(
 showAdminSetupButton.addEventListener(
     "click",
     () => {
-
         loginBox.classList.add("hidden");
-
         registerBox.classList.add("hidden");
-
         adminSetupBox.classList.remove("hidden");
-
 
         loginMessage.textContent = "";
         registerMessage.textContent = "";
         adminSetupMessage.textContent = "";
     }
 );
-
 
 // =========================
 // CANCEL ADMIN SETUP
@@ -169,18 +141,13 @@ showAdminSetupButton.addEventListener(
 cancelAdminSetupButton.addEventListener(
     "click",
     () => {
-
         adminSetupBox.classList.add("hidden");
-
         registerBox.classList.add("hidden");
-
         loginBox.classList.remove("hidden");
-
 
         adminSetupMessage.textContent = "";
     }
 );
-
 
 // =========================
 // REGISTER CUSTOMER
@@ -189,16 +156,12 @@ cancelAdminSetupButton.addEventListener(
 registerForm.addEventListener(
     "submit",
     async (event) => {
-
         event.preventDefault();
-
 
         registerMessage.textContent =
             "Creating account...";
 
-
         const customerData = {
-
             first_name:
                 document
                     .getElementById("first-name")
@@ -229,9 +192,7 @@ registerForm.addEventListener(
                     .value
         };
 
-
         try {
-
             const response = await fetch(
                 `${API_URL}/register`,
                 {
@@ -247,28 +208,20 @@ registerForm.addEventListener(
                 }
             );
 
-
             const data = await response.json();
 
-
             if (!response.ok) {
-
                 registerMessage.textContent =
                     data.message;
-
                 return;
             }
-
 
             registerMessage.textContent =
                 data.message;
 
-
             registerForm.reset();
 
-
             setTimeout(() => {
-
                 registerBox.classList.add(
                     "hidden"
                 );
@@ -277,30 +230,23 @@ registerForm.addEventListener(
                     "hidden"
                 );
 
-
                 loginMessage.textContent =
                     "Account created. You can now log in.";
 
-
                 registerMessage.textContent = "";
-
             }, 1000);
 
-
         } catch (error) {
-
             console.error(
                 "Registration error:",
                 error
             );
-
 
             registerMessage.textContent =
                 "Unable to connect to the FixTrack server.";
         }
     }
 );
-
 
 // =========================
 // FIRST ADMIN SETUP
@@ -309,16 +255,12 @@ registerForm.addEventListener(
 adminSetupForm.addEventListener(
     "submit",
     async (event) => {
-
         event.preventDefault();
-
 
         adminSetupMessage.textContent =
             "Creating administrator account...";
 
-
         const adminData = {
-
             first_name:
                 document
                     .getElementById(
@@ -359,9 +301,7 @@ adminSetupForm.addEventListener(
                     .value
         };
 
-
         try {
-
             const response = await fetch(
                 `${API_URL}/setup-admin`,
                 {
@@ -377,38 +317,29 @@ adminSetupForm.addEventListener(
                 }
             );
 
-
             const data = await response.json();
 
-
             if (!response.ok) {
-
                 adminSetupMessage.textContent =
                     data.message;
 
                 // Recheck in case an admin
                 // already exists
                 await checkSetupStatus();
-
                 return;
             }
-
 
             adminSetupMessage.textContent =
                 "Administrator created successfully!";
 
-
             adminSetupForm.reset();
-
 
             // Hide Set Up Shop permanently
             initialSetupSection.classList.add(
                 "hidden"
             );
 
-
             setTimeout(() => {
-
                 adminSetupBox.classList.add(
                     "hidden"
                 );
@@ -417,30 +348,23 @@ adminSetupForm.addEventListener(
                     "hidden"
                 );
 
-
                 loginMessage.textContent =
                     "Administrator account created. You can now log in.";
 
-
                 adminSetupMessage.textContent = "";
-
             }, 1200);
 
-
         } catch (error) {
-
             console.error(
                 "Admin setup error:",
                 error
             );
-
 
             adminSetupMessage.textContent =
                 "Unable to connect to the FixTrack server.";
         }
     }
 );
-
 
 // =========================
 // LOGIN
@@ -449,16 +373,12 @@ adminSetupForm.addEventListener(
 loginForm.addEventListener(
     "submit",
     async (event) => {
-
         event.preventDefault();
-
 
         loginMessage.textContent =
             "Logging in...";
 
-
         const loginData = {
-
             email:
                 document
                     .getElementById("login-email")
@@ -471,9 +391,7 @@ loginForm.addEventListener(
                     .value
         };
 
-
         try {
-
             const response = await fetch(
                 `${API_URL}/login`,
                 {
@@ -489,18 +407,13 @@ loginForm.addEventListener(
                 }
             );
 
-
             const data = await response.json();
 
-
             if (!response.ok) {
-
                 loginMessage.textContent =
                     data.message;
-
                 return;
             }
-
 
             // Save JWT token
             localStorage.setItem(
@@ -508,42 +421,33 @@ loginForm.addEventListener(
                 data.token
             );
 
-
             // Save logged-in user
             localStorage.setItem(
                 "fixtrack_user",
                 JSON.stringify(data.user)
             );
 
-
             // =========================
             // ROLE-BASED REDIRECT
             // =========================
 
             if (data.user.role === "admin") {
-
                 window.location.href =
                     "admin-dashboard.html";
-
 
             } else if (
                 data.user.role === "technician"
             ) {
-
                 window.location.href =
                     "technician-dashboard.html";
-
 
             } else if (
                 data.user.role === "customer"
             ) {
-
                 window.location.href =
                     "dashboard.html";
 
-
             } else {
-
                 localStorage.removeItem(
                     "fixtrack_token"
                 );
@@ -552,26 +456,21 @@ loginForm.addEventListener(
                     "fixtrack_user"
                 );
 
-
                 loginMessage.textContent =
                     "Your account has an invalid role.";
             }
 
-
         } catch (error) {
-
             console.error(
                 "Login error:",
                 error
             );
-
 
             loginMessage.textContent =
                 "Unable to connect to the FixTrack server.";
         }
     }
 );
-
 
 // =========================
 // START FIXTRACK
