@@ -32,15 +32,10 @@ app.use(express.json());
 // =====================================
 
 app.use("/api/auth", authRoutes);
-
 app.use("/api/devices", deviceRoutes);
-
 app.use("/api/technicians", technicianRoutes);
-
 app.use("/api/repairs", repairRoutes);
-
 app.use("/api/parts", partRoutes);
-
 app.use("/api/billing", billingRoutes);
 
 // =====================================
@@ -67,23 +62,30 @@ async function testDatabaseConnection() {
             "Database time:",
             result.rows[0].now
         );
-
     } catch (error) {
         console.error("Database connection failed:");
         console.error(error.message);
     }
 }
 
-testDatabaseConnection();
-
 // =====================================
-// START SERVER
+// START SERVER (LOCAL DEVELOPMENT)
 // =====================================
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-    console.log(
-        `FixTrack server running on port ${PORT}`
-    );
-});
+if (require.main === module) {
+    testDatabaseConnection();
+
+    app.listen(PORT, () => {
+        console.log(
+            `FixTrack server running on port ${PORT}`
+        );
+    });
+}
+
+// =====================================
+// EXPORT FOR VERCEL
+// =====================================
+
+module.exports = app;
