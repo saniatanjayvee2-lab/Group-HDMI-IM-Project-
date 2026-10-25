@@ -1,5 +1,5 @@
 
-const PARTS_API = "http://localhost:3000/api/parts";
+const PARTS_API = "https://fixtrack-backend.vercel.app/api/parts";
 
 const token = localStorage.getItem("fixtrack_token");
 const userData = localStorage.getItem("fixtrack_user");
