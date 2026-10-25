@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>FixTrack | Manage Repairs</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="dashboard-header">
+        <div>
+            <h1>FixTrack</h1>
+            <p>Admin / Repair Management</p>
+        </div>
+
+        <button
+            type="button"
+            onclick="window.location.href='admin-dashboard.html'">
+            Back to Dashboard
+        </button>
+    </header>
+
+    <main class="dashboard-container">
+
+        <section class="dashboard-welcome">
+            <h2>Manage Repair Requests</h2>
+            <p>
+                View customer repairs, assign technicians,
+                and monitor repair progress.
+            </p>
+        </section>
+
+        <section class="device-section">
+
+            <div class="device-list-card">
+
+                <h3>All Repair Requests</h3>
+
+                <div id="admin-repair-list">
+                    <p>Loading repair requests...</p>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="admin-repairs.js"></script>
+
+</body>
+</html>

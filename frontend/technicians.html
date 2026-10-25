@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FixTrack | Manage Technicians</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="dashboard-header">
+
+        <div>
+            <h1>FixTrack</h1>
+            <p>Administrator Panel</p>
+        </div>
+
+        <button
+            type="button"
+            onclick="window.location.href='admin-dashboard.html'"
+        >
+            Back to Dashboard
+        </button>
+
+    </header>
+
+
+    <main class="dashboard-container">
+
+        <section class="dashboard-welcome">
+
+            <h2>Manage Technicians</h2>
+
+            <p>
+                Create technician accounts and manage
+                your repair team.
+            </p>
+
+        </section>
+
+
+        <section class="device-section">
+
+
+            <!-- ADD TECHNICIAN -->
+
+            <div class="device-form-card">
+
+                <h3>Add Technician</h3>
+
+
+                <form id="technician-form">
+
+                    <label for="tech-first-name">
+                        First Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="tech-first-name"
+                        required
+                    >
+
+
+                    <label for="tech-middle-name">
+                        Middle Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="tech-middle-name"
+                    >
+
+
+                    <label for="tech-last-name">
+                        Last Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="tech-last-name"
+                        required
+                    >
+
+
+                    <label for="tech-email">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="tech-email"
+                        required
+                    >
+
+
+                    <label for="tech-password">
+                        Temporary Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="tech-password"
+                        minlength="8"
+                        required
+                    >
+
+
+                    <button type="submit">
+                        Add Technician
+                    </button>
+
+
+                    <p id="technician-message"></p>
+
+                </form>
+
+            </div>
+
+
+            <!-- TECHNICIAN LIST -->
+
+            <div class="device-list-card">
+
+                <h3>Technicians</h3>
+
+                <div id="technician-list">
+
+                    <p>
+                        Loading technicians...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="technicians.js"></script>
+
+</body>
+</html>

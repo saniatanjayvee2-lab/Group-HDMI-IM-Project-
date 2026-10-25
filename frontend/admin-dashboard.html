@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FixTrack | Admin Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="dashboard-header">
+        <div>
+            <h1>FixTrack</h1>
+            <p>Administrator Panel</p>
+        </div>
+
+        <button type="button" id="logoutBtn">
+            Logout
+        </button>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-container">
+
+        <!-- WELCOME -->
+        <section class="dashboard-welcome">
+            <h2 id="welcomeUser">Welcome, Admin!</h2>
+            <p>
+                Manage your repair shop, technicians,
+                customers, and inventory.
+            </p>
+        </section>
+
+        <!-- ADMIN MENU -->
+        <section class="dashboard-menu">
+
+            <!-- REPAIR REQUESTS -->
+            <div class="dashboard-card">
+                <h3>Repair Requests</h3>
+
+                <p>
+                    View customer repair requests,
+                    assign technicians, and update statuses.
+                </p>
+
+                <button
+                    type="button"
+                    onclick="window.location.href='admin-repairs.html'"
+                >
+                    Manage Repairs
+                </button>
+            </div>
+
+            <!-- TECHNICIANS -->
+            <div class="dashboard-card">
+                <h3>Technicians</h3>
+
+                <p>
+                    Create technician accounts
+                    and manage your repair team.
+                </p>
+
+                <button
+                    type="button"
+                    onclick="window.location.href='technicians.html'"
+                >
+                    Manage Technicians
+                </button>
+            </div>
+
+            <!-- CUSTOMERS -->
+            <div class="dashboard-card">
+                <h3>Customers</h3>
+
+                <p>
+                    View registered customers
+                    and their information.
+                </p>
+
+                <button
+                    type="button"
+                    id="manageCustomersBtn"
+                >
+                    Manage Customers
+                </button>
+            </div>
+
+            <!-- PARTS AND INVENTORY -->
+            <div class="dashboard-card">
+                <h3>Parts &amp; Inventory</h3>
+
+                <p>
+                    Add replacement parts, manage prices,
+                    and monitor stock quantities.
+                </p>
+
+                <button
+                    type="button"
+                    onclick="window.location.href='admin-parts.html'"
+                >
+                    Manage Inventory
+                </button>
+            </div>
+
+            <!-- PAYMENTS -->
+            <div class="dashboard-card">
+                <h3>Payments</h3>
+
+                <p>
+                    Manage repair payments,
+                    billing, and transaction records.
+                </p>
+
+                <button
+                    type="button"
+                    id="managePaymentsBtn"
+                >
+                    Manage Payments
+                </button>
+            </div>
+
+            <!-- REPORTS -->
+            <div class="dashboard-card">
+                <h3>Reports</h3>
+
+                <p>
+                    View repair statistics,
+                    inventory summaries, and shop reports.
+                </p>
+
+                <button
+                    type="button"
+                    id="viewReportsBtn"
+                >
+                    View Reports
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="admin-dashboard.js"></script>
+
+</body>
+</html>

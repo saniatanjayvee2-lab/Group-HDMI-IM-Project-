@@ -1,0 +1,2393 @@
+* {
+
+    margin: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+
+    font-family: Arial, sans-serif;
+
+}
+
+
+
+body {
+
+    min-height: 100vh;
+
+    background: #f4f7fb;
+
+    color: #1f2937;
+
+}
+
+
+
+.auth-container {
+
+    min-height: 100vh;
+
+    display: flex;
+
+}
+
+
+
+/* LEFT SIDE */
+
+
+
+.brand-section {
+
+    width: 50%;
+
+    background: #111827;
+
+    color: white;
+
+
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+
+
+    padding: 70px;
+
+}
+
+
+
+.brand-section h1 {
+
+    font-size: 52px;
+
+    margin-bottom: 10px;
+
+    color: #3b82f6;
+
+}
+
+
+
+.brand-section h2 {
+
+    font-size: 26px;
+
+    margin-bottom: 20px;
+
+}
+
+
+
+.brand-section p {
+
+    max-width: 500px;
+
+    line-height: 1.6;
+
+    color: #d1d5db;
+
+}
+
+
+
+
+
+/* RIGHT SIDE */
+
+
+
+.auth-section {
+
+    width: 50%;
+
+
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+
+
+    padding: 40px;
+
+}
+
+
+
+.auth-box {
+
+    background: white;
+
+    width: 100%;
+
+    max-width: 430px;
+
+
+
+    padding: 40px;
+
+
+
+    border-radius: 12px;
+
+
+
+    box-shadow:
+
+        0 10px 30px rgba(0, 0, 0, 0.08);
+
+}
+
+
+
+.auth-box h2 {
+
+    font-size: 28px;
+
+    margin-bottom: 8px;
+
+}
+
+
+
+.auth-box > p {
+
+    color: #6b7280;
+
+    margin-bottom: 25px;
+
+}
+
+
+
+
+
+/* FORMS */
+
+
+
+form {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+
+form label {
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+
+
+    margin-bottom: 7px;
+
+}
+
+
+
+form input {
+
+    width: 100%;
+
+
+
+    padding: 12px 14px;
+
+
+
+    margin-bottom: 18px;
+
+
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 7px;
+
+
+
+    font-size: 15px;
+
+}
+
+
+
+form input:focus {
+
+    outline: none;
+
+    border-color: #3b82f6;
+
+}
+
+
+
+
+
+/* MAIN BUTTON */
+
+
+
+form button {
+
+    padding: 13px;
+
+
+
+    border: none;
+
+    border-radius: 7px;
+
+
+
+    background: #2563eb;
+
+    color: white;
+
+
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+
+
+    cursor: pointer;
+
+
+
+    margin-top: 5px;
+
+}
+
+
+
+form button:hover {
+
+    background: #1d4ed8;
+
+}
+
+
+
+
+
+/* LOGIN / REGISTER SWITCH */
+
+
+
+.auth-box > p:last-child {
+
+    text-align: center;
+
+    margin-top: 22px;
+
+    margin-bottom: 0;
+
+}
+
+
+
+#show-register,
+
+#show-login {
+
+    background: none;
+
+    border: none;
+
+
+
+    color: #2563eb;
+
+
+
+    font-weight: bold;
+
+
+
+    cursor: pointer;
+
+}
+
+
+
+
+
+/* SUCCESS / ERROR MESSAGE */
+
+
+
+#login-message,
+
+#register-message {
+
+    margin-top: 15px;
+
+    text-align: center;
+
+}
+
+
+
+
+
+/* HIDE REGISTER OR LOGIN */
+
+
+
+.hidden {
+
+    display: none;
+
+}
+
+
+
+
+
+/* MOBILE */
+
+
+
+@media (max-width: 800px) {
+
+
+
+    .auth-container {
+
+        flex-direction: column;
+
+    }
+
+
+
+    .brand-section,
+
+    .auth-section {
+
+        width: 100%;
+
+    }
+
+
+
+    .brand-section {
+
+        padding: 40px 25px;
+
+        text-align: center;
+
+        align-items: center;
+
+    }
+
+
+
+    .brand-section h1 {
+
+        font-size: 40px;
+
+    }
+
+
+
+    .auth-section {
+
+        padding: 30px 20px;
+
+    }
+
+
+
+    .auth-box {
+
+        padding: 30px 25px;
+
+    }
+
+}
+
+
+
+/* =========================
+
+   CUSTOMER DASHBOARD
+
+========================= */
+
+
+
+.dashboard-header {
+
+    background: #101827;
+
+    color: white;
+
+    padding: 20px 8%;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+
+
+.dashboard-header h1 {
+
+    color: #3b82f6;
+
+    font-size: 32px;
+
+    margin: 0;
+
+}
+
+
+
+.dashboard-header p {
+
+    margin: 5px 0 0;
+
+    color: #d1d5db;
+
+}
+
+
+
+.dashboard-header #logoutBtn {
+
+    background: #ef4444;
+
+    color: white;
+
+    border: none;
+
+    padding: 10px 20px;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+}
+
+
+
+.dashboard-header #logoutBtn:hover {
+
+    background: #dc2626;
+
+}
+
+
+
+
+
+/* MAIN DASHBOARD */
+
+
+
+.dashboard-container {
+
+    max-width: 1100px;
+
+    margin: 40px auto;
+
+    padding: 0 20px;
+
+}
+
+
+
+.dashboard-welcome {
+
+    margin-bottom: 30px;
+
+}
+
+
+
+.dashboard-welcome h2 {
+
+    font-size: 30px;
+
+    color: #101827;
+
+    margin-bottom: 8px;
+
+}
+
+
+
+.dashboard-welcome p {
+
+    color: #64748b;
+
+}
+
+
+
+
+
+/* DASHBOARD CARDS */
+
+
+
+.dashboard-menu {
+
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 20px;
+
+}
+
+
+
+.dashboard-card {
+
+    background: white;
+
+    padding: 25px;
+
+    border-radius: 12px;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+
+}
+
+
+
+.dashboard-card h3 {
+
+    color: #101827;
+
+    font-size: 21px;
+
+    margin-bottom: 10px;
+
+}
+
+
+
+.dashboard-card p {
+
+    color: #64748b;
+
+    margin-bottom: 20px;
+
+}
+
+
+
+.dashboard-card button {
+
+    background: #2563eb;
+
+    color: white;
+
+    border: none;
+
+    padding: 10px 18px;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+}
+
+
+
+.dashboard-card button:hover {
+
+    background: #1d4ed8;
+
+}
+
+
+
+
+
+/* MOBILE */
+
+
+
+@media (max-width: 700px) {
+
+
+
+    .dashboard-menu {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+
+    .dashboard-header {
+
+        padding: 20px;
+
+    }
+
+
+
+    .dashboard-container {
+
+        margin-top: 25px;
+
+    }
+
+}
+
+
+
+/* =========================
+
+   MY DEVICES PAGE
+
+========================= */
+
+
+
+.device-section {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 25px;
+
+    align-items: start;
+
+}
+
+
+
+
+
+/* CARDS */
+
+
+
+.device-form-card,
+
+.device-list-card {
+
+    background: white;
+
+    padding: 28px;
+
+    border-radius: 12px;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+
+}
+
+
+
+.device-form-card h3,
+
+.device-list-card h3 {
+
+    color: #101827;
+
+    font-size: 22px;
+
+    margin-top: 0;
+
+    margin-bottom: 20px;
+
+}
+
+
+
+
+
+/* FORM */
+
+
+
+#device-form {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+
+#device-form label {
+
+    color: #374151;
+
+    font-weight: 600;
+
+    margin-bottom: 7px;
+
+}
+
+
+
+#device-form input,
+
+#device-form select {
+
+    width: 100%;
+
+    padding: 12px 14px;
+
+    margin-bottom: 18px;
+
+
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 7px;
+
+
+
+    font-size: 15px;
+
+    background: white;
+
+
+
+    box-sizing: border-box;
+
+}
+
+
+
+#device-form input:focus,
+
+#device-form select:focus {
+
+    outline: none;
+
+    border-color: #2563eb;
+
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+
+}
+
+
+
+
+
+/* ADD DEVICE BUTTON */
+
+
+
+#device-form button {
+
+    background: #2563eb;
+
+    color: white;
+
+
+
+    border: none;
+
+    border-radius: 7px;
+
+
+
+    padding: 12px 18px;
+
+
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+
+
+    cursor: pointer;
+
+}
+
+
+
+#device-form button:hover {
+
+    background: #1d4ed8;
+
+}
+
+
+
+
+
+/* SUCCESS / ERROR MESSAGE */
+
+
+
+#device-message {
+
+    margin-top: 15px;
+
+    margin-bottom: 0;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+
+
+
+
+/* DEVICE LIST */
+
+
+
+#device-list {
+
+    margin-top: 10px;
+
+}
+
+
+
+#device-list p {
+
+    color: #64748b;
+
+}
+
+
+
+
+
+/* BACK TO DASHBOARD BUTTON */
+
+
+
+.dashboard-header button {
+
+    border: none;
+
+    border-radius: 7px;
+
+
+
+    padding: 10px 18px;
+
+
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+
+
+    cursor: pointer;
+
+
+
+    background: #2563eb;
+
+    color: white;
+
+}
+
+
+
+.dashboard-header button:hover {
+
+    background: #1d4ed8;
+
+}
+
+
+
+
+
+/* MOBILE */
+
+
+
+@media (max-width: 800px) {
+
+
+
+    .device-section {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+
+    .device-form-card,
+
+    .device-list-card {
+
+        padding: 20px;
+
+    }
+
+}
+
+
+
+/* DEVICE ACTION BUTTONS */
+
+
+
+.device-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 18px;
+
+}
+
+
+
+.remove-device-btn {
+
+    background: #ef4444 !important;
+
+    color: white !important;
+
+    border: none !important;
+
+    border-radius: 6px !important;
+
+    padding: 8px 14px !important;
+
+    font-size: 13px !important;
+
+    font-weight: 600 !important;
+
+    cursor: pointer;
+
+}
+
+
+
+.remove-device-btn:hover {
+
+    background: #dc2626 !important;
+
+}
+
+
+
+.edit-device-btn {
+
+    background: #2563eb !important;
+
+    color: white !important;
+
+    border: none !important;
+
+    border-radius: 6px !important;
+
+    padding: 8px 14px !important;
+
+    font-size: 13px !important;
+
+    font-weight: 600 !important;
+
+    cursor: pointer;
+
+}
+
+
+
+.edit-device-btn:hover {
+
+    background: #1d4ed8 !important;
+
+}
+
+
+
+.device-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 18px;
+
+}
+
+
+
+/* =========================
+
+   EDIT DEVICE MODAL
+
+========================= */
+
+
+
+.modal-overlay {
+
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+
+
+    width: 100%;
+
+    height: 100%;
+
+
+
+    background: rgba(15, 23, 42, 0.65);
+
+
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+
+
+    z-index: 1000;
+
+}
+
+
+
+.modal-overlay.hidden {
+
+    display: none;
+
+}
+
+
+
+
+
+/* MODAL BOX */
+
+
+
+.edit-device-modal {
+
+    background: white;
+
+
+
+    width: 100%;
+
+    max-width: 520px;
+
+
+
+    border-radius: 14px;
+
+
+
+    padding: 28px;
+
+
+
+    box-shadow:
+
+        0 20px 50px rgba(0, 0, 0, 0.25);
+
+}
+
+
+
+
+
+/* MODAL HEADER */
+
+
+
+.modal-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+
+
+    margin-bottom: 25px;
+
+}
+
+
+
+.modal-header h2 {
+
+    margin: 0 0 5px;
+
+    color: #101827;
+
+}
+
+
+
+.modal-header p {
+
+    margin: 0;
+
+    color: #64748b;
+
+}
+
+
+
+
+
+/* X BUTTON */
+
+
+
+.modal-close-btn {
+
+    background: transparent !important;
+
+    color: #64748b !important;
+
+
+
+    border: none !important;
+
+
+
+    font-size: 28px !important;
+
+
+
+    padding: 0 !important;
+
+
+
+    cursor: pointer;
+
+}
+
+
+
+.modal-close-btn:hover {
+
+    color: #101827 !important;
+
+}
+
+
+
+
+
+/* EDIT FORM */
+
+
+
+#edit-device-form {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+
+#edit-device-form label {
+
+    font-weight: 600;
+
+    color: #374151;
+
+
+
+    margin-bottom: 7px;
+
+}
+
+
+
+#edit-device-form input,
+
+#edit-device-form select {
+
+    width: 100%;
+
+
+
+    padding: 12px 14px;
+
+
+
+    margin-bottom: 17px;
+
+
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 7px;
+
+
+
+    font-size: 15px;
+
+
+
+    box-sizing: border-box;
+
+}
+
+
+
+#edit-device-form input:focus,
+
+#edit-device-form select:focus {
+
+    outline: none;
+
+
+
+    border-color: #2563eb;
+
+
+
+    box-shadow:
+
+        0 0 0 3px rgba(37, 99, 235, 0.12);
+
+}
+
+
+
+
+
+/* MODAL BUTTONS */
+
+
+
+.modal-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+
+
+    gap: 10px;
+
+
+
+    margin-top: 10px;
+
+}
+
+
+
+.cancel-edit-btn {
+
+    background: #e2e8f0 !important;
+
+    color: #374151 !important;
+
+
+
+    border: none !important;
+
+    border-radius: 7px !important;
+
+
+
+    padding: 10px 18px !important;
+
+
+
+    cursor: pointer;
+
+}
+
+
+
+.cancel-edit-btn:hover {
+
+    background: #cbd5e1 !important;
+
+}
+
+
+
+
+
+.save-edit-btn {
+
+    background: #2563eb !important;
+
+    color: white !important;
+
+
+
+    border: none !important;
+
+    border-radius: 7px !important;
+
+
+
+    padding: 10px 18px !important;
+
+
+
+    font-weight: 600 !important;
+
+
+
+    cursor: pointer;
+
+}
+
+
+
+.save-edit-btn:hover {
+
+    background: #1d4ed8 !important;
+
+}
+
+
+
+
+
+/* EDIT MESSAGE */
+
+
+
+#edit-device-message {
+
+    margin: 0;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+
+
+/* ========================================
+
+   INITIAL FIXTRACK SETUP
+
+======================================== */
+
+
+
+#initial-setup-section {
+
+    margin-top: 22px;
+
+    padding-top: 18px;
+
+    border-top: 1px solid #e2e8f0;
+
+    text-align: center;
+
+}
+
+
+
+#initial-setup-section p {
+
+    margin: 0 0 10px;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+}
+
+
+
+#show-admin-setup {
+
+    width: 100%;
+
+    padding: 11px 16px;
+
+
+
+    background: #0f172a;
+
+    color: white;
+
+
+
+    border: none;
+
+    border-radius: 7px;
+
+
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+
+
+    cursor: pointer;
+
+
+
+    transition:
+
+        background 0.2s ease,
+
+        transform 0.1s ease;
+
+}
+
+
+
+#show-admin-setup:hover {
+
+    background: #1e293b;
+
+}
+
+
+
+#show-admin-setup:active {
+
+    transform: scale(0.98);
+
+}
+
+
+
+
+
+/* ========================================
+
+   ADMIN SETUP FORM
+
+======================================== */
+
+
+
+#admin-setup-box h2 {
+
+    margin-bottom: 6px;
+
+    color: #0f172a;
+
+}
+
+
+
+#admin-setup-box > p {
+
+    color: #64748b;
+
+    margin-bottom: 22px;
+
+}
+
+
+
+#admin-setup-form {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+
+#admin-setup-form label {
+
+    margin-bottom: 7px;
+
+
+
+    color: #374151;
+
+
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+
+
+    text-align: left;
+
+}
+
+
+
+#admin-setup-form input {
+
+    width: 100%;
+
+
+
+    padding: 12px 14px;
+
+    margin-bottom: 16px;
+
+
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 7px;
+
+
+
+    font-size: 14px;
+
+
+
+    box-sizing: border-box;
+
+}
+
+
+
+#admin-setup-form input:focus {
+
+    outline: none;
+
+
+
+    border-color: #2563eb;
+
+
+
+    box-shadow:
+
+        0 0 0 3px rgba(37, 99, 235, 0.12);
+
+}
+
+
+
+#admin-setup-form button {
+
+    width: 100%;
+
+
+
+    padding: 12px;
+
+
+
+    margin-top: 4px;
+
+
+
+    background: #2563eb;
+
+    color: white;
+
+
+
+    border: none;
+
+    border-radius: 7px;
+
+
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+
+
+    cursor: pointer;
+
+}
+
+
+
+#admin-setup-form button:hover {
+
+    background: #1d4ed8;
+
+}
+
+
+
+
+
+/* ========================================
+
+   ADMIN SETUP MESSAGE
+
+======================================== */
+
+
+
+#admin-setup-message {
+
+    margin-top: 14px;
+
+
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+
+
+    text-align: center;
+
+}
+
+
+
+
+
+/* ========================================
+
+   RETURN TO LOGIN BUTTON
+
+======================================== */
+
+
+
+#admin-setup-box > p:last-child {
+
+    margin-top: 18px;
+
+    margin-bottom: 0;
+
+
+
+    text-align: center;
+
+
+
+    color: #64748b;
+
+
+
+    font-size: 13px;
+
+}
+
+
+
+#cancel-admin-setup {
+
+    background: transparent;
+
+    color: #2563eb;
+
+
+
+    border: none;
+
+
+
+    padding: 0;
+
+
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+
+
+    cursor: pointer;
+
+}
+
+
+
+#cancel-admin-setup:hover {
+
+    text-decoration: underline;
+
+}
+
+
+
+
+
+/* REPAIR REQUEST FORM */
+
+
+
+#repair-form select,
+
+#repair-form textarea {
+
+    display: block;
+
+    width: 100%;
+
+    padding: 12px 14px;
+
+    margin: 8px 0 18px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 7px;
+
+    background: white;
+
+    color: #111827;
+
+    font: inherit;
+
+    box-sizing: border-box;
+
+}
+
+
+
+#repair-form textarea {
+
+    resize: vertical;
+
+    min-height: 120px;
+
+}
+
+
+
+#repair-form select:focus,
+
+#repair-form textarea:focus {
+
+    outline: none;
+
+    border-color: #2563eb;
+
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+
+}
+
+
+
+#repair-form label {
+
+    display: block;
+
+    font-weight: 600;
+
+    color: #374151;
+
+    margin-bottom: 6px;
+
+}
+
+
+
+#repair-message {
+
+    margin-top: 12px;
+
+    font-size: 14px;
+
+}
+
+
+
+
+
+/* ADMIN REPAIR MANAGEMENT */
+
+
+
+.admin-technician-select,
+
+.admin-status-select {
+
+    display: block;
+
+    width: 100%;
+
+    padding: 12px;
+
+    margin-top: 8px;
+
+    margin-bottom: 18px;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #0f172a;
+
+    font-size: 14px;
+
+    box-sizing: border-box;
+
+}
+
+
+
+.admin-technician-select:focus,
+
+.admin-status-select:focus {
+
+    outline: none;
+
+    border-color: #2563eb;
+
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+
+}
+
+
+
+.registered-device > label {
+
+    display: block;
+
+    margin-top: 18px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #334155;
+
+}
+
+
+
+.registered-device > .save-edit-btn {
+
+    margin-top: 5px;
+
+}
+
+
+
+.repair-update-message {
+
+    margin-top: 12px;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    color: #2563eb;
+
+}
+
+
+
+.registered-device > h4 {
+
+    margin-bottom: 12px;
+
+    font-size: 18px;
+
+}
+
+
+
+.registered-device > p {
+
+    margin: 5px 0;
+
+    line-height: 1.5;
+
+}
+
+
+
+
+
+/* =====================================
+
+   FIXTRACK - TECHNICIAN DIAGNOSIS
+
+   ===================================== */
+
+
+
+#diagnosisSection {
+
+    margin-top: 24px;
+
+}
+
+
+
+#diagnosisSection h3 {
+
+    font-size: 22px;
+
+    color: #0f172a;
+
+    margin-bottom: 16px;
+
+}
+
+
+
+#diagnosisSection form {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+}
+
+
+
+#diagnosisSection label {
+
+    display: block;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #1e293b;
+
+    margin-bottom: 6px;
+
+}
+
+
+
+#diagnosisSection select,
+
+#diagnosisSection textarea {
+
+    display: block;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 13px 15px;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #0f172a;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    margin-bottom: 16px;
+
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+}
+
+
+
+#diagnosisSection textarea {
+
+    min-height: 110px;
+
+    resize: vertical;
+
+}
+
+
+
+#diagnosisSection select:focus,
+
+#diagnosisSection textarea:focus {
+
+    outline: none;
+
+    border-color: #2563eb;
+
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+
+}
+
+
+
+#diagnosisSection button[type="submit"] {
+
+    width: 100%;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #2563eb;
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: background 0.2s;
+
+}
+
+
+
+#diagnosisSection button[type="submit"]:hover {
+
+    background: #1d4ed8;
+
+}
+
+
+
+#diagnosisSection .registered-device {
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 10px;
+
+    padding: 20px;
+
+    margin: 14px 0;
+
+}
+
+
+
+#diagnosisSection .registered-device h4 {
+
+    font-size: 17px;
+
+    color: #0f172a;
+
+    margin-bottom: 12px;
+
+}
+
+
+
+#diagnosisSection .registered-device p {
+
+    color: #475569;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+    margin: 6px 0;
+
+}
+
+
+
+#diagnosisSection input,
+
+#diagnosisSection button,
+
+#diagnosisSection select,
+
+#diagnosisSection textarea {
+
+    font-family: inherit;
+
+}
+
+
+
+@media (max-width: 768px) {
+
+    #diagnosisSection {
+
+        padding: 20px;
+
+    }
+
+}
+
+/* =========================================
+   PARTS & INVENTORY MANAGEMENT
+   ========================================= */
+
+/* Keep the existing dashboard header and visual identity. */
+#part-form,
+#parts-list {
+    min-width: 0;
+}
+
+#part-form label {
+    display: block;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 7px;
+}
+
+#part-form input:not([type="hidden"]),
+#part-form textarea {
+    display: block;
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #111827;
+    font: inherit;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+#part-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+#part-form input:focus,
+#part-form textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+#save-part-btn {
+    width: 100%;
+    padding: 13px 18px;
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#save-part-btn:hover { background: #1d4ed8; }
+#save-part-btn:disabled { opacity: 0.6; cursor: wait; }
+
+#cancel-edit-btn {
+    margin-top: 10px;
+    padding: 11px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #e2e8f0;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#cancel-edit-btn:hover { background: #cbd5e1; }
+
+#part-message {
+    margin-top: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+#inventory-summary > div {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    padding: 0 !important;
+    margin-bottom: 20px !important;
+    background: transparent !important;
+}
+
+#inventory-summary > div > p {
+    min-width: 0;
+    padding: 13px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+    color: #334155;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+#parts-list {
+    display: grid;
+    gap: 14px;
+}
+
+#parts-list .registered-device {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px !important;
+    margin: 0 !important;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+}
+
+#parts-list .registered-device h4 {
+    color: #0f172a;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 12px;
+}
+
+#parts-list .registered-device p {
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 6px 0;
+    overflow-wrap: anywhere;
+}
+
+#parts-list .registered-device button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 85px;
+    padding: 10px 16px;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #ffffff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#parts-list .registered-device button:hover { background: #1d4ed8; }
+
+/* JS sets an inline red background on Delete, so override it. */
+#parts-list .registered-device button:last-child {
+    background: #dc2626 !important;
+    border-color: #dc2626;
+    color: #ffffff;
+}
+
+#parts-list .registered-device button:last-child:hover {
+    background: #b91c1c !important;
+}
+
+@media (max-width: 800px) {
+    #inventory-summary > div {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* =====================================
+   FIXTRACK - MANAGE REPAIRS & BILLING
+   ===================================== */
+
+.admin-repair-card {
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.repair-billing-section {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #cbd5e1;
+}
+
+.repair-billing-content {
+    margin-top: 16px;
+}
+
+.billing-charge-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.billing-remove-btn {
+    background-color: #dc2626;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.billing-remove-btn:hover:not(:disabled) {
+    background-color: #b91c1c;
+}
+
+.billing-remove-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.billing-entry-form {
+    margin-top: 12px;
+}
+
+.billing-labor-heading {
+    margin-top: 20px;
+}
+
+.billing-totals {
+    margin-top: 24px;
+    padding: 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+}
+
+.billing-message {
+    margin-bottom: 10px;
+}

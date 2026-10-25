@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixTrack | Customer Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="dashboard-header">
+        <div>
+            <h1>FixTrack</h1>
+            <p>Computer Repair Management System</p>
+        </div>
+
+        <button id="logoutBtn">Logout</button>
+    </header>
+
+    <main class="dashboard-container">
+
+        <section class="dashboard-welcome">
+            <h2 id="welcomeUser">Welcome!</h2>
+            <p>Manage your devices and track your computer repairs.</p>
+        </section>
+
+        <section class="dashboard-menu">
+
+            <!-- MY DEVICES -->
+            <div class="dashboard-card">
+                <h3>My Devices</h3>
+                <p>View and manage your registered devices.</p>
+
+                <button onclick="window.location.href='devices.html'">
+                    View Devices
+                </button>
+            </div>
+
+            <!-- REPAIR REQUESTS -->
+            <div class="dashboard-card">
+                <h3>Repair Requests</h3>
+                <p>Create a repair request and check its progress.</p>
+
+                <button onclick="window.location.href='repairs.html'">
+                    View Repairs
+                </button>
+            </div>
+
+            <!-- REPAIR HISTORY -->
+            <div class="dashboard-card">
+                <h3>Repair History</h3>
+                <p>View your previous repairs and completed services.</p>
+
+                <button onclick="window.location.href='history.html'">
+                    View History
+                </button>
+            </div>
+
+            <!-- PROFILE -->
+            <div class="dashboard-card">
+                <h3>Profile</h3>
+                <p>View and manage your FixTrack account information.</p>
+
+                <button onclick="window.location.href='profile.html'">
+                    View Profile
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="dashboard.js"></script>
+
+</body>
+</html>

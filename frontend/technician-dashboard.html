@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixTrack | Technician Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="dashboard-header">
+        <div>
+            <h1>FixTrack</h1>
+            <p>Technician Dashboard</p>
+        </div>
+
+        <button type="button" id="logoutBtn">
+            Logout
+        </button>
+    </header>
+
+    <main class="dashboard-container">
+
+        <section class="dashboard-welcome">
+            <h2 id="welcomeUser">
+                Welcome, Technician!
+            </h2>
+            <p>
+                View assigned repair jobs and update repair progress.
+            </p>
+        </section>
+
+        <section class="dashboard-menu">
+
+            <div class="dashboard-card">
+                <h3>Assigned Repairs</h3>
+                <p>View repair jobs assigned to you.</p>
+                <button type="button" id="viewRepairsBtn">
+                    View Repairs
+                </button>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Diagnosis</h3>
+                <p>Record device diagnosis and repair details.</p>
+                <button type="button" id="manageDiagnosisBtn">
+                    Manage Diagnosis
+                </button>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Repair Status</h3>
+                <p>Update the progress and status of assigned repairs.</p>
+                <button type="button" id="updateStatusBtn">
+                    Update Status
+                </button>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>Repair History</h3>
+                <p>View repairs you previously worked on.</p>
+                <button type="button" id="viewHistoryBtn">
+                    View History
+                </button>
+            </div>
+
+        </section>
+
+        <!-- ASSIGNED REPAIRS -->
+
+        <section
+            class="device-list-card"
+            id="assignedRepairsSection"
+            style="display:none; margin-top:24px;"
+        >
+            <h3>My Assigned Repairs</h3>
+
+            <div id="assignedRepairsList">
+                Loading assigned repairs...
+            </div>
+        </section>
+
+        <!-- MANAGE DIAGNOSIS -->
+
+        <section
+            class="device-list-card"
+            id="diagnosisSection"
+            style="display:none; margin-top:24px;"
+        >
+            <h3>Manage Diagnosis</h3>
+            <p>Record the findings for your assigned repairs.</p>
+
+            <form id="diagnosisForm">
+
+                <label for="diagnosisRepair">
+                    Select Assigned Repair
+                </label>
+
+                <select id="diagnosisRepair" required>
+                    <option value="">
+                        Select a repair
+                    </option>
+                </select>
+
+                <label for="diagnosisDetails">
+                    Diagnosis Details
+                </label>
+
+                <textarea
+                    id="diagnosisDetails"
+                    rows="5"
+                    placeholder="Describe the problem found during inspection..."
+                    required
+                ></textarea>
+
+                <label for="recommendedAction">
+                    Recommended Action
+                </label>
+
+                <textarea
+                    id="recommendedAction"
+                    rows="4"
+                    placeholder="Describe the recommended repair..."
+                ></textarea>
+
+                <button
+                    type="submit"
+                    id="saveDiagnosisBtn"
+                >
+                    Save Diagnosis
+                </button>
+
+                <p
+                    id="diagnosisMessage"
+                    role="status"
+                    aria-live="polite"
+                    style="margin-top:12px;"
+                ></p>
+
+            </form>
+
+            <h3 style="margin-top:30px;">
+                My Saved Diagnoses
+            </h3>
+
+            <div id="diagnosisList">
+                No diagnoses loaded yet.
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="technician-dashboard.js"></script>
+
+</body>
+</html>

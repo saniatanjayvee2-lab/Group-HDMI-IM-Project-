@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixTrack | My Devices</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="dashboard-header">
+        <div>
+            <h1>FixTrack</h1>
+            <p>Computer Repair Management System</p>
+        </div>
+
+        <button onclick="window.location.href='dashboard.html'">
+            Back to Dashboard
+        </button>
+    </header>
+
+
+    <main class="dashboard-container">
+
+        <section class="dashboard-welcome">
+            <h2>My Devices</h2>
+            <p>Add and manage the devices you want to have repaired.</p>
+        </section>
+
+
+        <section class="device-section">
+
+            <!-- ADD DEVICE -->
+            <div class="device-form-card">
+
+                <h3>Add Device</h3>
+
+                <form id="device-form">
+
+                    <label for="device-type">
+                        Device Type
+                    </label>
+
+                    <select id="device-type" required>
+                        <option value="">
+                            Select device type
+                        </option>
+
+                        <option value="Laptop">
+                            Laptop
+                        </option>
+
+                        <option value="Desktop">
+                            Desktop
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+                    </select>
+
+
+                    <label for="brand">
+                        Brand
+                    </label>
+
+                    <input
+                        type="text"
+                        id="brand"
+                        placeholder="Example: Acer"
+                        required
+                    >
+
+
+                    <label for="model">
+                        Model
+                    </label>
+
+                    <input
+                        type="text"
+                        id="model"
+                        placeholder="Example: Predator Helios Neo 16"
+                        required
+                    >
+
+
+                    <label for="serial-number">
+                        Serial Number
+                    </label>
+
+                    <input
+                        type="text"
+                        id="serial-number"
+                        placeholder="Enter serial number"
+                    >
+
+
+                    <label for="accessories">
+                        Accessories Included
+                    </label>
+
+                    <input
+                        type="text"
+                        id="accessories"
+                        placeholder="Example: Charger, mouse"
+                    >
+
+
+                    <button type="submit">
+                        Add Device
+                    </button>
+
+
+                    <p id="device-message"></p>
+
+                </form>
+
+            </div>
+
+
+            <!-- REGISTERED DEVICES -->
+            <div class="device-list-card">
+
+                <h3>Registered Devices</h3>
+
+                <div id="device-list">
+                    <p>Loading devices...</p>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         EDIT DEVICE MODAL
+    ========================== -->
+
+    <div id="edit-device-modal" class="modal-overlay hidden">
+
+        <div class="edit-device-modal">
+
+            <div class="modal-header">
+
+                <div>
+                    <h2>Edit Device</h2>
+                    <p>Update your device information.</p>
+                </div>
+
+                <button
+                    type="button"
+                    id="close-edit-modal"
+                    class="modal-close-btn"
+                >
+                    &times;
+                </button>
+
+            </div>
+
+
+            <form id="edit-device-form">
+
+                <!-- Stores device ID -->
+                <input
+                    type="hidden"
+                    id="edit-device-id"
+                >
+
+
+                <label for="edit-device-type">
+                    Device Type
+                </label>
+
+                <select
+                    id="edit-device-type"
+                    required
+                >
+                    <option value="">
+                        Select device type
+                    </option>
+
+                    <option value="Laptop">
+                        Laptop
+                    </option>
+
+                    <option value="Desktop">
+                        Desktop
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+                </select>
+
+
+                <label for="edit-brand">
+                    Brand
+                </label>
+
+                <input
+                    type="text"
+                    id="edit-brand"
+                    required
+                >
+
+
+                <label for="edit-model">
+                    Model
+                </label>
+
+                <input
+                    type="text"
+                    id="edit-model"
+                    required
+                >
+
+
+                <label for="edit-serial-number">
+                    Serial Number
+                </label>
+
+                <input
+                    type="text"
+                    id="edit-serial-number"
+                >
+
+
+                <label for="edit-accessories">
+                    Accessories Included
+                </label>
+
+                <input
+                    type="text"
+                    id="edit-accessories"
+                >
+
+
+                <p id="edit-device-message"></p>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        id="cancel-edit-btn"
+                        class="cancel-edit-btn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="save-edit-btn"
+                    >
+                        Save Changes
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script src="devices.js"></script>
+
+</body>
+</html>

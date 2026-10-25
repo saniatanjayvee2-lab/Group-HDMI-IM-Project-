@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixTrack | Repair Requests</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="dashboard-header">
+        <div>
+            <h1>FixTrack</h1>
+            <p>Computer Repair Management System</p>
+        </div>
+
+        <button
+            type="button"
+            onclick="window.location.href='dashboard.html'"
+        >
+            Back to Dashboard
+        </button>
+    </header>
+
+    <main class="dashboard-container">
+
+        <section class="dashboard-welcome">
+            <h2>Repair Requests</h2>
+            <p>Submit a repair request and track its progress.</p>
+        </section>
+
+        <section class="device-section">
+
+            <!-- NEW REPAIR REQUEST -->
+            <div class="device-form-card">
+                <h3>Request a Repair</h3>
+
+                <form id="repair-form">
+
+                    <label for="repair-device">
+                        Select Device
+                    </label>
+
+                    <select id="repair-device" required>
+                        <option value="">
+                            Loading your devices...
+                        </option>
+                    </select>
+
+                    <label for="problem-description">
+                        Describe the Problem
+                    </label>
+
+                    <textarea
+                        id="problem-description"
+                        rows="5"
+                        placeholder="Example: My laptop suddenly shuts down while using it."
+                        required
+                    ></textarea>
+
+                    <button type="submit">
+                        Submit Repair Request
+                    </button>
+
+                    <p id="repair-message"></p>
+
+                </form>
+            </div>
+
+            <!-- REPAIR REQUEST LIST -->
+            <div class="device-list-card">
+                <h3>My Repair Requests</h3>
+
+                <div id="repair-list">
+                    <p>Loading repair requests...</p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="repairs.js"></script>
+
+</body>
+</html>

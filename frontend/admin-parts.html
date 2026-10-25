@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FixTrack | Parts & Inventory</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="dashboard-header">
+        <div>
+            <h1>FixTrack</h1>
+            <p>Admin / Parts & Inventory</p>
+        </div>
+
+        <button
+            type="button"
+            onclick="window.location.href='admin-dashboard.html'"
+        >
+            Back to Dashboard
+        </button>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-container">
+
+        <section class="dashboard-welcome">
+            <h2>Parts & Inventory Management</h2>
+            <p>
+                Add replacement parts, manage prices,
+                and monitor available stock.
+            </p>
+        </section>
+
+        <section class="device-section">
+
+            <!-- ADD / EDIT PART FORM -->
+            <div class="device-form-card">
+
+                <h3 id="part-form-title">Add New Part</h3>
+
+                <form id="part-form">
+
+                    <input
+                        type="hidden"
+                        id="part-id"
+                    >
+
+                    <label for="part-name">
+                        Part Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="part-name"
+                        placeholder="Example: 8GB DDR4 RAM"
+                        required
+                    >
+
+                    <label for="part-description">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="part-description"
+                        placeholder="Enter part details..."
+                        rows="3"
+                    ></textarea>
+
+                    <label for="part-price">
+                        Unit Price (₱)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="part-price"
+                        min="0"
+                        step="0.01"
+                        placeholder="Example: 1500.00"
+                        required
+                    >
+
+                    <label for="part-stock">
+                        Stock Quantity
+                    </label>
+
+                    <input
+                        type="number"
+                        id="part-stock"
+                        min="0"
+                        step="1"
+                        placeholder="Example: 10"
+                        required
+                    >
+
+                    <button
+                        type="submit"
+                        id="save-part-btn"
+                    >
+                        Add Part
+                    </button>
+
+                    <button
+                        type="button"
+                        id="cancel-edit-btn"
+                        style="display: none;"
+                    >
+                        Cancel Edit
+                    </button>
+
+                    <p
+                        id="part-message"
+                        role="status"
+                        aria-live="polite"
+                    ></p>
+
+                </form>
+
+            </div>
+
+            <!-- INVENTORY LIST -->
+            <div class="device-list-card">
+
+                <h3>Available Parts</h3>
+
+                <div id="inventory-summary"></div>
+
+                <div id="parts-list">
+                    Loading inventory...
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="admin-parts.js"></script>
+
+</body>
+</html>
