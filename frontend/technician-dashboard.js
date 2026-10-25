@@ -2,8 +2,8 @@
 const token = localStorage.getItem("fixtrack_token");
 const userData = localStorage.getItem("fixtrack_user");
 
-const API_URL = "http://localhost:3000/api/repairs";
-const TECHNICIAN_API = "http://localhost:3000/api/technicians";
+const API_URL = "https://fixtrack-backend.vercel.app/api/repairs";
+const TECHNICIAN_API = "https://fixtrack-backend.vercel.app/api/technicians";
 
 let currentUser = null;
 let assignedRepairs = [];
