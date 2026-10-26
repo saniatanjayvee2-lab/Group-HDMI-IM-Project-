@@ -1,8 +1,13 @@
 
-const API_URL = "https://fixtrack-backend.vercel.app/api/repairs";
-const TECHNICIANS_API = "https://fixtrack-backend.vercel.app/api/technicians";
-const BILLING_API = "https://fixtrack-backend.vercel.app/api/billing";
-const PARTS_API = "https://fixtrack-backend.vercel.app/api/parts";
+
+const BASE_API = "https://fixtrack-backend.vercel.app/api";
+
+const API_URL = `${BASE_API}/repairs`;
+const TECHNICIANS_API = `${BASE_API}/technicians`;
+const BILLING_API = `${BASE_API}/billing`;
+const PARTS_API = `${BASE_API}/parts`;
+const PAYMENTS_API = `${BASE_API}/payments`;
+
 
 const token = localStorage.getItem("fixtrack_token");
 const userData = localStorage.getItem("fixtrack_user");
@@ -11,10 +16,18 @@ const repairList = document.getElementById("admin-repair-list");
 let technicians = [];
 let isAdmin = false;
 
+// =====================================
 // CHECK ADMIN LOGIN
+// =====================================
+
 try {
     const user = userData ? JSON.parse(userData) : null;
-    isAdmin = Boolean(token && user && user.role === "admin");
+
+    isAdmin = Boolean(
+        token &&
+        user &&
+        user.role === "admin"
+    );
 } catch (error) {
     console.error("Invalid user data:", error);
 }
@@ -25,11 +38,16 @@ if (!isAdmin) {
     initializeAdminRepairs();
 }
 
+// =====================================
 // HELPERS
+// =====================================
+
 function authHeaders(withJson = false) {
     return {
         Authorization: `Bearer ${token}`,
-        ...(withJson ? { "Content-Type": "application/json" } : {})
+        ...(withJson
+            ? { "Content-Type": "application/json" }
+            : {})
     };
 }
 
@@ -43,13 +61,38 @@ function formatMoney(amount) {
 function createElement(tag, text = "", className = "") {
     const element = document.createElement(tag);
     element.textContent = text;
-    if (className) element.className = className;
+
+    if (className) {
+        element.className = className;
+    }
+
     return element;
 }
 
 function showMessage(element, message, isError = false) {
     element.textContent = message;
-    element.style.color = isError ? "#dc2626" : "#15803d";
+
+    element.classList.toggle(
+        "message-error",
+        isError
+    );
+
+    element.classList.toggle(
+        "message-success",
+        !isError
+    );
+}
+
+function formatDate(value) {
+    if (!value) {
+        return "Not available";
+    }
+
+    const date = new Date(value);
+
+    return Number.isNaN(date.getTime())
+        ? "Not available"
+        : date.toLocaleString("en-PH");
 }
 
 async function apiRequest(url, options = {}) {
@@ -61,7 +104,9 @@ async function apiRequest(url, options = {}) {
         }
     });
 
-    const data = await response.json().catch(() => ({}));
+    const data = await response
+        .json()
+        .catch(() => ({}));
 
     if (!response.ok) {
         throw new Error(
@@ -73,16 +118,24 @@ async function apiRequest(url, options = {}) {
     return data;
 }
 
+// =====================================
 // INITIALIZE
+// =====================================
+
 async function initializeAdminRepairs() {
     await loadTechnicians();
     await loadAdminRepairs();
 }
 
+// =====================================
 // LOAD TECHNICIANS
+// =====================================
+
 async function loadTechnicians() {
     try {
-        const data = await apiRequest(TECHNICIANS_API);
+        const data = await apiRequest(
+            TECHNICIANS_API
+        );
 
         technicians = Array.isArray(data)
             ? data
@@ -91,25 +144,38 @@ async function loadTechnicians() {
                 : [];
 
     } catch (error) {
-        console.error("Load technicians error:", error);
+        console.error(
+            "Load technicians error:",
+            error
+        );
+
         technicians = [];
     }
 }
 
+// =====================================
 // LOAD ADMIN REPAIRS
+// =====================================
+
 async function loadAdminRepairs(successMessage = "") {
     if (!repairList) {
-        console.error("Repair list element not found.");
+        console.error(
+            "Repair list element not found."
+        );
         return;
     }
 
-    repairList.textContent = "Loading repair requests...";
+    repairList.textContent =
+        "Loading repair requests...";
 
     try {
-        const repairs = await apiRequest(`${API_URL}/admin`);
+        const repairs = await apiRequest(
+            `${API_URL}/admin`
+        );
 
         if (!Array.isArray(repairs)) {
-            repairList.textContent = "Invalid repair data.";
+            repairList.textContent =
+                "Invalid repair data.";
             return;
         }
 
@@ -122,9 +188,15 @@ async function loadAdminRepairs(successMessage = "") {
                 "repair-update-message"
             );
 
-            notice.setAttribute("role", "status");
+            notice.setAttribute(
+                "role",
+                "status"
+            );
 
-            showMessage(notice, successMessage);
+            showMessage(
+                notice,
+                successMessage
+            );
 
             repairList.appendChild(notice);
         }
@@ -136,19 +208,26 @@ async function loadAdminRepairs(successMessage = "") {
                     "No customer repair requests yet."
                 )
             );
-
             return;
         }
 
         repairs.forEach(createRepairCard);
 
     } catch (error) {
-        console.error("Load repairs error:", error);
-        repairList.textContent = error.message;
+        console.error(
+            "Load repairs error:",
+            error
+        );
+
+        repairList.textContent =
+            error.message;
     }
 }
 
+// =====================================
 // CREATE REPAIR CARD
+// =====================================
+
 function createRepairCard(repair) {
     const card = createElement(
         "div",
@@ -156,7 +235,9 @@ function createRepairCard(repair) {
         "registered-device"
     );
 
-    card.classList.add("admin-repair-card");
+    card.classList.add(
+        "admin-repair-card"
+    );
 
     const title = createElement(
         "h4",
@@ -182,7 +263,9 @@ function createRepairCard(repair) {
         "p",
         `Submitted: ${
             repair.date_submitted
-                ? new Date(repair.date_submitted).toLocaleDateString()
+                ? new Date(
+                    repair.date_submitted
+                ).toLocaleDateString()
                 : "Unknown"
         }`
     );
@@ -192,11 +275,12 @@ function createRepairCard(repair) {
         `Current Status: ${repair.status}`
     );
 
-    const assignedTechnician = technicians.find(
-        tech =>
-            Number(tech.technician_id) ===
-            Number(repair.technician_id)
-    );
+    const assignedTechnician =
+        technicians.find(
+            tech =>
+                Number(tech.technician_id) ===
+                Number(repair.technician_id)
+        );
 
     const assignmentInfo = createElement(
         "p",
@@ -205,32 +289,46 @@ function createRepairCard(repair) {
             : "Assigned Technician: Unassigned"
     );
 
+    // =====================================
     // TECHNICIAN SELECTION
+    // =====================================
+
     const technicianLabel = createElement(
         "label",
         "Assign Technician"
     );
 
-    const technicianSelect = document.createElement("select");
+    const technicianSelect =
+        document.createElement("select");
 
-    technicianSelect.className = "admin-technician-select";
+    technicianSelect.className =
+        "admin-technician-select";
 
-    const unassignedOption = document.createElement("option");
+    const unassignedOption =
+        document.createElement("option");
 
     unassignedOption.value = "";
-    unassignedOption.textContent = "Unassigned";
+    unassignedOption.textContent =
+        "Unassigned";
 
-    technicianSelect.appendChild(unassignedOption);
+    technicianSelect.appendChild(
+        unassignedOption
+    );
 
     technicians.forEach(technician => {
-        const option = document.createElement("option");
+        const option =
+            document.createElement("option");
 
-        option.value = String(technician.technician_id);
+        option.value = String(
+            technician.technician_id
+        );
 
         option.textContent =
             `${technician.first_name} ${technician.last_name}`;
 
-        technicianSelect.appendChild(option);
+        technicianSelect.appendChild(
+            option
+        );
     });
 
     technicianSelect.value =
@@ -238,15 +336,20 @@ function createRepairCard(repair) {
             ? ""
             : String(repair.technician_id);
 
+    // =====================================
     // REPAIR STATUS
+    // =====================================
+
     const statusLabel = createElement(
         "label",
         "Update Repair Status"
     );
 
-    const statusSelect = document.createElement("select");
+    const statusSelect =
+        document.createElement("select");
 
-    statusSelect.className = "admin-status-select";
+    statusSelect.className =
+        "admin-status-select";
 
     [
         "Pending",
@@ -254,15 +357,23 @@ function createRepairCard(repair) {
         "Completed",
         "Released"
     ].forEach(status => {
-        const option = document.createElement("option");
+        const option =
+            document.createElement("option");
 
         option.value = status;
         option.textContent = status;
 
-        statusSelect.appendChild(option);
+        statusSelect.appendChild(
+            option
+        );
     });
 
-    statusSelect.value = repair.status;
+    statusSelect.value =
+        repair.status;
+
+    // =====================================
+    // SAVE REPAIR CHANGES
+    // =====================================
 
     const saveButton = createElement(
         "button",
@@ -278,67 +389,90 @@ function createRepairCard(repair) {
         "repair-update-message"
     );
 
-    message.setAttribute("role", "status");
+    message.setAttribute(
+        "role",
+        "status"
+    );
 
-    // SAVE CHANGES
-    saveButton.addEventListener("click", async () => {
-        const technicianId = technicianSelect.value;
-        const status = statusSelect.value;
+    saveButton.addEventListener(
+        "click",
+        async () => {
+            const technicianId =
+                technicianSelect.value;
 
-        if (
-            technicianId &&
-            (
-                !Number.isSafeInteger(Number(technicianId)) ||
-                Number(technicianId) <= 0
-            )
-        ) {
-            showMessage(
-                message,
-                "Invalid technician selection.",
-                true
-            );
+            const status =
+                statusSelect.value;
 
-            return;
+            if (
+                technicianId &&
+                (
+                    !Number.isSafeInteger(
+                        Number(technicianId)
+                    ) ||
+                    Number(technicianId) <= 0
+                )
+            ) {
+                showMessage(
+                    message,
+                    "Invalid technician selection.",
+                    true
+                );
+                return;
+            }
+
+            saveButton.disabled = true;
+            saveButton.textContent =
+                "Saving...";
+
+            try {
+                const data = await apiRequest(
+                    `${API_URL}/admin/${repair.repair_id}`,
+                    {
+                        method: "PUT",
+                        body: JSON.stringify({
+                            technician_id:
+                                technicianId
+                                    ? Number(technicianId)
+                                    : null,
+                            status
+                        })
+                    }
+                );
+
+                await loadAdminRepairs(
+                    data.message ||
+                    "Repair request updated successfully!"
+                );
+
+            } catch (error) {
+                console.error(
+                    "Update repair error:",
+                    error
+                );
+
+                showMessage(
+                    message,
+                    error.message,
+                    true
+                );
+
+            } finally {
+                saveButton.disabled = false;
+                saveButton.textContent =
+                    "Save Changes";
+            }
         }
+    );
 
-        saveButton.disabled = true;
-        saveButton.textContent = "Saving...";
+    // =====================================
+    // MANAGE BILLING
+    // =====================================
 
-        try {
-            const data = await apiRequest(
-                `${API_URL}/admin/${repair.repair_id}`,
-                {
-                    method: "PUT",
+    const billingSection =
+        document.createElement("section");
 
-                    body: JSON.stringify({
-                        technician_id: technicianId
-                            ? Number(technicianId)
-                            : null,
-                        status
-                    })
-                }
-            );
-
-            await loadAdminRepairs(
-                data.message ||
-                "Repair request updated successfully!"
-            );
-
-        } catch (error) {
-            console.error("Update repair error:", error);
-
-            showMessage(message, error.message, true);
-
-        } finally {
-            saveButton.disabled = false;
-            saveButton.textContent = "Save Changes";
-        }
-    });
-
-    // BILLING SECTION
-    const billingSection = document.createElement("section");
-
-    billingSection.className = "repair-billing-section";
+    billingSection.className =
+        "repair-billing-section";
 
     const billingButton = createElement(
         "button",
@@ -348,30 +482,38 @@ function createRepairCard(repair) {
 
     billingButton.type = "button";
 
-    const billingContent = document.createElement("div");
+    const billingContent =
+        document.createElement("div");
 
-    billingContent.className = "repair-billing-content";
+    billingContent.className =
+        "repair-billing-content";
+
     billingContent.hidden = true;
 
     let billingOpened = false;
 
-    billingButton.addEventListener("click", async () => {
-        billingOpened = !billingOpened;
+    billingButton.addEventListener(
+        "click",
+        async () => {
+            billingOpened = !billingOpened;
 
-        billingContent.hidden = !billingOpened;
+            billingContent.hidden =
+                !billingOpened;
 
-        billingButton.textContent = billingOpened
-            ? "Hide Billing"
-            : "Manage Billing";
+            billingButton.textContent =
+                billingOpened
+                    ? "Hide Billing"
+                    : "Manage Billing";
 
-        if (billingOpened) {
-            await renderBilling(
-                repair.repair_id,
-                repair.status,
-                billingContent
-            );
+            if (billingOpened) {
+                await renderBilling(
+                    repair.repair_id,
+                    repair.status,
+                    billingContent
+                );
+            }
         }
-    });
+    );
 
     billingSection.append(
         billingButton,
@@ -398,8 +540,15 @@ function createRepairCard(repair) {
     repairList.appendChild(card);
 }
 
+// =====================================
 // RENDER REPAIR BILLING
-async function renderBilling(repairId, repairStatus, container) {
+// =====================================
+
+async function renderBilling(
+    repairId,
+    repairStatus,
+    container
+) {
     container.replaceChildren(
         createElement(
             "p",
@@ -408,16 +557,20 @@ async function renderBilling(repairId, repairStatus, container) {
     );
 
     try {
-        const [bill, partsData] = await Promise.all([
-            apiRequest(`${BILLING_API}/${repairId}`),
-            apiRequest(PARTS_API)
-        ]);
+        const [bill, partsData] =
+            await Promise.all([
+                apiRequest(
+                    `${BILLING_API}/${repairId}`
+                ),
+                apiRequest(PARTS_API)
+            ]);
 
-        const inventory = Array.isArray(partsData)
-            ? partsData
-            : Array.isArray(partsData.parts)
-                ? partsData.parts
-                : [];
+        const inventory =
+            Array.isArray(partsData)
+                ? partsData
+                : Array.isArray(partsData.parts)
+                    ? partsData.parts
+                    : [];
 
         container.replaceChildren();
 
@@ -434,7 +587,11 @@ async function renderBilling(repairId, repairStatus, container) {
             "billing-message"
         );
 
-        notice.setAttribute("role", "status");
+        notice.setAttribute(
+            "role",
+            "status"
+        );
+
         container.appendChild(notice);
 
         const isReleased =
@@ -450,21 +607,30 @@ async function renderBilling(repairId, repairStatus, container) {
             );
         }
 
+        // =====================================
         // REPLACEMENT PARTS
+        // =====================================
+
         container.appendChild(
-            createElement("h4", "Replacement Parts")
+            createElement(
+                "h4",
+                "Replacement Parts"
+            )
         );
 
-        const partsList = document.createElement("div");
+        const partsList =
+            document.createElement("div");
 
-        if (!bill.parts || bill.parts.length === 0) {
+        if (
+            !bill.parts ||
+            bill.parts.length === 0
+        ) {
             partsList.appendChild(
                 createElement(
                     "p",
                     "No replacement parts added."
                 )
             );
-
         } else {
             bill.parts.forEach(part => {
                 const row = createElement(
@@ -481,13 +647,15 @@ async function renderBilling(repairId, repairStatus, container) {
                 );
 
                 if (!isReleased) {
-                    const removeButton = createElement(
-                        "button",
-                        "Remove",
-                        "billing-remove-btn"
-                    );
+                    const removeButton =
+                        createElement(
+                            "button",
+                            "Remove",
+                            "billing-remove-btn"
+                        );
 
-                    removeButton.type = "button";
+                    removeButton.type =
+                        "button";
 
                     removeButton.addEventListener(
                         "click",
@@ -500,7 +668,8 @@ async function renderBilling(repairId, repairStatus, container) {
                                 return;
                             }
 
-                            removeButton.disabled = true;
+                            removeButton.disabled =
+                                true;
 
                             try {
                                 await apiRequest(
@@ -523,21 +692,31 @@ async function renderBilling(repairId, repairStatus, container) {
                                     true
                                 );
 
-                                removeButton.disabled = false;
+                                removeButton.disabled =
+                                    false;
                             }
                         }
                     );
 
-                    row.appendChild(removeButton);
+                    row.appendChild(
+                        removeButton
+                    );
                 }
 
-                partsList.appendChild(row);
+                partsList.appendChild(
+                    row
+                );
             });
         }
 
-        container.appendChild(partsList);
+        container.appendChild(
+            partsList
+        );
 
+        // =====================================
         // ADD REPLACEMENT PART
+        // =====================================
+
         if (!isReleased) {
             const partForm = createElement(
                 "form",
@@ -550,53 +729,70 @@ async function renderBilling(repairId, repairStatus, container) {
                 "Select Inventory Part"
             );
 
-            const partSelect = document.createElement("select");
+            const partSelect =
+                document.createElement("select");
 
             partSelect.required = true;
 
-            const placeholder = document.createElement("option");
+            const placeholder =
+                document.createElement("option");
 
             placeholder.value = "";
-            placeholder.textContent = "Choose a part";
+            placeholder.textContent =
+                "Choose a part";
 
-            partSelect.appendChild(placeholder);
+            partSelect.appendChild(
+                placeholder
+            );
 
             inventory.forEach(part => {
-                const option = document.createElement("option");
+                const option =
+                    document.createElement("option");
 
-                const stock = Number(part.stock_quantity);
+                const stock =
+                    Number(part.stock_quantity);
 
-                option.value = String(part.part_id);
+                option.value =
+                    String(part.part_id);
 
                 option.textContent =
                     `${part.part_name || part.name} — ${formatMoney(part.unit_price)} (Stock: ${stock})`;
 
                 option.disabled =
-                    !Number.isFinite(stock) || stock <= 0;
+                    !Number.isFinite(stock) ||
+                    stock <= 0;
 
-                partSelect.appendChild(option);
+                partSelect.appendChild(
+                    option
+                );
             });
 
-            const quantityLabel = createElement(
-                "label",
-                "Quantity"
-            );
+            const quantityLabel =
+                createElement(
+                    "label",
+                    "Quantity"
+                );
 
-            const quantityInput = document.createElement("input");
+            const quantityInput =
+                document.createElement("input");
 
-            quantityInput.type = "number";
+            quantityInput.type =
+                "number";
+
             quantityInput.min = "1";
             quantityInput.step = "1";
             quantityInput.value = "1";
             quantityInput.required = true;
 
-            const addPartButton = createElement(
-                "button",
-                "Add Part",
-                "save-edit-btn"
-            );
+            const addPartButton =
+                createElement(
+                    "button",
+                    "Add Part",
+                    "save-edit-btn"
+                );
 
-            addPartButton.type = "submit";
+            addPartButton.type =
+                "submit";
 
             partForm.append(
                 partLabel,
@@ -611,13 +807,20 @@ async function renderBilling(repairId, repairStatus, container) {
                 async event => {
                     event.preventDefault();
 
-                    const partId = Number(partSelect.value);
-                    const quantity = Number(quantityInput.value);
+                    const partId =
+                        Number(partSelect.value);
+
+                    const quantity =
+                        Number(quantityInput.value);
 
                     if (
-                        !Number.isSafeInteger(partId) ||
+                        !Number.isSafeInteger(
+                            partId
+                        ) ||
                         partId <= 0 ||
-                        !Number.isSafeInteger(quantity) ||
+                        !Number.isSafeInteger(
+                            quantity
+                        ) ||
                         quantity <= 0
                     ) {
                         showMessage(
@@ -625,18 +828,17 @@ async function renderBilling(repairId, repairStatus, container) {
                             "Choose a valid part and quantity.",
                             true
                         );
-
                         return;
                     }
 
-                    addPartButton.disabled = true;
+                    addPartButton.disabled =
+                        true;
 
                     try {
                         await apiRequest(
                             `${BILLING_API}/${repairId}/parts`,
                             {
                                 method: "POST",
-
                                 body: JSON.stringify({
                                     part_id: partId,
                                     quantity
@@ -657,15 +859,21 @@ async function renderBilling(repairId, repairStatus, container) {
                             true
                         );
 
-                        addPartButton.disabled = false;
+                        addPartButton.disabled =
+                            false;
                     }
                 }
             );
 
-            container.appendChild(partForm);
+            container.appendChild(
+                partForm
+            );
         }
 
+        // =====================================
         // LABOR CHARGES
+        // =====================================
+
         container.appendChild(
             createElement(
                 "h4",
@@ -674,16 +882,19 @@ async function renderBilling(repairId, repairStatus, container) {
             )
         );
 
-        const laborList = document.createElement("div");
+        const laborList =
+            document.createElement("div");
 
-        if (!bill.labor || bill.labor.length === 0) {
+        if (
+            !bill.labor ||
+            bill.labor.length === 0
+        ) {
             laborList.appendChild(
                 createElement(
                     "p",
                     "No labor charges added."
                 )
             );
-
         } else {
             bill.labor.forEach(labor => {
                 const row = createElement(
@@ -700,13 +911,15 @@ async function renderBilling(repairId, repairStatus, container) {
                 );
 
                 if (!isReleased) {
-                    const removeButton = createElement(
-                        "button",
-                        "Remove",
-                        "billing-remove-btn"
-                    );
+                    const removeButton =
+                        createElement(
+                            "button",
+                            "Remove",
+                            "billing-remove-btn"
+                        );
 
-                    removeButton.type = "button";
+                    removeButton.type =
+                        "button";
 
                     removeButton.addEventListener(
                         "click",
@@ -719,7 +932,8 @@ async function renderBilling(repairId, repairStatus, container) {
                                 return;
                             }
 
-                            removeButton.disabled = true;
+                            removeButton.disabled =
+                                true;
 
                             try {
                                 await apiRequest(
@@ -742,21 +956,31 @@ async function renderBilling(repairId, repairStatus, container) {
                                     true
                                 );
 
-                                removeButton.disabled = false;
+                                removeButton.disabled =
+                                    false;
                             }
                         }
                     );
 
-                    row.appendChild(removeButton);
+                    row.appendChild(
+                        removeButton
+                    );
                 }
 
-                laborList.appendChild(row);
+                laborList.appendChild(
+                    row
+                );
             });
         }
 
-        container.appendChild(laborList);
+        container.appendChild(
+            laborList
+        );
 
+        // =====================================
         // ADD LABOR CHARGE
+        // =====================================
+
         if (!isReleased) {
             const laborForm = createElement(
                 "form",
@@ -764,38 +988,50 @@ async function renderBilling(repairId, repairStatus, container) {
                 "billing-entry-form"
             );
 
-            const descriptionLabel = createElement(
-                "label",
-                "Labor Description"
-            );
+            const descriptionLabel =
+                createElement(
+                    "label",
+                    "Labor Description"
+                );
 
-            const descriptionInput = document.createElement("input");
+            const descriptionInput =
+                document.createElement("input");
 
-            descriptionInput.type = "text";
+            descriptionInput.type =
+                "text";
+
             descriptionInput.placeholder =
                 "Example: SSD installation and testing";
-            descriptionInput.required = true;
 
-            const costLabel = createElement(
-                "label",
-                "Labor Cost (PHP)"
-            );
+            descriptionInput.required =
+                true;
 
-            const costInput = document.createElement("input");
+            const costLabel =
+                createElement(
+                    "label",
+                    "Labor Cost (PHP)"
+                );
 
-            costInput.type = "number";
+            const costInput =
+                document.createElement("input");
+
+            costInput.type =
+                "number";
+
             costInput.min = "0";
             costInput.step = "0.01";
             costInput.placeholder = "0.00";
             costInput.required = true;
 
-            const addLaborButton = createElement(
-                "button",
-                "Add Labor Charge",
-                "save-edit-btn"
-            );
+            const addLaborButton =
+                createElement(
+                    "button",
+                    "Add Labor Charge",
+                    "save-edit-btn"
+                );
 
-            addLaborButton.type = "submit";
+            addLaborButton.type =
+                "submit";
 
             laborForm.append(
                 descriptionLabel,
@@ -819,7 +1055,9 @@ async function renderBilling(repairId, repairStatus, container) {
                     if (
                         !description ||
                         !costInput.value ||
-                        !Number.isFinite(laborCost) ||
+                        !Number.isFinite(
+                            laborCost
+                        ) ||
                         laborCost < 0
                     ) {
                         showMessage(
@@ -827,18 +1065,17 @@ async function renderBilling(repairId, repairStatus, container) {
                             "Enter a valid description and labor cost.",
                             true
                         );
-
                         return;
                     }
 
-                    addLaborButton.disabled = true;
+                    addLaborButton.disabled =
+                        true;
 
                     try {
                         await apiRequest(
                             `${BILLING_API}/${repairId}/labor`,
                             {
                                 method: "POST",
-
                                 body: JSON.stringify({
                                     description,
                                     labor_cost: laborCost
@@ -859,15 +1096,21 @@ async function renderBilling(repairId, repairStatus, container) {
                             true
                         );
 
-                        addLaborButton.disabled = false;
+                        addLaborButton.disabled =
+                            false;
                     }
                 }
             );
 
-            container.appendChild(laborForm);
+            container.appendChild(
+                laborForm
+            );
         }
 
+        // =====================================
         // BILLING TOTALS
+        // =====================================
+
         const totals = createElement(
             "div",
             "",
@@ -879,28 +1122,377 @@ async function renderBilling(repairId, repairStatus, container) {
                 "p",
                 `Parts Subtotal: ${formatMoney(bill.parts_total)}`
             ),
-
             createElement(
                 "p",
                 `Labor Subtotal: ${formatMoney(bill.labor_total)}`
             ),
-
             createElement(
                 "h3",
                 `Total Repair Cost: ${formatMoney(bill.total_amount)}`
             )
         );
 
-        container.appendChild(totals);
+        container.appendChild(
+            totals
+        );
+
+        // =====================================
+        // PAYMENTS & PAYMENT TRACKING
+        // =====================================
+
+        await renderPayments(
+            repairId,
+            container,
+            isReleased
+        );
 
     } catch (error) {
-        console.error("Load billing error:", error);
+        console.error(
+            "Load billing error:",
+            error
+        );
 
         container.replaceChildren(
             createElement(
                 "p",
                 `Unable to load billing: ${error.message}`
             )
+        );
+    }
+}
+
+// =====================================
+// RENDER PAYMENTS
+// PAYMONGO ONLY - NO MANUAL DROPDOWN
+// =====================================
+
+async function renderPayments(
+    repairId,
+    container,
+    isReleased = false
+) {
+    const section = createElement(
+        "section",
+        "",
+        "payment-section"
+    );
+
+    container.appendChild(section);
+
+    const heading = createElement(
+        "h3",
+        "Payments & Payment Tracking"
+    );
+
+    section.appendChild(
+        heading
+    );
+
+    const notice = createElement(
+        "p",
+        "",
+        "payment-message"
+    );
+
+    notice.setAttribute(
+        "role",
+        "status"
+    );
+
+    section.appendChild(
+        notice
+    );
+
+    try {
+        const data = await apiRequest(
+            `${PAYMENTS_API}/${repairId}`
+        );
+
+        const totalAmount =
+            Number(data.total_amount) || 0;
+
+        const totalPaid =
+            Number(data.total_paid) || 0;
+
+        const remainingBalance =
+            Number(data.remaining_balance) || 0;
+
+        const paymentStatus =
+            data.payment_status || "Unpaid";
+
+        // =====================================
+        // PAYMENT SUMMARY
+        // =====================================
+
+        const summary = createElement(
+            "div",
+            "",
+            "payment-summary"
+        );
+
+        summary.append(
+            createElement(
+                "p",
+                `Total Repair Cost: ${formatMoney(totalAmount)}`
+            ),
+            createElement(
+                "p",
+                `Amount Paid: ${formatMoney(totalPaid)}`
+            ),
+            createElement(
+                "p",
+                `Remaining Balance: ${formatMoney(remainingBalance)}`
+            )
+        );
+
+        const statusRow = createElement(
+            "p",
+            "Payment Status: "
+        );
+
+        const statusBadge = createElement(
+            "span",
+            paymentStatus,
+            "payment-status-badge"
+        );
+
+        if (paymentStatus === "Paid") {
+            statusBadge.classList.add(
+                "payment-paid"
+            );
+        } else if (
+            paymentStatus === "Partially Paid"
+        ) {
+            statusBadge.classList.add(
+                "payment-partial"
+            );
+        } else {
+            statusBadge.classList.add(
+                "payment-unpaid"
+            );
+        }
+
+        statusRow.appendChild(
+            statusBadge
+        );
+
+        summary.appendChild(
+            statusRow
+        );
+
+        section.appendChild(
+            summary
+        );
+
+        // =====================================
+        // PAYMONGO CHECKOUT - TEST MODE
+        // =====================================
+
+        if (remainingBalance > 0) {
+            section.appendChild(
+                createElement(
+                    "h4",
+                    "Online Payment via PayMongo"
+                )
+            );
+
+            const paymongoBox = createElement(
+                "div",
+                "",
+                "paymongo-checkout-box"
+            );
+
+            const paymongoInfo = createElement(
+                "p",
+                `Amount to Pay: ${formatMoney(remainingBalance)}`
+            );
+
+            const paymongoNote = createElement(
+                "p",
+                "Pay securely through PayMongo. Choose GCash or another available payment method on the checkout page. Test Mode only."
+            );
+
+            const paymongoButton = createElement(
+                "button",
+                "Pay with PayMongo (Test Mode)",
+                "paymongo-checkout-btn"
+            );
+
+            paymongoButton.type =
+                "button";
+
+            paymongoButton.addEventListener(
+                "click",
+                async () => {
+                    const confirmed = confirm(
+                        `Create a PayMongo TEST checkout for ${formatMoney(remainingBalance)}? No real payment will be charged.`
+                    );
+
+                    if (!confirmed) {
+                        return;
+                    }
+
+                    paymongoButton.disabled =
+                        true;
+
+                    paymongoButton.textContent =
+                        "Creating Test Checkout...";
+
+                    showMessage(
+                        notice,
+                        "Connecting to PayMongo..."
+                    );
+
+                    try {
+                        const result =
+                            await apiRequest(
+                                `${PAYMENTS_API}/${repairId}/checkout`,
+                                {
+                                    method: "POST"
+                                }
+                            );
+
+                        const checkoutUrl =
+                            result.checkout_url;
+
+                        if (
+                            typeof checkoutUrl !== "string" ||
+                            !checkoutUrl.startsWith(
+                                "https://"
+                            )
+                        ) {
+                            throw new Error(
+                                "Invalid PayMongo checkout URL."
+                            );
+                        }
+
+                        window.location.assign(
+                            checkoutUrl
+                        );
+
+                    } catch (error) {
+                        console.error(
+                            "PayMongo checkout error:",
+                            error
+                        );
+
+                        showMessage(
+                            notice,
+                            error.message,
+                            true
+                        );
+
+                        paymongoButton.disabled =
+                            false;
+
+                        paymongoButton.textContent =
+                            "Pay with PayMongo (Test Mode)";
+                    }
+                }
+            );
+
+            paymongoBox.append(
+                paymongoInfo,
+                paymongoNote,
+                paymongoButton
+            );
+
+            section.appendChild(
+                paymongoBox
+            );
+
+        } else {
+            section.appendChild(
+                createElement(
+                    "p",
+                    "There is no outstanding balance."
+                )
+            );
+        }
+
+        // =====================================
+        // PAYMENT HISTORY
+        // =====================================
+
+        section.appendChild(
+            createElement(
+                "h4",
+                "Payment History"
+            )
+        );
+
+        const history = createElement(
+            "div",
+            "",
+            "payment-history"
+        );
+
+        const payments =
+            Array.isArray(data.payments)
+                ? data.payments
+                : [];
+
+        if (payments.length === 0) {
+            history.appendChild(
+                createElement(
+                    "p",
+                    "No payments have been recorded yet."
+                )
+            );
+        } else {
+            payments.forEach(payment => {
+                const item = createElement(
+                    "div",
+                    "",
+                    "payment-history-item"
+                );
+
+                item.append(
+                    createElement(
+                        "p",
+                        `Payment #${payment.payment_id}`
+                    ),
+                    createElement(
+                        "p",
+                        `Amount: ${formatMoney(payment.amount_paid)}`
+                    ),
+                    createElement(
+                        "p",
+                        `Method: ${payment.payment_method}`
+                    ),
+                    createElement(
+                        "p",
+                        `Status: ${payment.payment_status}`
+                    ),
+                    createElement(
+                        "p",
+                        `Date: ${formatDate(
+                            payment.payment_date ||
+                            payment.created_at
+                        )}`
+                    )
+                );
+
+                history.appendChild(
+                    item
+                );
+            });
+        }
+
+        section.appendChild(
+            history
+        );
+
+    } catch (error) {
+        console.error(
+            "Load payments error:",
+            error
+        );
+
+        showMessage(
+            notice,
+            `Unable to load payments: ${error.message}`,
+            true
         );
     }
 }
