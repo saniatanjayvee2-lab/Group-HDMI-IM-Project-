@@ -5522,3 +5522,39 @@ body.admin-repairs-page {
     color: #334155;
     cursor: default;
 }
+
+/* PROPOSAL: append these scoped rules to existing frontend/style.css. */
+.customer-profile-page { background: #f4f7fb; color: #1e293b; }
+.customer-profile-layout { width: min(960px, 94%); margin: 32px auto 64px; }
+.customer-profile-layout .profile-page-heading { margin-bottom: 20px; }
+.customer-profile-layout .profile-page-heading h2 { margin: 0 0 8px; }
+.customer-profile-layout .profile-page-heading p { color: #64748b; }
+.customer-profile-panel { padding: 26px; border: 1px solid #e2e8f0; border-radius: 14px; background: white; }
+.customer-profile-page .profile-back-link { color: white; text-decoration: none; font-weight: 600; }
+.customer-profile-page #message { min-height: 20px; margin: 0 0 14px; }
+.customer-profile-page #profile-form h3 { margin: 22px 0 14px; }
+.customer-profile-page .profile-field-grid,
+.customer-profile-page #profile-form .grid.two { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+.customer-profile-page #profile-form label { display: block; font-size: 14px; font-weight: 600; }
+.customer-profile-page #profile-form input[type="text"],
+.customer-profile-page #profile-form input[type="email"] { width: 100%; margin-top: 6px; padding: 11px 12px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font: inherit; }
+.customer-profile-page #profile-form input[readonly],
+.customer-profile-page #profile-form input:disabled { background: #f8fafc; color: #334155; }
+.customer-profile-page #role { cursor: default; }
+.customer-profile-page .profile-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 22px; }
+.customer-profile-page #phones-list .entry,
+.customer-profile-page #addresses-list .entry { margin: 12px 0; padding: 16px; border: 1px solid #e2e8f0; border-radius: 10px; }
+.customer-profile-page .entry-title { font-weight: 700; margin-bottom: 12px; }
+.customer-profile-page .primary-choice { margin-top: 14px; display: flex !important; gap: 8px; align-items: center; }
+.customer-profile-page .profile-form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+.customer-profile-page #profile-form button { width: auto; padding: 10px 16px; border-radius: 8px; cursor: pointer; }
+.customer-profile-page #profile-form .remove { margin-top: 12px; }
+.customer-profile-page #profile-form .empty { color: #64748b; }
+.customer-profile-page #profile-form [hidden],
+.customer-profile-page .profile-edit-toolbar [hidden] { display: none !important; }
+@media (max-width: 640px) {
+  .customer-profile-panel { padding: 16px; }
+  .customer-profile-page .profile-field-grid,
+  .customer-profile-page #profile-form .grid.two { grid-template-columns: 1fr; }
+  .customer-profile-page .profile-form-actions { flex-wrap: wrap; }
+}
