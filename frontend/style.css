@@ -4458,3 +4458,498 @@ body.customer-management #customer-dialog:not([open]) {
         font-size: 16px;
     }
 }
+
+/* ==========================================
+   FIXTRACK - MODERN CUSTOMER EDIT DESIGN
+   ========================================== */
+
+/* Modal */
+
+body.customer-management #customer-dialog {
+    width: min(720px, calc(100vw - 32px)) !important;
+    max-width: 720px !important;
+    max-height: 85vh !important;
+    padding: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    background: #fff !important;
+    border: none !important;
+    border-radius: 16px !important;
+    box-shadow: 0 24px 70px rgba(0,0,0,.25) !important;
+}
+
+body.customer-management #customer-dialog::backdrop {
+    background: rgba(15,23,42,.6);
+}
+
+body.customer-management #customer-dialog:not([open]) {
+    display: none !important;
+}
+
+/* Header */
+
+.customer-management .customer-modal-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.customer-management .customer-modal-header h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.customer-management #customer-close {
+    width: auto !important;
+    min-width: 0 !important;
+    padding: 8px 14px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    background: #f8fafc !important;
+    color: #334155 !important;
+    cursor: pointer;
+}
+
+/* Modal content */
+
+.customer-management #customer-dialog-message {
+    margin: 0;
+    padding: 0 24px;
+    font-size: 13px;
+    color: #475569;
+}
+
+.customer-management #customer-dialog-message:not(:empty) {
+    padding-top: 12px;
+    padding-bottom: 8px;
+}
+
+.customer-management #customer-dialog-message.customer-error {
+    color: #dc2626;
+}
+
+.customer-management #customer-edit-form {
+    display: block;
+    padding: 20px 24px 0 !important;
+    margin: 0 !important;
+}
+
+.customer-management #customer-edit-form[hidden],
+.customer-management #customer-details:empty {
+    display: none !important;
+}
+
+/* Personal information */
+
+.customer-management .customer-form-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 16px !important;
+    margin-bottom: 24px;
+}
+
+.customer-management .customer-form-grid label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.customer-management .customer-form-grid input,
+.customer-management .customer-modern-card-fields input {
+    width: 100%;
+    height: 40px;
+    padding: 9px 12px;
+    margin: 0;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #fff;
+    color: #0f172a;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.customer-management .customer-form-grid input:focus,
+.customer-management .customer-modern-card-fields input:focus {
+    outline: 2px solid #6366f1;
+    outline-offset: 1px;
+    border-color: #6366f1;
+}
+
+/* Section headings */
+
+.customer-management #customer-edit-form h3 {
+    margin: 24px 0 12px !important;
+    color: #0f172a;
+    font-size: 15px !important;
+    font-weight: 700;
+}
+
+/* Contact and address cards */
+
+.customer-management .customer-modern-card {
+    display: block !important;
+    min-width: 0;
+    margin: 10px 0 !important;
+    padding: 0 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    background: #fff !important;
+    overflow: hidden;
+}
+
+.customer-management .customer-modern-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 58px;
+    padding: 12px 14px;
+}
+
+.customer-management .customer-modern-card-identity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.customer-management .customer-modern-card-symbol {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+.customer-management .customer-ui-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.customer-management .customer-modern-card-summary {
+    flex: 1;
+    min-width: 0;
+}
+
+.customer-management .customer-modern-card-primary {
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.customer-management .customer-modern-card-secondary {
+    margin-top: 3px;
+    color: #64748b;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+/* Edit and remove buttons */
+
+.customer-management .customer-modern-card-actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 8px;
+}
+
+.customer-management .customer-modern-icon-button {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    flex: none !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    background: #f8fafc !important;
+    color: #475569 !important;
+    cursor: pointer;
+}
+
+.customer-management .customer-modern-icon-button:hover {
+    background: #eef2ff !important;
+    color: #4338ca !important;
+}
+
+.customer-management .customer-modern-delete {
+    background: #fff7f7 !important;
+    border-color: #fecaca !important;
+    color: #dc2626 !important;
+}
+
+.customer-management .customer-modern-delete:hover {
+    background: #fee2e2 !important;
+}
+
+/* Expandable editor */
+
+.customer-management .customer-modern-card-fields {
+    display: block;
+    padding: 16px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+}
+
+.customer-management .customer-modern-card-fields[hidden] {
+    display: none !important;
+}
+
+.customer-management .customer-modern-card-fields label {
+    display: block;
+    margin-bottom: 12px;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.customer-management .customer-modern-card-fields input {
+    display: block;
+    margin-top: 6px;
+}
+
+.customer-management .customer-modern-field-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 14px;
+}
+
+.customer-management .customer-modern-done {
+    width: auto !important;
+    padding: 9px 18px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    background: #4f46e5 !important;
+    color: white !important;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Add new buttons */
+
+.customer-management #customer-add-phone,
+.customer-management #customer-add-address {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+    padding: 11px 16px !important;
+    margin: 10px 0 18px;
+    border: 1px dashed #a5b4fc !important;
+    border-radius: 9px !important;
+    background: #f8faff !important;
+    color: #4f46e5 !important;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.customer-management #customer-add-phone:hover,
+.customer-management #customer-add-address:hover {
+    background: #eef2ff !important;
+}
+
+/* Save and cancel */
+
+.customer-management .customer-form-actions {
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 15;
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin: 24px -24px 0 !important;
+    padding: 16px 24px !important;
+    background: #fff !important;
+    border-top: 1px solid #e2e8f0;
+}
+
+.customer-management .customer-form-actions button {
+    width: auto !important;
+    min-width: 110px;
+    padding: 10px 18px !important;
+    margin: 0 !important;
+    border-radius: 8px !important;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.customer-management #customer-save {
+    border: 1px solid #4f46e5 !important;
+    background: #4f46e5 !important;
+    color: white !important;
+}
+
+.customer-management #customer-cancel {
+    border: 1px solid #e2e8f0 !important;
+    background: white !important;
+    color: #475569 !important;
+}
+
+/* View customer details */
+
+.customer-management #customer-details {
+    padding: 20px 24px;
+}
+
+.customer-management .customer-profile-card,
+.customer-management .customer-record-card {
+    padding: 18px;
+    margin-bottom: 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.customer-management .customer-profile-card {
+    background: #f8fafc;
+}
+
+.customer-management .customer-detail-row {
+    display: grid;
+    grid-template-columns: 150px minmax(0,1fr);
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.customer-management .customer-detail-row:last-child {
+    border-bottom: none;
+}
+
+.customer-management .customer-detail-label {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.customer-management .customer-detail-value {
+    color: #0f172a;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.customer-management .customer-section-title {
+    margin: 24px 0 12px;
+    font-size: 17px;
+    color: #0f172a;
+}
+
+.customer-management .customer-record-title {
+    margin: 0 0 12px;
+    color: #0f172a;
+    font-size: 15px;
+}
+
+.customer-management .customer-record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.customer-management .customer-status-badge {
+    display: inline-block;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.customer-management .customer-status-completed {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.customer-management .customer-status-cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+    body.customer-management #customer-dialog {
+        width: calc(100vw - 20px) !important;
+        max-height: 90vh !important;
+    }
+
+    .customer-management .customer-modal-header {
+        padding: 16px;
+    }
+
+    .customer-management #customer-edit-form {
+        padding: 16px 16px 0 !important;
+    }
+
+    .customer-management .customer-form-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    .customer-management .customer-modern-card-header {
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .customer-management .customer-modern-card-identity {
+        gap: 8px;
+    }
+
+    .customer-management .customer-modern-card-symbol {
+        width: 30px;
+        height: 30px;
+    }
+
+    .customer-management .customer-modern-card-actions {
+        gap: 5px;
+    }
+
+    .customer-management .customer-modern-icon-button {
+        width: 30px !important;
+        height: 30px !important;
+        min-width: 30px !important;
+    }
+
+    .customer-management .customer-form-actions {
+        margin: 24px -16px 0 !important;
+        padding: 12px 16px !important;
+    }
+
+    .customer-management .customer-detail-row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+}
