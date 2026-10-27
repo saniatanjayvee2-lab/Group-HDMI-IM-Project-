@@ -7,7 +7,7 @@
 
     <title>FixTrack | Manage Technicians</title>
 
-    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="style.css?v=5">
 </head>
 
 <body>
@@ -123,12 +123,11 @@
 
                 <h3>Technicians</h3>
 
-                <p>
-                    View technician accounts and use
-                    Edit or Remove to manage your team.
-                </p>
-
-                <p id="technician-action-message"></p>
+                <p
+                    id="technician-action-message"
+                    role="status"
+                    aria-live="polite"
+                ></p>
 
                 <div id="technician-list">
 
@@ -142,11 +141,8 @@
 
     </main>
 
-    <!-- EXISTING ADD TECHNICIAN FUNCTIONALITY -->
-    <script src="technicians.js?v=3"></script>
-
-    <!-- NEW EDIT AND REMOVE FUNCTIONALITY -->
-    <script src="admin-technicians.js?v=3" defer></script>
+    <!-- TECHNICIAN MANAGEMENT -->
+    <script src="technicians.js?v=5"></script>
 
 </body>
 </html>
