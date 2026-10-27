@@ -5000,3 +5000,506 @@ body.customer-management #customer-dialog:not([open]) {
     background: #f8fafc;
     color: #334155;
 }
+
+/* =========================================
+   FIXTRACK - ADMIN REPAIR MANAGEMENT
+   ========================================= */
+
+body.admin-repairs-page {
+    background: #f4f7fb;
+    color: #1e293b;
+}
+
+.admin-repairs-page .repairs-dashboard {
+    width: min(1200px, 94%);
+    margin: 0 auto;
+    padding: 32px 0 60px;
+}
+
+.admin-repairs-page .repairs-page-heading {
+    margin-bottom: 24px;
+}
+
+.admin-repairs-page .repairs-page-heading h2 {
+    font-size: 27px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.admin-repairs-page .repairs-page-heading p {
+    margin-top: 8px;
+    color: #64748b;
+}
+
+.admin-repairs-page .repairs-workspace {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+}
+
+.admin-repairs-page .repairs-section-header {
+    margin-bottom: 22px;
+}
+
+.admin-repairs-page .repairs-section-header h3 {
+    font-size: 19px;
+    color: #0f172a;
+}
+
+.admin-repairs-page .repairs-section-header p {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+/* REPAIR CARDS */
+
+.admin-repairs-page #admin-repair-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.admin-repairs-page .admin-repair-card {
+    min-width: 0;
+    padding: 22px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.admin-repairs-page .repair-card-overview {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    height: 100%;
+}
+
+.admin-repairs-page .repair-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.admin-repairs-page .repair-card-title h4 {
+    margin: 0 0 6px;
+    font-size: 17px;
+    color: #0f172a;
+}
+
+.admin-repairs-page .repair-card-id {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.admin-repairs-page .repair-status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.admin-repairs-page .repair-status-pill.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.admin-repairs-page .repair-status-pill.in-progress {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.admin-repairs-page .repair-status-pill.completed {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.admin-repairs-page .repair-status-pill.released {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.admin-repairs-page .repair-card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.admin-repairs-page .repair-card-meta p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.admin-repairs-page .repair-card-meta strong {
+    color: #475569;
+}
+
+.admin-repairs-page .repair-manage-btn {
+    width: 100%;
+    margin-top: auto;
+    padding: 12px 16px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 9px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.admin-repairs-page .repair-manage-btn:hover {
+    background: #1d4ed8;
+}
+
+/* MODAL */
+
+.admin-repairs-page.repair-modal-open {
+    overflow: hidden;
+}
+
+.admin-repairs-page .repair-modal[hidden],
+.admin-repairs-page .repair-tab-panel[hidden],
+.admin-repairs-page .repair-card-controls[hidden],
+.admin-repairs-page .repair-billing-section[hidden] {
+    display: none !important;
+}
+
+.admin-repairs-page .repair-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.65);
+}
+
+.admin-repairs-page .repair-modal-dialog {
+    display: flex;
+    flex-direction: column;
+    width: min(760px, 100%);
+    max-height: 92vh;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.2);
+}
+
+.admin-repairs-page .repair-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 24px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-repairs-page .repair-modal-header h2 {
+    margin: 0;
+    font-size: 22px;
+    color: #0f172a;
+}
+
+.admin-repairs-page .repair-modal-header p {
+    margin-top: 5px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.admin-repairs-page .repair-modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: #f1f5f9;
+    color: #334155;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.admin-repairs-page .repair-modal-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 12px 24px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-repairs-page .repair-tab {
+    flex: 1;
+    padding: 12px 16px;
+    background: transparent;
+    color: #64748b;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.admin-repairs-page .repair-tab.active {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.admin-repairs-page .repair-modal-body {
+    flex: 1;
+    min-height: 0;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.admin-repairs-page .repair-modal-footer {
+    padding: 14px 24px;
+    border-top: 1px solid #e2e8f0;
+    text-align: right;
+}
+
+.admin-repairs-page .repair-modal-footer button {
+    width: auto;
+    padding: 10px 20px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: white;
+    color: #334155;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* REPAIR CONTROLS */
+
+.admin-repairs-page .repair-modal .repair-card-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.admin-repairs-page .repair-modal label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.admin-repairs-page .repair-modal input,
+.admin-repairs-page .repair-modal select,
+.admin-repairs-page .repair-modal textarea {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: white;
+    color: #0f172a;
+    font-size: 14px;
+}
+
+.admin-repairs-page .repair-modal .save-edit-btn {
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* BILLING */
+
+.admin-repairs-page .repair-modal .repair-billing-section {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.admin-repairs-page .repair-modal .repair-billing-section > button {
+    display: none;
+}
+
+.admin-repairs-page .repair-modal .repair-billing-content {
+    margin: 0;
+    width: 100%;
+}
+
+.admin-repairs-page .repair-modal .repair-billing-content h3 {
+    margin: 0 0 18px;
+    font-size: 20px;
+    color: #0f172a;
+}
+
+.admin-repairs-page .repair-modal .repair-billing-content h4 {
+    margin: 24px 0 12px;
+    font-size: 16px;
+    color: #334155;
+}
+
+.admin-repairs-page .repair-modal .billing-charge-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-repairs-page .repair-modal .billing-charge-row span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.admin-repairs-page .repair-modal .billing-remove-btn {
+    width: auto;
+    flex-shrink: 0;
+}
+
+.admin-repairs-page .repair-modal .billing-totals {
+    width: 100%;
+    padding: 20px;
+    margin: 20px 0;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 12px;
+}
+
+/* COLLAPSIBLE ADD PART AND ADD LABOR FORMS */
+
+.admin-repairs-page .billing-form-wrapper {
+    margin: 16px 0 24px;
+}
+
+.admin-repairs-page .billing-form-toggle {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.admin-repairs-page .billing-form-toggle:hover {
+    background: #1d4ed8;
+}
+
+.admin-repairs-page .billing-form-wrapper .billing-entry-form[hidden] {
+    display: none !important;
+}
+
+.admin-repairs-page .billing-form-wrapper .billing-entry-form:not([hidden]) {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    padding: 18px;
+    margin-top: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+.admin-repairs-page .billing-form-cancel {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: white;
+    color: #334155;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.admin-repairs-page .billing-form-cancel:hover {
+    background: #f1f5f9;
+}
+
+/* PAYMENTS */
+
+.admin-repairs-page .repair-modal .payment-section {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.admin-repairs-page .repair-modal .payment-summary,
+.admin-repairs-page .repair-modal .paymongo-checkout-box,
+.admin-repairs-page .repair-modal .payment-history-item {
+    width: 100%;
+    padding: 18px;
+    margin: 14px 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #f8fafc;
+}
+
+.admin-repairs-page .repair-modal .paymongo-checkout-btn {
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 800px) {
+    .admin-repairs-page #admin-repair-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .admin-repairs-page .repairs-dashboard {
+        width: calc(100% - 24px);
+        padding-top: 24px;
+    }
+
+    .admin-repairs-page .repairs-workspace {
+        padding: 16px;
+    }
+
+    .admin-repairs-page .repair-modal {
+        padding: 8px;
+    }
+
+    .admin-repairs-page .repair-modal-dialog {
+        max-height: 96vh;
+    }
+
+    .admin-repairs-page .repair-modal-header,
+    .admin-repairs-page .repair-modal-body {
+        padding: 17px;
+    }
+
+    .admin-repairs-page .repair-modal-tabs {
+        padding: 10px 12px;
+        gap: 4px;
+    }
+
+    .admin-repairs-page .repair-tab {
+        padding: 10px 6px;
+        font-size: 12px;
+    }
+
+    .admin-repairs-page .repair-modal-footer {
+        padding: 12px 17px;
+    }
+}
