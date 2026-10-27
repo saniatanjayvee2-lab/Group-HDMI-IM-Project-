@@ -5,7 +5,7 @@
    ========================================= */
 
 // =====================================
-// VERCEL BACKEND API
+// API CONFIGURATION
 // =====================================
 
 const BASE_API = "https://fixtrack-backend.vercel.app/api";
@@ -95,9 +95,9 @@ async function apiRequest(url, options = {}) {
         headers: {
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
-            ...(options.body ? {
-                "Content-Type": "application/json"
-            } : {}),
+            ...(options.body
+                ? { "Content-Type": "application/json" }
+                : {}),
             ...options.headers
         }
     });
@@ -115,7 +115,7 @@ async function apiRequest(url, options = {}) {
 }
 
 // =====================================
-// CREATE ELEMENTS
+// ELEMENT HELPERS
 // =====================================
 
 function createCell(value) {
@@ -155,32 +155,40 @@ function createActionButton(label, className, handler) {
 }
 
 // =====================================
-// CHECK PAYMENT ELIGIBILITY
+// PAYMENT TYPE
 // =====================================
+
+function isPayMongoPayment(payment) {
+    const method = String(
+        payment.payment_method || ""
+    ).toLowerCase();
+
+    return (
+        payment.is_paymongo === true ||
+        payment.is_paymongo === "true" ||
+        method.includes("paymongo")
+    );
+}
 
 function canModifyPayment(payment) {
     const status = String(
         payment.payment_status || ""
     ).toLowerCase();
 
-    const method = String(
-        payment.payment_method || ""
-    ).toLowerCase();
-
     return (
         status === "completed" &&
-        payment.is_paymongo !== true &&
-        payment.is_paymongo !== "true" &&
-        !method.includes("paymongo")
+        !isPayMongoPayment(payment)
     );
 }
 
 // =====================================
-// SEARCH TRANSACTIONS
+// SEARCH
 // =====================================
 
 function filterTransactions(query) {
-    const search = String(query || "").trim().toLowerCase();
+    const search = String(query || "")
+        .trim()
+        .toLowerCase();
 
     if (!search) return transactions;
 
@@ -191,17 +199,398 @@ function filterTransactions(query) {
             payment.amount_paid,
             payment.payment_method,
             payment.payment_status,
-            formatDate(payment.payment_date || payment.created_at)
+            payment.checkout_session_id,
+            formatDate(
+                payment.payment_date ||
+                payment.created_at
+            )
         ];
 
         return values.some(value =>
-            String(value ?? "").toLowerCase().includes(search)
+            String(value ?? "")
+                .toLowerCase()
+                .includes(search)
         );
     });
 }
 
 // =====================================
-// EDIT PAYMENT
+// TRANSACTION DETAILS MODAL
+// =====================================
+
+function createDetailsModal() {
+    let overlay = document.getElementById(
+        "fixtrackPaymentDetailsOverlay"
+    );
+
+    if (overlay) return overlay;
+
+    overlay = document.createElement("div");
+    overlay.id = "fixtrackPaymentDetailsOverlay";
+
+    Object.assign(overlay.style, {
+        position: "fixed",
+        inset: "0",
+        background: "rgba(15, 23, 42, 0.65)",
+        display: "none",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: "9999",
+        padding: "20px",
+        boxSizing: "border-box"
+    });
+
+    const modal = document.createElement("div");
+    modal.id = "fixtrackPaymentDetailsModal";
+
+    Object.assign(modal.style, {
+        background: "#ffffff",
+        color: "#0f172a",
+        width: "100%",
+        maxWidth: "520px",
+        maxHeight: "90vh",
+        overflowY: "auto",
+        borderRadius: "14px",
+        boxShadow: "0 24px 60px rgba(0,0,0,0.2)",
+        padding: "26px",
+        boxSizing: "border-box"
+    });
+
+    const header = document.createElement("div");
+
+    Object.assign(header.style, {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: "16px",
+        marginBottom: "18px"
+    });
+
+    const title = document.createElement("h2");
+    title.id = "fixtrackPaymentDetailsTitle";
+    title.textContent = "Transaction Details";
+
+    Object.assign(title.style, {
+        margin: "0",
+        fontSize: "21px",
+        fontWeight: "700"
+    });
+
+    const closeButton = document.createElement("button");
+    closeButton.type = "button";
+    closeButton.textContent = "×";
+    closeButton.setAttribute(
+        "aria-label",
+        "Close transaction details"
+    );
+
+    Object.assign(closeButton.style, {
+        background: "#f1f5f9",
+        border: "none",
+        borderRadius: "8px",
+        width: "36px",
+        height: "36px",
+        fontSize: "25px",
+        cursor: "pointer",
+        color: "#334155"
+    });
+
+    closeButton.addEventListener("click", closeDetailsModal);
+
+    header.appendChild(title);
+    header.appendChild(closeButton);
+
+    const content = document.createElement("div");
+    content.id = "fixtrackPaymentDetailsContent";
+
+    modal.appendChild(header);
+    modal.appendChild(content);
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener("click", event => {
+        if (event.target === overlay) {
+            closeDetailsModal();
+        }
+    });
+
+    document.addEventListener("keydown", event => {
+        if (
+            event.key === "Escape" &&
+            overlay.style.display !== "none"
+        ) {
+            closeDetailsModal();
+        }
+    });
+
+    return overlay;
+}
+
+function closeDetailsModal() {
+    const overlay = document.getElementById(
+        "fixtrackPaymentDetailsOverlay"
+    );
+
+    if (overlay) {
+        overlay.style.display = "none";
+    }
+
+    document.body.style.overflow = "";
+}
+
+function createDetailRow(label, value) {
+    const row = document.createElement("div");
+
+    Object.assign(row.style, {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        gap: "18px",
+        padding: "12px 0",
+        borderBottom: "1px solid #e2e8f0"
+    });
+
+    const labelElement = document.createElement("span");
+    labelElement.textContent = label;
+
+    Object.assign(labelElement.style, {
+        color: "#64748b",
+        fontSize: "13px",
+        flexShrink: "0"
+    });
+
+    const valueElement = document.createElement("span");
+    valueElement.textContent = String(value ?? "N/A");
+
+    Object.assign(valueElement.style, {
+        color: "#0f172a",
+        fontSize: "13px",
+        fontWeight: "600",
+        textAlign: "right",
+        overflowWrap: "anywhere"
+    });
+
+    row.appendChild(labelElement);
+    row.appendChild(valueElement);
+
+    return row;
+}
+
+function createDetailsSection(titleText) {
+    const heading = document.createElement("h3");
+    heading.textContent = titleText;
+
+    Object.assign(heading.style, {
+        margin: "22px 0 8px",
+        fontSize: "14px",
+        color: "#2563eb",
+        fontWeight: "700"
+    });
+
+    return heading;
+}
+
+function viewPaymentDetails(payment) {
+    const overlay = createDetailsModal();
+
+    const title = document.getElementById(
+        "fixtrackPaymentDetailsTitle"
+    );
+
+    const content = document.getElementById(
+        "fixtrackPaymentDetailsContent"
+    );
+
+    title.textContent =
+        `Transaction #${payment.payment_id}`;
+
+    content.replaceChildren();
+
+    const isGateway = isPayMongoPayment(payment);
+
+    const typeLabel = isGateway
+        ? "PayMongo Online Payment"
+        : "Manual Payment";
+
+    content.appendChild(
+        createDetailsSection("Payment Information")
+    );
+
+    content.appendChild(
+        createDetailRow(
+            "Transaction ID",
+            `#${payment.payment_id}`
+        )
+    );
+
+    content.appendChild(
+        createDetailRow(
+            "Repair ID",
+            `#${payment.repair_id}`
+        )
+    );
+
+    content.appendChild(
+        createDetailRow(
+            "Payment Type",
+            typeLabel
+        )
+    );
+
+    content.appendChild(
+        createDetailRow(
+            "Payment Method",
+            payment.payment_method || "Unknown"
+        )
+    );
+
+    content.appendChild(
+        createDetailRow(
+            "Amount",
+            formatMoney(payment.amount_paid)
+        )
+    );
+
+    content.appendChild(
+        createDetailRow(
+            "Status",
+            payment.payment_status || "Unknown"
+        )
+    );
+
+    content.appendChild(
+        createDetailRow(
+            "Payment Date",
+            formatDate(
+                payment.payment_date ||
+                payment.created_at
+            )
+        )
+    );
+
+    if (payment.created_at) {
+        content.appendChild(
+            createDetailRow(
+                "Record Created",
+                formatDate(payment.created_at)
+            )
+        );
+    }
+
+    if (isGateway) {
+        content.appendChild(
+            createDetailsSection("PayMongo Information")
+        );
+
+        content.appendChild(
+            createDetailRow(
+                "Gateway",
+                "PayMongo"
+            )
+        );
+
+        content.appendChild(
+            createDetailRow(
+                "Mode",
+                "Test Mode"
+            )
+        );
+
+        if (payment.checkout_session_id) {
+            content.appendChild(
+                createDetailRow(
+                    "Checkout Session ID",
+                    payment.checkout_session_id
+                )
+            );
+        }
+
+        if (payment.paymongo_source_id) {
+            content.appendChild(
+                createDetailRow(
+                    "Gateway Payment ID",
+                    payment.paymongo_source_id
+                )
+            );
+        }
+
+        const note = document.createElement("p");
+
+        note.textContent =
+            "This payment was recorded through PayMongo. " +
+            "Gateway-linked payments cannot be manually edited " +
+            "or voided in FixTrack.";
+
+        Object.assign(note.style, {
+            background: "#eff6ff",
+            border: "1px solid #bfdbfe",
+            borderRadius: "8px",
+            padding: "13px",
+            color: "#1d4ed8",
+            fontSize: "12px",
+            lineHeight: "1.6",
+            marginTop: "18px"
+        });
+
+        content.appendChild(note);
+    }
+
+    if (
+        String(payment.payment_status).toLowerCase() ===
+        "voided"
+    ) {
+        const note = document.createElement("p");
+
+        note.textContent =
+            "This transaction was voided and is excluded " +
+            "from the total collected amount.";
+
+        Object.assign(note.style, {
+            background: "#f1f5f9",
+            borderRadius: "8px",
+            padding: "13px",
+            color: "#475569",
+            fontSize: "12px",
+            marginTop: "18px"
+        });
+
+        content.appendChild(note);
+    }
+
+    const footer = document.createElement("div");
+
+    Object.assign(footer.style, {
+        display: "flex",
+        justifyContent: "flex-end",
+        marginTop: "22px"
+    });
+
+    const closeButton = createActionButton(
+        "Close",
+        "payment-details-close-btn",
+        closeDetailsModal
+    );
+
+    Object.assign(closeButton.style, {
+        background: "#2563eb",
+        color: "#ffffff",
+        border: "none",
+        borderRadius: "8px",
+        padding: "11px 24px",
+        fontWeight: "600",
+        cursor: "pointer"
+    });
+
+    footer.appendChild(closeButton);
+    content.appendChild(footer);
+
+    overlay.style.display = "flex";
+    document.body.style.overflow = "hidden";
+}
+
+// =====================================
+// EDIT MANUAL PAYMENT
 // =====================================
 
 async function editPayment(payment) {
@@ -223,10 +612,13 @@ async function editPayment(payment) {
         !amountInput.trim() ||
         !Number.isFinite(amount) ||
         amount <= 0 ||
-        !Number.isInteger(Math.round(amount * 100)) ||
-        Math.abs(amount * 100 - Math.round(amount * 100)) > 0.000001
+        Math.abs(
+            amount * 100 - Math.round(amount * 100)
+        ) > 0.000001
     ) {
-        alert("Enter a valid positive amount with at most two decimal places.");
+        alert(
+            "Enter a valid positive amount with at most two decimal places."
+        );
         return;
     }
 
@@ -297,7 +689,7 @@ async function editPayment(payment) {
 }
 
 // =====================================
-// VOID PAYMENT
+// VOID MANUAL PAYMENT
 // =====================================
 
 async function voidPayment(payment) {
@@ -352,10 +744,16 @@ async function voidPayment(payment) {
 }
 
 // =====================================
-// VIEW PAYMENT AUDIT HISTORY
+// AUDIT HISTORY
+// MANUAL PAYMENTS ONLY
 // =====================================
 
 async function viewAuditHistory(payment) {
+    if (isPayMongoPayment(payment)) {
+        viewPaymentDetails(payment);
+        return;
+    }
+
     try {
         const result = await apiRequest(
             `${PAYMENTS_API}/transaction/${payment.payment_id}/audit`
@@ -364,24 +762,28 @@ async function viewAuditHistory(payment) {
         const logs = result.audit_logs || [];
 
         if (!logs.length) {
-            alert("No corrections or void actions recorded.");
+            alert(
+                "No corrections or void actions recorded for this payment."
+            );
             return;
         }
 
-        const history = logs.map(log => {
-            return (
-                `Action: ${log.action}\n` +
-                `Date: ${formatDate(log.created_at)}\n` +
-                `Admin ID: ${log.admin_user_id}\n` +
-                `Old amount: ${formatMoney(log.old_amount)}\n` +
-                `New amount: ${formatMoney(log.new_amount)}\n` +
-                `Old method: ${log.old_method || "N/A"}\n` +
-                `New method: ${log.new_method || "N/A"}\n` +
-                `Reason: ${log.reason}`
-            );
-        }).join("\n\n--------------------\n\n");
+        const history = logs.map(log => (
+            `Action: ${log.action}\n` +
+            `Date: ${formatDate(log.created_at)}\n` +
+            `Admin ID: ${log.admin_user_id}\n` +
+            `Old amount: ${formatMoney(log.old_amount)}\n` +
+            `New amount: ${formatMoney(log.new_amount)}\n` +
+            `Old method: ${log.old_method || "N/A"}\n` +
+            `New method: ${log.new_method || "N/A"}\n` +
+            `Old status: ${log.old_status || "N/A"}\n` +
+            `New status: ${log.new_status || "N/A"}\n` +
+            `Reason: ${log.reason}`
+        )).join("\n\n--------------------\n\n");
 
-        alert(`Payment #${payment.payment_id} Audit History\n\n${history}`);
+        alert(
+            `Payment #${payment.payment_id} Audit History\n\n${history}`
+        );
 
     } catch (error) {
         console.error("Audit history error:", error);
@@ -390,7 +792,7 @@ async function viewAuditHistory(payment) {
 }
 
 // =====================================
-// RENDER TRANSACTION TABLE
+// RENDER TRANSACTIONS
 // =====================================
 
 function renderTransactions(query = "") {
@@ -400,11 +802,18 @@ function renderTransactions(query = "") {
 
     const filteredPayments = filterTransactions(query);
 
-    // Add Actions column if not already present.
     const table = historyBody.closest("table");
     const headerRow = table?.querySelector("thead tr");
 
-    if (headerRow && !headerRow.querySelector(".payment-actions-heading")) {
+    if (
+        headerRow &&
+        !headerRow.querySelector(".payment-actions-heading") &&
+        !Array.from(headerRow.children).some(
+            cell =>
+                cell.textContent.trim().toLowerCase() ===
+                "actions"
+        )
+    ) {
         const heading = document.createElement("th");
         heading.textContent = "Actions";
         heading.className = "payment-actions-heading";
@@ -413,6 +822,7 @@ function renderTransactions(query = "") {
 
     if (filteredPayments.length === 0) {
         const row = document.createElement("tr");
+
         const emptyCell = createCell(
             "No matching payment transactions found."
         );
@@ -422,6 +832,7 @@ function renderTransactions(query = "") {
 
         row.appendChild(emptyCell);
         historyBody.appendChild(row);
+
         return;
     }
 
@@ -445,6 +856,7 @@ function renderTransactions(query = "") {
         );
 
         const statusCell = document.createElement("td");
+
         statusCell.appendChild(
             createStatusBadge(payment.payment_status)
         );
@@ -460,12 +872,41 @@ function renderTransactions(query = "") {
             )
         );
 
-        // PAYMENT ACTIONS
+        // =====================================
+        // ACTIONS
+        // =====================================
+
         const actionsCell = document.createElement("td");
         const actions = document.createElement("div");
 
         actions.className = "payment-actions";
 
+        actions.style.display = "flex";
+        actions.style.flexWrap = "wrap";
+        actions.style.gap = "6px";
+
+        // Every transaction can be inspected.
+        const detailsButton = createActionButton(
+            "View Details",
+            "payment-details-btn",
+            () => viewPaymentDetails(payment)
+        );
+
+        Object.assign(detailsButton.style, {
+            background: "#2563eb",
+            color: "#ffffff",
+            border: "none",
+            borderRadius: "6px",
+            padding: "8px 12px",
+            fontSize: "12px",
+            fontWeight: "600",
+            cursor: "pointer"
+        });
+
+        actions.appendChild(detailsButton);
+
+        // Only completed manual payments
+        // can be edited or voided.
         if (canModifyPayment(payment)) {
             actions.appendChild(
                 createActionButton(
@@ -484,13 +925,17 @@ function renderTransactions(query = "") {
             );
         }
 
-        actions.appendChild(
-            createActionButton(
-                "Audit",
-                "payment-audit-btn",
-                () => viewAuditHistory(payment)
-            )
-        );
+        // Audit remains available for
+        // manual payments only.
+        if (!isPayMongoPayment(payment)) {
+            actions.appendChild(
+                createActionButton(
+                    "Audit",
+                    "payment-audit-btn",
+                    () => viewAuditHistory(payment)
+                )
+            );
+        }
 
         actionsCell.appendChild(actions);
         row.appendChild(actionsCell);
@@ -505,8 +950,9 @@ function renderTransactions(query = "") {
 
 function updatePaymentStatistics() {
     const completedPayments = transactions.filter(payment =>
-        String(payment.payment_status || "").toLowerCase() ===
-        "completed"
+        String(
+            payment.payment_status || ""
+        ).toLowerCase() === "completed"
     );
 
     const totalCollected = completedPayments.reduce(
@@ -525,15 +971,18 @@ function updatePaymentStatistics() {
     );
 
     if (collectedElement) {
-        collectedElement.textContent = formatMoney(totalCollected);
+        collectedElement.textContent =
+            formatMoney(totalCollected);
     }
 
     if (outstandingElement) {
-        outstandingElement.textContent = formatMoney(totalOutstanding);
+        outstandingElement.textContent =
+            formatMoney(totalOutstanding);
     }
 
     if (countElement) {
-        countElement.textContent = String(completedPayments.length);
+        countElement.textContent =
+            String(completedPayments.length);
     }
 }
 
@@ -554,15 +1003,21 @@ async function loadPayments() {
     setMessage("Loading payment records...");
 
     try {
-        const repairs = await apiRequest(`${REPAIRS_API}/admin`);
+        const repairs = await apiRequest(
+            `${REPAIRS_API}/admin`
+        );
 
         if (!Array.isArray(repairs)) {
-            throw new Error("Invalid repair list response.");
+            throw new Error(
+                "Invalid repair list response."
+            );
         }
 
         const results = await Promise.allSettled(
             repairs.map(repair =>
-                apiRequest(`${PAYMENTS_API}/${repair.repair_id}`)
+                apiRequest(
+                    `${PAYMENTS_API}/${repair.repair_id}`
+                )
             )
         );
 
@@ -581,24 +1036,28 @@ async function loadPayments() {
 
             nextRepairPayments.push({
                 repair_id: repairId,
-                total_amount: Number(data.total_amount) || 0,
-                total_paid: Number(data.total_paid) || 0,
+                total_amount:
+                    Number(data.total_amount) || 0,
+                total_paid:
+                    Number(data.total_paid) || 0,
                 remaining_balance:
                     Number(data.remaining_balance) || 0,
-                payment_status: data.payment_status || "Unpaid"
+                payment_status:
+                    data.payment_status || "Unpaid"
             });
 
             if (Array.isArray(data.payments)) {
                 data.payments.forEach(payment => {
                     nextTransactions.push({
                         ...payment,
-                        repair_id: payment.repair_id ?? repairId
+                        repair_id:
+                            payment.repair_id ?? repairId
                     });
                 });
             }
         });
 
-        // Remove duplicate transactions by payment ID.
+        // Remove duplicate transactions.
         const uniqueTransactions = new Map();
 
         nextTransactions.forEach(payment => {
@@ -608,16 +1067,23 @@ async function loadPayments() {
             );
         });
 
-        transactions = Array.from(uniqueTransactions.values());
+        transactions = Array.from(
+            uniqueTransactions.values()
+        );
+
         repairPayments = nextRepairPayments;
 
         transactions.sort((a, b) => {
             const dateA = new Date(
-                a.payment_date || a.created_at || 0
+                a.payment_date ||
+                a.created_at ||
+                0
             );
 
             const dateB = new Date(
-                b.payment_date || b.created_at || 0
+                b.payment_date ||
+                b.created_at ||
+                0
             );
 
             return dateB - dateA;
@@ -625,7 +1091,9 @@ async function loadPayments() {
 
         updatePaymentStatistics();
 
-        renderTransactions(searchInput?.value || "");
+        renderTransactions(
+            searchInput?.value || ""
+        );
 
         if (
             failedRequests.length === repairs.length &&
@@ -651,7 +1119,11 @@ async function loadPayments() {
         }
 
     } catch (error) {
-        console.error("Payment management error:", error);
+        console.error(
+            "Payment management error:",
+            error
+        );
+
         setMessage(error.message, true);
 
     } finally {
@@ -665,7 +1137,7 @@ async function loadPayments() {
 }
 
 // =====================================
-// INITIALIZE PAGE
+// INITIALIZE
 // =====================================
 
 function initializeAdminPayments() {
@@ -678,8 +1150,13 @@ function initializeAdminPayments() {
         return;
     }
 
+    createDetailsModal();
+
     if (refreshButton) {
-        refreshButton.addEventListener("click", loadPayments);
+        refreshButton.addEventListener(
+            "click",
+            loadPayments
+        );
     }
 
     if (searchInput) {
