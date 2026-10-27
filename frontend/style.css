@@ -4953,3 +4953,50 @@ body.customer-management #customer-dialog:not([open]) {
         gap: 4px;
     }
 }
+
+/* FIXTRACK CUSTOMER PROFILE BUTTON FIX */
+
+.profile-edit-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+#edit-profile-btn {
+    display: inline-block;
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 7px;
+    padding: 12px 22px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+#edit-profile-btn:hover {
+    background: #1d4ed8;
+}
+
+#edit-profile-btn:active {
+    background: #1e40af;
+}
+
+#edit-profile-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#profile-form button[hidden],
+#profile-form input[hidden],
+.profile-edit-toolbar button[hidden] {
+    display: none !important;
+}
+
+#profile-form input[readonly] {
+    background: #f8fafc;
+    color: #334155;
+}
