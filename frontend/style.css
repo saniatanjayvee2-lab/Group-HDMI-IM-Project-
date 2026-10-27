@@ -3390,3 +3390,60 @@ form button:hover {
         width: 100%;
     }
 }
+
+/* =====================================
+   ADMIN PAYMENT ACTIONS
+   ===================================== */
+
+.admin-payments-page .payment-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 190px;
+}
+
+.admin-payments-page .payment-actions button {
+    border: none;
+    border-radius: 7px;
+    padding: 9px 13px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.admin-payments-page .payment-edit-btn {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.admin-payments-page .payment-edit-btn:hover {
+    background: #bfdbfe;
+}
+
+.admin-payments-page .payment-void-btn {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.admin-payments-page .payment-void-btn:hover {
+    background: #fecaca;
+}
+
+.admin-payments-page .payment-audit-btn {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+.admin-payments-page .payment-audit-btn:hover {
+    background: #e2e8f0;
+}
+
+.admin-payments-page .payments-status.voided {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+.admin-payments-page .payments-table {
+    min-width: 850px;
+}
