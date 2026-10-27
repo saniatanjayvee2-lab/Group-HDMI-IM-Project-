@@ -3953,3 +3953,46 @@ body.customer-management .customer-table-wrap {
         align-self: stretch !important;
     }
 }
+
+/* =====================================
+   FIX CUSTOMER DETAILS POPUP POSITION
+   ===================================== */
+
+body.customer-management #customer-dialog {
+    position: fixed !important;
+    inset: 0 !important;
+    margin: auto !important;
+
+    width: min(680px, calc(100vw - 32px)) !important;
+    max-width: 680px !important;
+    max-height: min(85vh, 800px) !important;
+
+    height: fit-content !important;
+    overflow-y: auto !important;
+
+    padding: 26px !important;
+    box-sizing: border-box !important;
+
+    background: #ffffff !important;
+    border: none !important;
+    border-radius: 14px !important;
+
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25) !important;
+    z-index: 9999 !important;
+}
+
+body.customer-management #customer-dialog::backdrop {
+    background: rgba(15, 23, 42, 0.65) !important;
+}
+
+body.customer-management #customer-dialog:not([open]) {
+    display: none !important;
+}
+
+@media (max-width: 600px) {
+    body.customer-management #customer-dialog {
+        width: calc(100vw - 24px) !important;
+        padding: 18px !important;
+        max-height: 90vh !important;
+    }
+}
