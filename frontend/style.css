@@ -3886,3 +3886,70 @@ body.customer-management {
         padding: 18px;
     }
 }
+
+/* ==========================================
+   FIX CUSTOMER MANAGEMENT LAYOUT
+   ========================================== */
+
+body.customer-management .customer-panel {
+    display: block !important;
+    min-height: 0 !important;
+    height: auto !important;
+}
+
+body.customer-management .customer-toolbar {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-end !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 0 20px !important;
+    padding: 0 !important;
+}
+
+body.customer-management .customer-toolbar > div {
+    flex: 1 1 280px !important;
+    width: auto !important;
+    min-width: 200px !important;
+    margin: 0 !important;
+}
+
+body.customer-management .customer-toolbar input {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+body.customer-management .customer-toolbar button {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 100px !important;
+    margin: 0 !important;
+    align-self: flex-end !important;
+}
+
+body.customer-management #customer-message {
+    margin: 0 0 16px !important;
+}
+
+body.customer-management .customer-table-wrap {
+    margin: 0 !important;
+}
+
+@media (max-width: 600px) {
+    body.customer-management .customer-toolbar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    body.customer-management .customer-toolbar > div,
+    body.customer-management .customer-toolbar button {
+        width: 100% !important;
+        min-width: 0 !important;
+        flex: none !important;
+        align-self: stretch !important;
+    }
+}
