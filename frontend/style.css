@@ -2816,3 +2816,244 @@ form button:hover {
         padding: 14px;
     }
 }
+
+/* ==========================================
+   FIXTRACK - ADMIN REPAIRS DASHBOARD
+   ========================================== */
+
+.admin-repairs-page {
+    background: #f3f6fb;
+    min-height: 100vh;
+}
+
+.admin-repairs-page .repairs-dashboard {
+    width: min(1440px, calc(100% - 64px));
+    max-width: none;
+    margin: 0 auto;
+    padding: 40px 0 80px;
+}
+
+.admin-repairs-page .repairs-page-heading {
+    margin-bottom: 28px;
+}
+
+.admin-repairs-page .repairs-page-heading h2 {
+    margin: 0 0 8px;
+    font-size: 30px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.admin-repairs-page .repairs-page-heading p {
+    margin: 0;
+    color: #64748b;
+    font-size: 15px;
+}
+
+.admin-repairs-page .repairs-workspace {
+    width: 100%;
+    max-width: none;
+    padding: 30px;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 6px 24px rgba(15, 23, 42, 0.05);
+}
+
+.admin-repairs-page .repairs-section-header {
+    margin-bottom: 26px;
+}
+
+.admin-repairs-page .repairs-section-header h3 {
+    margin: 0 0 6px;
+    font-size: 21px;
+    color: #0f172a;
+}
+
+.admin-repairs-page .repairs-section-header p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* REPAIR CARD GRID */
+
+.admin-repairs-page #admin-repair-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 24px;
+
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+.admin-repairs-page #admin-repair-list > .admin-repair-card,
+.admin-repairs-page #admin-repair-list > .registered-device {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    margin: 0;
+    padding: 26px;
+
+    background: #ffffff;
+    border: 1px solid #dce5f0;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+}
+
+.admin-repairs-page .admin-repair-card h4 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 14px;
+}
+
+.admin-repairs-page .admin-repair-card p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #475569;
+}
+
+/* FORM CONTROLS */
+
+.admin-repairs-page .admin-repair-card label {
+    display: block;
+    margin: 16px 0 7px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.admin-repairs-page .admin-repair-card input,
+.admin-repairs-page .admin-repair-card select {
+    display: block;
+    width: 100%;
+    max-width: none;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 14px;
+}
+
+.admin-repairs-page .admin-repair-card button {
+    min-height: 40px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* BILLING */
+
+.admin-repairs-page .repair-billing-section {
+    width: 100%;
+    margin-top: 24px;
+    padding-top: 22px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.admin-repairs-page .repair-billing-content {
+    width: 100%;
+    margin-top: 22px;
+}
+
+.admin-repairs-page .repair-billing-content h3 {
+    margin: 18px 0;
+    font-size: 20px;
+}
+
+.admin-repairs-page .repair-billing-content h4 {
+    margin: 24px 0 12px;
+    font-size: 16px;
+}
+
+.admin-repairs-page .billing-entry-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin: 18px 0 24px;
+}
+
+.admin-repairs-page .billing-charge-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-repairs-page .billing-totals {
+    width: 100%;
+    padding: 22px;
+    margin-top: 26px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 12px;
+}
+
+.admin-repairs-page .billing-totals h3 {
+    font-size: 22px;
+    color: #1d4ed8;
+}
+
+/* PAYMENT TRACKING */
+
+.admin-repairs-page .payment-section {
+    width: 100%;
+    margin-top: 30px;
+    padding-top: 24px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.admin-repairs-page .payment-summary,
+.admin-repairs-page .paymongo-checkout-box,
+.admin-repairs-page .payment-history-item {
+    width: 100%;
+    padding: 20px;
+    margin-top: 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.admin-repairs-page .paymongo-checkout-btn {
+    width: 100%;
+    margin-top: 14px;
+    background: #2563eb;
+    color: white;
+    border: none;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1000px) {
+    .admin-repairs-page #admin-repair-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .admin-repairs-page .repairs-dashboard {
+        width: calc(100% - 24px);
+        padding-top: 24px;
+    }
+
+    .admin-repairs-page .repairs-workspace {
+        padding: 16px;
+    }
+
+    .admin-repairs-page #admin-repair-list > .admin-repair-card,
+    .admin-repairs-page #admin-repair-list > .registered-device {
+        padding: 18px;
+    }
+}
