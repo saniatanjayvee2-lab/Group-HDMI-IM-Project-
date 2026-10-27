@@ -143,7 +143,6 @@
                     ["Edit", "edit"]
                 ]) {
                     const button = node("button", label);
-
                     button.type = "button";
 
                     button.setAttribute(
@@ -187,7 +186,7 @@
     }
 
     // =====================================
-    // DYNAMIC PHONE AND ADDRESS FIELDS
+    // COMPACT CONTACT AND ADDRESS CARDS
     // =====================================
 
     const phoneDefinitions = [
@@ -203,24 +202,60 @@
     ];
 
     function fieldset(container, row, definitions, idKey) {
+        const isPhone = idKey === "phone_id";
+        const existing = row[idKey] != null;
+
         const group = node(
             "fieldset",
             undefined,
-            "customer-contact-group"
+            "customer-contact-group customer-compact-group"
         );
 
-        group.append(
-            node(
-                "legend",
-                idKey === "phone_id"
-                    ? "Contact Number"
-                    : "Address"
-            )
-        );
-
-        if (row[idKey] != null) {
+        if (existing) {
             group.dataset.recordId = String(row[idKey]);
         }
+
+        const header = node(
+            "div",
+            undefined,
+            "customer-compact-header"
+        );
+
+        const summary = node(
+            "div",
+            "",
+            "customer-compact-summary"
+        );
+
+        const actions = node(
+            "div",
+            undefined,
+            "customer-compact-actions"
+        );
+
+        const editButton = node(
+            "button",
+            existing ? "Edit" : "Collapse",
+            "customer-compact-edit"
+        );
+
+        editButton.type = "button";
+
+        const removeButton = node(
+            "button",
+            "Remove",
+            "customer-compact-remove"
+        );
+
+        removeButton.type = "button";
+
+        const fields = node(
+            "div",
+            undefined,
+            "customer-compact-fields"
+        );
+
+        const inputs = {};
 
         for (const [name, label, max, required] of definitions) {
             const wrapper = node("label", label);
@@ -235,44 +270,98 @@
                 input.type = "tel";
             }
 
+            inputs[name] = input;
+
             wrapper.append(input);
-            group.append(wrapper);
+            fields.append(wrapper);
         }
 
-        const removeButton = node(
-            "button",
-            idKey === "phone_id"
-                ? "Remove Contact Number"
-                : "Remove Address",
-            "customer-remove-button"
-        );
+        function updateSummary() {
+            if (isPhone) {
+                const number =
+                    inputs.phone_number.value.trim() ||
+                    "New Contact Number";
 
-        removeButton.type = "button";
+                const type = inputs.type.value.trim();
+
+                summary.textContent = type
+                    ? `${number} (${type})`
+                    : number;
+            } else {
+                const address = [
+                    inputs.street_address.value.trim(),
+                    inputs.city.value.trim(),
+                    inputs.province.value.trim(),
+                    inputs.postal_code.value.trim()
+                ].filter(Boolean).join(", ");
+
+                summary.textContent =
+                    address || "New Address";
+            }
+        }
+
+        function setExpanded(expanded) {
+            fields.hidden = !expanded;
+            group.classList.toggle(
+                "customer-expanded",
+                expanded
+            );
+
+            editButton.textContent =
+                expanded ? "Done" : "Edit";
+
+            if (expanded) {
+                fields.querySelector("input")?.focus();
+            }
+        }
+
+        editButton.addEventListener("click", () => {
+            if (saving) return;
+
+            setExpanded(fields.hidden);
+        });
 
         removeButton.addEventListener("click", () => {
             if (saving) return;
 
-            const label =
-                idKey === "phone_id"
-                    ? "contact number"
-                    : "address";
+            const label = isPhone
+                ? "contact number"
+                : "address";
 
-            const confirmed = window.confirm(
-                `Remove this ${label}? The change will be saved when you click Save Changes.`
-            );
-
-            if (!confirmed) return;
+            if (
+                !window.confirm(
+                    `Remove this ${label}? Click Save Changes to confirm the change.`
+                )
+            ) {
+                return;
+            }
 
             group.remove();
 
             message(
                 el("customer-dialog-message"),
-                `The ${label} was removed from the form. Click Save Changes to apply.`
+                `${label} removed from the form. Click Save Changes to apply.`
             );
         });
 
-        group.append(removeButton);
+        for (const input of Object.values(inputs)) {
+            input.addEventListener("input", updateSummary);
+        }
+
+        actions.append(editButton, removeButton);
+        header.append(summary, actions);
+        group.append(header, fields);
         container.append(group);
+
+        updateSummary();
+        setExpanded(!existing);
+
+        if (!existing) {
+            group.scrollIntoView({
+                behavior: "smooth",
+                block: "nearest"
+            });
+        }
     }
 
     function addPhone(row = {}) {
@@ -331,31 +420,15 @@
             parent.append(row);
         }
 
-        // CUSTOMER PROFILE
-
         const profile = node(
             "section",
             undefined,
             "customer-profile-card"
         );
 
-        detailRow(
-            profile,
-            "Customer ID",
-            customer.user_id
-        );
-
-        detailRow(
-            profile,
-            "Full Name",
-            fullName(customer)
-        );
-
-        detailRow(
-            profile,
-            "Email",
-            customer.email
-        );
+        detailRow(profile, "Customer ID", customer.user_id);
+        detailRow(profile, "Full Name", fullName(customer));
+        detailRow(profile, "Email", customer.email);
 
         detailRow(
             profile,
@@ -390,8 +463,6 @@
         );
 
         target.append(profile);
-
-        // REGISTERED DEVICES
 
         const devices = customer.devices || [];
 
@@ -432,28 +503,12 @@
                 `#${device.device_id}`
             );
 
-            detailRow(
-                card,
-                "Device Type",
-                device.device_type
-            );
-
-            detailRow(
-                card,
-                "Serial Number",
-                device.serial_number
-            );
-
-            detailRow(
-                card,
-                "Accessories",
-                device.accessories_included
-            );
+            detailRow(card, "Device Type", device.device_type);
+            detailRow(card, "Serial Number", device.serial_number);
+            detailRow(card, "Accessories", device.accessories_included);
 
             target.append(card);
         });
-
-        // REPAIR REQUESTS
 
         const repairs = customer.repairs || [];
 
@@ -588,10 +643,7 @@
 
             selected = customer;
 
-            message(
-                el("customer-dialog-message"),
-                ""
-            );
+            message(el("customer-dialog-message"), "");
 
             if (mode === "view") {
                 details(customer);
@@ -618,8 +670,6 @@
 
             form.hidden = false;
 
-            form.elements.namedItem("first_name").focus();
-
         } catch (error) {
             if (version === detailRequest) {
                 message(
@@ -641,15 +691,8 @@
         }
     }
 
-    el("customer-close").addEventListener(
-        "click",
-        close
-    );
-
-    el("customer-cancel").addEventListener(
-        "click",
-        close
-    );
+    el("customer-close").addEventListener("click", close);
+    el("customer-cancel").addEventListener("click", close);
 
     dialog.addEventListener("cancel", event => {
         if (saving) {
@@ -669,62 +712,18 @@
     });
 
     // =====================================
-    // ADD CONTACT NUMBER
+    // ADD BUTTONS
     // =====================================
 
-    el("customer-add-phone").addEventListener(
-        "click",
-        () => {
-            if (saving || !selected || form.hidden) {
-                return;
-            }
+    el("customer-add-phone").addEventListener("click", () => {
+        if (saving || !selected || form.hidden) return;
+        addPhone();
+    });
 
-            addPhone();
-
-            const newest =
-                el("customer-phone-fields").lastElementChild;
-
-            if (newest) {
-                newest.scrollIntoView({
-                    behavior: "smooth",
-                    block: "nearest"
-                });
-
-                newest.querySelector("input")?.focus({
-                    preventScroll: true
-                });
-            }
-        }
-    );
-
-    // =====================================
-    // ADD ADDRESS
-    // =====================================
-
-    el("customer-add-address").addEventListener(
-        "click",
-        () => {
-            if (saving || !selected || form.hidden) {
-                return;
-            }
-
-            addAddress();
-
-            const newest =
-                el("customer-address-fields").lastElementChild;
-
-            if (newest) {
-                newest.scrollIntoView({
-                    behavior: "smooth",
-                    block: "nearest"
-                });
-
-                newest.querySelector("input")?.focus({
-                    preventScroll: true
-                });
-            }
-        }
-    );
+    el("customer-add-address").addEventListener("click", () => {
+        if (saving || !selected || form.hidden) return;
+        addAddress();
+    });
 
     // =====================================
     // SEARCH AND REFRESH
@@ -743,16 +742,13 @@
         () => load()
     );
 
-    el("customer-search").addEventListener(
-        "input",
-        () => {
-            clearTimeout(searchTimer);
+    el("customer-search").addEventListener("input", () => {
+        clearTimeout(searchTimer);
 
-            searchTimer = setTimeout(() => {
-                load();
-            }, 300);
-        }
-    );
+        searchTimer = setTimeout(() => {
+            load();
+        }, 300);
+    });
 
     // =====================================
     // COLLECT CONTACT INFORMATION
@@ -765,16 +761,12 @@
             const row = {};
 
             if (group.dataset.recordId) {
-                row[key] = Number(
-                    group.dataset.recordId
-                );
+                row[key] = Number(group.dataset.recordId);
             }
 
-            group.querySelectorAll("input").forEach(
-                input => {
-                    row[input.name] = input.value.trim();
-                }
-            );
+            group.querySelectorAll("input").forEach(input => {
+                row[input.name] = input.value.trim();
+            });
 
             return row;
         });
@@ -784,91 +776,101 @@
     // SAVE CUSTOMER CHANGES
     // =====================================
 
-    form.addEventListener(
-        "submit",
-        async event => {
-            event.preventDefault();
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
 
-            if (
-                saving ||
-                !selected ||
-                !form.reportValidity()
-            ) {
+        if (saving || !selected) {
+            return;
+        }
+
+        // Expand any collapsed group containing invalid fields
+        for (const input of form.querySelectorAll("input")) {
+            if (!input.checkValidity()) {
+                const group = input.closest(
+                    ".customer-compact-group"
+                );
+
+                if (group) {
+                    group.querySelector(
+                        ".customer-compact-fields"
+                    ).hidden = false;
+
+                    group.classList.add("customer-expanded");
+                }
+
+                input.focus();
+                input.reportValidity();
                 return;
             }
+        }
 
-            const body = {};
+        const body = {};
 
-            for (const key of [
-                "first_name",
-                "middle_name",
-                "last_name",
-                "email"
-            ]) {
-                body[key] =
-                    form.elements.namedItem(key).value.trim();
-            }
+        for (const key of [
+            "first_name",
+            "middle_name",
+            "last_name",
+            "email"
+        ]) {
+            body[key] =
+                form.elements.namedItem(key).value.trim();
+        }
 
-            body.phones = collect(
-                el("customer-phone-fields"),
-                "phone_id"
+        body.phones = collect(
+            el("customer-phone-fields"),
+            "phone_id"
+        );
+
+        body.addresses = collect(
+            el("customer-address-fields"),
+            "address_id"
+        );
+
+        saving = true;
+
+        const controls = [
+            ...form.querySelectorAll("input, button"),
+            el("customer-close")
+        ];
+
+        controls.forEach(control => {
+            control.disabled = true;
+        });
+
+        message(
+            el("customer-dialog-message"),
+            "Saving changes..."
+        );
+
+        try {
+            const result = await request(
+                `/${selected.user_id}`,
+                {
+                    method: "PUT",
+                    body: JSON.stringify(body)
+                }
             );
 
-            body.addresses = collect(
-                el("customer-address-fields"),
-                "address_id"
-            );
+            saving = false;
+            dialog.close();
 
-            saving = true;
+            await load(result.message);
 
-            const controls = [
-                ...form.querySelectorAll("input, button"),
-                el("customer-close")
-            ];
-
-            controls.forEach(control => {
-                control.disabled = true;
-            });
-
+        } catch (error) {
             message(
                 el("customer-dialog-message"),
-                "Saving changes..."
+                error.message,
+                true
             );
 
-            try {
-                const result = await request(
-                    `/${selected.user_id}`,
-                    {
-                        method: "PUT",
-                        body: JSON.stringify(body)
-                    }
-                );
+        } finally {
+            saving = false;
 
-                saving = false;
-                dialog.close();
-
-                await load(result.message);
-
-            } catch (error) {
-                message(
-                    el("customer-dialog-message"),
-                    error.message,
-                    true
-                );
-
-            } finally {
-                saving = false;
-
-                controls.forEach(control => {
-                    control.disabled = false;
-                });
-            }
+            controls.forEach(control => {
+                control.disabled = false;
+            });
         }
-    );
-
-    // =====================================
-    // INITIAL LOAD
-    // =====================================
+    });
 
     load();
 })();
