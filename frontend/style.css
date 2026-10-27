@@ -2391,3 +2391,428 @@ form button:hover {
 .billing-message {
     margin-bottom: 10px;
 }
+
+
+
+/* =====================================
+   FIXTRACK - PAYMENTS & PAYMENT TRACKING
+   ===================================== */
+
+.payment-section {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 2px solid #e2e8f0;
+}
+
+.payment-section h3 {
+    margin-bottom: 18px;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.payment-section h4 {
+    margin-top: 22px;
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* PAYMENT SUMMARY */
+
+.payment-summary {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.payment-summary p {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+/* PAYMENT STATUS */
+
+.payment-status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.payment-paid {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.payment-partial {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.payment-unpaid {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* RECORD PAYMENT FORM */
+
+.payment-entry-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    margin-bottom: 24px;
+}
+
+.payment-entry-form label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.payment-entry-form input,
+.payment-entry-form select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.payment-entry-form input:focus,
+.payment-entry-form select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.payment-entry-form button {
+    align-self: flex-start;
+}
+
+.payment-entry-form button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* PAYMENT HISTORY */
+
+.payment-history {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.payment-history-item {
+    padding: 16px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+.payment-history-item p {
+    margin: 6px 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.payment-history-item p:first-child {
+    font-weight: 700;
+    font-size: 15px;
+}
+
+/* SUCCESS AND ERROR MESSAGES */
+
+.payment-message,
+.billing-message {
+    margin: 10px 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.message-success {
+    color: #15803d;
+}
+
+.message-error {
+    color: #dc2626;
+}
+
+/* MOBILE RESPONSIVENESS */
+
+@media (max-width: 600px) {
+    .payment-section {
+        margin-top: 20px;
+    }
+
+    .payment-summary,
+    .payment-entry-form {
+        padding: 15px;
+    }
+
+    .payment-entry-form button {
+        width: 100%;
+    }
+
+    .payment-history-item {
+        padding: 14px;
+    }
+}
+
+
+/* =====================================
+   PAYMONGO TEST CHECKOUT
+   ===================================== */
+
+.paymongo-checkout-box {
+    margin-top: 12px;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+}
+
+.paymongo-checkout-box p {
+    margin: 0 0 12px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #334155;
+}
+
+.paymongo-checkout-box p:first-child {
+    font-size: 16px;
+    font-weight: 700;
+    color: #14532d;
+}
+
+.paymongo-checkout-btn {
+    display: inline-block;
+    background: #087f5b;
+    color: #ffffff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.paymongo-checkout-btn:hover {
+    background: #066649;
+}
+
+.paymongo-checkout-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+    .paymongo-checkout-box {
+        padding: 15px;
+    }
+
+    .paymongo-checkout-btn {
+        width: 100%;
+    }
+}
+
+
+/* =========================================
+   FIXTRACK ADMIN REPAIRS - RESPONSIVE LAYOUT
+   ========================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+#admin-repair-list {
+    width: 100%;
+    max-width: 1280px;
+    margin: 24px auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    align-items: start;
+}
+
+#admin-repair-list > .registered-device,
+#admin-repair-list > .admin-repair-card {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+    padding: 28px;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+}
+
+.admin-repair-card h4 {
+    font-size: 20px;
+    margin-bottom: 14px;
+}
+
+.admin-repair-card p {
+    line-height: 1.6;
+}
+
+.repair-billing-section,
+.repair-billing-content,
+.payment-section {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+}
+
+.repair-billing-section {
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.repair-billing-content {
+    margin-top: 20px;
+}
+
+.repair-billing-content h3,
+.payment-section h3 {
+    font-size: 20px;
+    margin: 20px 0 16px;
+}
+
+.repair-billing-content h4,
+.payment-section h4 {
+    font-size: 16px;
+    margin: 22px 0 12px;
+}
+
+.billing-entry-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin: 18px 0 24px;
+}
+
+.admin-repair-card input,
+.admin-repair-card select,
+.billing-entry-form input,
+.billing-entry-form select {
+    width: 100%;
+    max-width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    font-size: 14px;
+}
+
+.admin-repair-card button {
+    min-height: 38px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.billing-entry-form .save-edit-btn,
+.paymongo-checkout-btn {
+    width: 100%;
+    background: #2563eb;
+    color: white;
+    border: none;
+}
+
+.billing-charge-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.billing-charge-row span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.billing-remove-btn {
+    background: #dc2626;
+    color: white;
+    border: none;
+}
+
+.billing-totals,
+.payment-summary,
+.paymongo-checkout-box,
+.payment-history-item {
+    width: 100%;
+    padding: 20px;
+    margin-top: 16px;
+    border: 1px solid #dbe3ef;
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.billing-totals h3 {
+    color: #0f172a;
+    font-size: 21px;
+    margin-top: 12px;
+}
+
+.payment-section {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.payment-summary p {
+    margin: 8px 0;
+}
+
+.payment-history-item {
+    background: #ffffff;
+}
+
+.paymongo-checkout-btn:hover {
+    background: #1d4ed8;
+}
+
+@media (max-width: 1050px) {
+    #admin-repair-list {
+        grid-template-columns: 1fr;
+        max-width: 850px;
+    }
+}
+
+@media (max-width: 600px) {
+    #admin-repair-list {
+        padding: 0 12px;
+        gap: 16px;
+    }
+
+    #admin-repair-list > .registered-device,
+    #admin-repair-list > .admin-repair-card {
+        padding: 18px;
+    }
+
+    .billing-totals,
+    .payment-summary,
+    .paymongo-checkout-box {
+        padding: 14px;
+    }
+}
