@@ -3,19 +3,299 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>FixTrack | Manage Repairs</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=4">
+
+    <style>
+        /* Repair Management redesign */
+
+        body.admin-repairs-page {
+            background: #f4f7fb;
+        }
+
+        .repairs-dashboard {
+            width: min(1200px, 94%);
+            max-width: 1200px;
+            margin: 30px auto 60px;
+        }
+
+        .repairs-page-heading {
+            margin-bottom: 22px;
+        }
+
+        .repairs-page-heading h2 {
+            color: #0f172a;
+            font-size: 26px;
+            margin-bottom: 7px;
+        }
+
+        .repairs-page-heading p,
+        .repairs-section-header p {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .repairs-workspace {
+            background: transparent;
+            border: 0;
+            box-shadow: none;
+            padding: 0;
+        }
+
+        .repairs-section-header {
+            margin-bottom: 18px;
+        }
+
+        .repairs-section-header h3 {
+            color: #0f172a;
+            font-size: 19px;
+            margin-bottom: 5px;
+        }
+
+        #admin-repair-list {
+            display: grid;
+            grid-template-columns: repeat(
+                2,
+                minmax(0, 1fr)
+            );
+            align-items: start;
+            gap: 18px;
+        }
+
+        #admin-repair-list > .repair-update-message {
+            grid-column: 1 / -1;
+        }
+
+        #admin-repair-list > .admin-repair-card {
+            width: 100%;
+            min-width: 0;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 13px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.025);
+        }
+
+        .repair-card-overview {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .repair-card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .repair-card-title {
+            min-width: 0;
+        }
+
+        .repair-card-title h4 {
+            margin: 0 0 5px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            overflow-wrap: anywhere;
+        }
+
+        .repair-card-id {
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        .repair-status-pill {
+            display: inline-flex;
+            align-items: center;
+            flex-shrink: 0;
+            padding: 6px 11px;
+            border-radius: 999px;
+            background: #eef2ff;
+            color: #4338ca;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .repair-status-pill.completed,
+        .repair-status-pill.released {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .repair-status-pill.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .repair-status-pill.in-progress {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .repair-card-meta {
+            display: grid;
+            gap: 7px;
+            margin: 8px 0;
+        }
+
+        .repair-card-meta p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #475569;
+            overflow-wrap: anywhere;
+        }
+
+        .repair-card-meta strong {
+            color: #334155;
+        }
+
+        .repair-manage-btn {
+            display: block;
+            width: 100%;
+            margin-top: 12px;
+            padding: 11px 15px;
+            background: #4f46e5;
+            border: 1px solid #4f46e5;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .repair-manage-btn:hover {
+            background: #4338ca;
+        }
+
+        .repair-card-details {
+            margin-top: 20px;
+            padding-top: 18px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .repair-card-details[hidden] {
+            display: none !important;
+        }
+
+        .repair-card-details > label {
+            display: block;
+            margin: 15px 0 7px;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .repair-card-details > select {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 14px;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #fff;
+            color: #334155;
+            font-size: 13px;
+        }
+
+        .repair-card-details > .save-edit-btn {
+            width: auto;
+            min-width: 130px;
+            padding: 10px 16px;
+            margin: 4px 0 12px;
+        }
+
+        .repair-card-details .repair-billing-section {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .repair-card-details .repair-billing-content {
+            margin-top: 15px;
+        }
+
+        .repair-card-details .repair-billing-content[hidden] {
+            display: none !important;
+        }
+
+        .repair-card-details .billing-entry-form {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            margin: 15px 0 22px;
+        }
+
+        .repair-card-details .billing-entry-form input,
+        .repair-card-details .billing-entry-form select {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .repair-card-details .billing-charge-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .repair-card-details .billing-charge-row span {
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .repair-card-details .billing-remove-btn {
+            width: auto;
+            flex-shrink: 0;
+        }
+
+        .repair-card-details .billing-totals {
+            margin-top: 18px;
+        }
+
+        .repair-card-details .payment-section {
+            margin-top: 20px;
+        }
+
+        @media (max-width: 800px) {
+            #admin-repair-list {
+                grid-template-columns: 1fr;
+            }
+
+            .repairs-dashboard {
+                width: 94%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .repairs-page-heading h2 {
+                font-size: 23px;
+            }
+
+            #admin-repair-list > .admin-repair-card {
+                padding: 16px;
+            }
+
+            .repair-card-top {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
 </head>
 
 <body class="admin-repairs-page">
 
-    <!-- HEADER -->
     <header class="dashboard-header">
         <div>
             <h1>FixTrack</h1>
@@ -30,32 +310,24 @@
         </button>
     </header>
 
-    <!-- MAIN DASHBOARD -->
     <main class="repairs-dashboard">
 
-        <!-- PAGE INTRO -->
         <section class="repairs-page-heading">
-            <div>
-                <h2>Repair Management</h2>
-                <p>
-                    Manage customer repair requests,
-                    technician assignments, billing,
-                    and payment tracking.
-                </p>
-            </div>
+            <h2>Repair Management</h2>
+            <p>
+                View customer repairs and manage each
+                request in one organized place.
+            </p>
         </section>
 
-        <!-- REPAIR REQUESTS -->
         <section class="repairs-workspace">
 
             <div class="repairs-section-header">
-                <div>
-                    <h3>All Repair Requests</h3>
-                    <p>
-                        View and manage registered
-                        customer repairs.
-                    </p>
-                </div>
+                <h3>All Repair Requests</h3>
+                <p>
+                    Select Manage Repair to view or
+                    update a repair request.
+                </p>
             </div>
 
             <div id="admin-repair-list">
@@ -66,7 +338,235 @@
 
     </main>
 
+    <!-- EXISTING WORKING REPAIR FUNCTIONS -->
     <script src="admin-repairs.js"></script>
+
+    <!-- INTERFACE ORGANIZER ONLY -->
+    <script>
+        (() => {
+            const list = document.getElementById(
+                "admin-repair-list"
+            );
+
+            if (!list) return;
+
+            const preparedCards = new WeakSet();
+
+            function makeText(tag, text, className) {
+                const element = document.createElement(tag);
+
+                element.textContent = text;
+
+                if (className) {
+                    element.className = className;
+                }
+
+                return element;
+            }
+
+            function getLine(elements, prefix) {
+                const element = elements.find(item =>
+                    item.textContent.startsWith(prefix)
+                );
+
+                if (!element) return "—";
+
+                return element.textContent
+                    .slice(prefix.length)
+                    .trim() || "—";
+            }
+
+            function organizeCard(card) {
+                if (preparedCards.has(card)) return;
+
+                preparedCards.add(card);
+
+                const original = Array.from(card.children);
+
+                const title = original.find(
+                    element => element.tagName === "H4"
+                );
+
+                const paragraphs = original.filter(
+                    element => element.tagName === "P"
+                );
+
+                const deviceName = title
+                    ? title.textContent
+                    : "Unknown Device";
+
+                const repairId = getLine(
+                    paragraphs,
+                    "Repair ID:"
+                );
+
+                const customer = getLine(
+                    paragraphs,
+                    "Customer:"
+                );
+
+                const problem = getLine(
+                    paragraphs,
+                    "Problem:"
+                );
+
+                const submitted = getLine(
+                    paragraphs,
+                    "Submitted:"
+                );
+
+                const status = getLine(
+                    paragraphs,
+                    "Current Status:"
+                );
+
+                const technician = getLine(
+                    paragraphs,
+                    "Assigned Technician:"
+                );
+
+                const overview = document.createElement("div");
+                overview.className = "repair-card-overview";
+
+                const top = document.createElement("div");
+                top.className = "repair-card-top";
+
+                const titleBox = document.createElement("div");
+                titleBox.className = "repair-card-title";
+
+                titleBox.append(
+                    makeText("h4", deviceName),
+                    makeText(
+                        "span",
+                        repairId,
+                        "repair-card-id"
+                    )
+                );
+
+                const badge = makeText(
+                    "span",
+                    status,
+                    "repair-status-pill"
+                );
+
+                const statusClass = status
+                    .toLowerCase()
+                    .replace(/\s+/g, "-");
+
+                if (
+                    [
+                        "pending",
+                        "in-progress",
+                        "completed",
+                        "released"
+                    ].includes(statusClass)
+                ) {
+                    badge.classList.add(statusClass);
+                }
+
+                top.append(titleBox, badge);
+
+                const meta = document.createElement("div");
+                meta.className = "repair-card-meta";
+
+                const fields = [
+                    ["Customer", customer],
+                    ["Technician", technician],
+                    ["Problem", problem],
+                    ["Submitted", submitted]
+                ];
+
+                fields.forEach(([label, value]) => {
+                    const row = document.createElement("p");
+                    const strong = document.createElement("strong");
+
+                    strong.textContent = label + ": ";
+
+                    row.append(
+                        strong,
+                        document.createTextNode(value)
+                    );
+
+                    meta.append(row);
+                });
+
+                const manageButton = makeText(
+                    "button",
+                    "Manage Repair",
+                    "repair-manage-btn"
+                );
+
+                manageButton.type = "button";
+
+                const details = document.createElement("div");
+                details.className = "repair-card-details";
+                details.hidden = true;
+
+                // Preserve all original elements and
+                // their existing JavaScript event listeners.
+                original.forEach(element => {
+                    if (
+                        element === title ||
+                        [
+                            "Repair ID:",
+                            "Customer:",
+                            "Problem:",
+                            "Submitted:",
+                            "Current Status:",
+                            "Assigned Technician:"
+                        ].some(prefix =>
+                            element.tagName === "P" &&
+                            element.textContent.startsWith(prefix)
+                        )
+                    ) {
+                        return;
+                    }
+
+                    details.append(element);
+                });
+
+                manageButton.addEventListener("click", () => {
+                    const willOpen = details.hidden;
+
+                    details.hidden = !willOpen;
+
+                    manageButton.textContent = willOpen
+                        ? "Close Repair"
+                        : "Manage Repair";
+
+                    manageButton.setAttribute(
+                        "aria-expanded",
+                        String(willOpen)
+                    );
+                });
+
+                manageButton.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+                overview.append(top, meta, manageButton);
+
+                card.replaceChildren(overview, details);
+            }
+
+            function organizeCards() {
+                list.querySelectorAll(
+                    ":scope > .admin-repair-card"
+                ).forEach(organizeCard);
+            }
+
+            const observer = new MutationObserver(
+                organizeCards
+            );
+
+            observer.observe(list, {
+                childList: true
+            });
+
+            organizeCards();
+        })();
+    </script>
 
 </body>
 </html>
