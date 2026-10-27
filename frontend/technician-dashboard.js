@@ -7,6 +7,7 @@ const TECHNICIAN_API = "https://fixtrack-backend.vercel.app/api/technicians";
 
 let currentUser = null;
 let assignedRepairs = [];
+let currentView = "repairs";
 
 try {
     currentUser = userData ? JSON.parse(userData) : null;
@@ -14,124 +15,131 @@ try {
     console.error("Invalid user data:", error);
 }
 
-// ==================================
-// CHECK TECHNICIAN LOGIN
-// ==================================
+// =====================================
+// LOGIN CHECK
+// =====================================
 
 if (!token || !currentUser) {
     window.location.replace("index.html");
-
 } else if (currentUser.role !== "technician") {
     window.location.replace(
         currentUser.role === "admin"
             ? "admin-dashboard.html"
             : "dashboard.html"
     );
-
 } else {
-    const welcomeUser =
-        document.getElementById("welcomeUser");
+    document.getElementById("welcomeUser").textContent =
+        `Welcome, ${currentUser.first_name}!`;
 
-    if (welcomeUser) {
-        welcomeUser.textContent =
-            `Welcome, ${currentUser.first_name}!`;
-    }
-
-    initializeTechnicianDashboard();
+    initializeDashboard();
 }
 
-// ==================================
-// INITIALIZE DASHBOARD
-// ==================================
+// =====================================
+// HELPERS
+// =====================================
 
-function initializeTechnicianDashboard() {
-    const viewRepairsBtn =
-        document.getElementById("viewRepairsBtn");
-
-    const manageDiagnosisBtn =
-        document.getElementById("manageDiagnosisBtn");
-
-    const updateStatusBtn =
-        document.getElementById("updateStatusBtn");
-
-    const viewHistoryBtn =
-        document.getElementById("viewHistoryBtn");
-
-    const diagnosisForm =
-        document.getElementById("diagnosisForm");
-
-    const logoutBtn =
-        document.getElementById("logoutBtn");
-
-    if (viewRepairsBtn) {
-        viewRepairsBtn.addEventListener("click", () => {
-            loadAssignedRepairs(false);
-        });
-    }
-
-    if (manageDiagnosisBtn) {
-        manageDiagnosisBtn.addEventListener(
-            "click",
-            openDiagnosisSection
-        );
-    }
-
-    if (updateStatusBtn) {
-        updateStatusBtn.addEventListener("click", () => {
-            loadAssignedRepairs(true);
-        });
-    }
-
-    if (viewHistoryBtn) {
-        viewHistoryBtn.addEventListener("click", () => {
-            loadRepairHistory();
-        });
-    }
-
-    if (diagnosisForm) {
-        diagnosisForm.addEventListener(
-            "submit",
-            saveDiagnosis
-        );
-    }
-
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", logout);
-    }
+function authHeaders() {
+    return {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+    };
 }
 
-// ==================================
-// HELPER: HIDE SECTIONS
-// ==================================
-
-function hideSections() {
-    const repairsSection =
-        document.getElementById("assignedRepairsSection");
-
-    const diagnosisSection =
-        document.getElementById("diagnosisSection");
-
-    if (repairsSection) {
-        repairsSection.style.display = "none";
-    }
-
-    if (diagnosisSection) {
-        diagnosisSection.style.display = "none";
-    }
+function getElement(id) {
+    return document.getElementById(id);
 }
 
-// ==================================
-// HELPER: FETCH ASSIGNED REPAIRS
-// ==================================
+function setMessage(id, text, error = false) {
+    const element = getElement(id);
+    if (!element) return;
+
+    element.textContent = text;
+    element.style.color = error ? "#dc2626" : "#15803d";
+}
+
+function formatDate(value) {
+    if (!value) return "Not available";
+
+    const date = new Date(value);
+
+    return Number.isNaN(date.getTime())
+        ? "Not available"
+        : date.toLocaleDateString();
+}
+
+function normalizeStatus(value) {
+    return String(value || "").trim().toLowerCase();
+}
+
+function isHistory(repair) {
+    return ["completed", "released"].includes(
+        normalizeStatus(repair.status)
+    );
+}
+
+function makeElement(tag, className, text) {
+    const element = document.createElement(tag);
+
+    if (className) element.className = className;
+    if (text !== undefined) element.textContent = text;
+
+    return element;
+}
+
+function addDetail(parent, label, value) {
+    const p = makeElement("p", "", `${label}: ${value}`);
+    parent.appendChild(p);
+}
+
+function showSection(id) {
+    getElement("assignedRepairsSection").style.display =
+        id === "assignedRepairsSection" ? "block" : "none";
+
+    getElement("diagnosisSection").style.display =
+        id === "diagnosisSection" ? "block" : "none";
+}
+
+// =====================================
+// INITIALIZE
+// =====================================
+
+async function initializeDashboard() {
+    getElement("viewRepairsBtn").addEventListener(
+        "click",
+        () => displayRepairs("repairs")
+    );
+
+    getElement("viewHistoryBtn").addEventListener(
+        "click",
+        () => displayRepairs("history")
+    );
+
+    getElement("backToRepairsBtn").addEventListener(
+        "click",
+        () => displayRepairs("repairs")
+    );
+
+    getElement("diagnosisForm").addEventListener(
+        "submit",
+        saveDiagnosis
+    );
+
+    getElement("logoutBtn").addEventListener(
+        "click",
+        logout
+    );
+
+    await displayRepairs("repairs");
+}
+
+// =====================================
+// FETCH REPAIRS
+// =====================================
 
 async function fetchAssignedRepairs() {
     const response = await fetch(
         `${API_URL}/technician`,
-        {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }
+        { headers: authHeaders() }
     );
 
     const data = await response.json().catch(() => ({}));
@@ -148,148 +156,225 @@ async function fetchAssignedRepairs() {
     }
 
     assignedRepairs = data;
+    updateSummary();
 
     return data;
 }
 
-// ==================================
-// LOAD ASSIGNED REPAIRS
-// ==================================
+// =====================================
+// SUMMARY CARDS
+// =====================================
 
-async function loadAssignedRepairs(showStatusControls = false) {
-    const section =
-        document.getElementById("assignedRepairsSection");
+function updateSummary() {
+    getElement("totalAssigned").textContent =
+        assignedRepairs.length;
 
-    const list =
-        document.getElementById("assignedRepairsList");
+    getElement("totalInProgress").textContent =
+        assignedRepairs.filter(
+            repair => normalizeStatus(repair.status) === "in progress"
+        ).length;
 
-    if (!section || !list) {
-        console.error("Assigned repairs section not found.");
-        return;
-    }
+    getElement("totalCompleted").textContent =
+        assignedRepairs.filter(
+            repair => isHistory(repair)
+        ).length;
+}
 
-    hideSections();
+// =====================================
+// DISPLAY REPAIRS / HISTORY
+// =====================================
 
-    section.style.display = "block";
-    list.textContent = "Loading assigned repairs...";
+async function displayRepairs(view = "repairs") {
+    currentView = view;
+    showSection("assignedRepairsSection");
 
-    const heading = section.querySelector("h3");
+    const list = getElement("assignedRepairsList");
+    const repairsBtn = getElement("viewRepairsBtn");
+    const historyBtn = getElement("viewHistoryBtn");
 
-    if (heading) {
-        heading.textContent = showStatusControls
-            ? "Update Repair Status"
-            : "My Assigned Repairs";
-    }
+    repairsBtn.classList.toggle("active", view === "repairs");
+    historyBtn.classList.toggle("active", view === "history");
+
+    getElement("repairSectionTitle").textContent =
+        view === "history" ? "Repair History" : "My Repairs";
+
+    list.textContent = "Loading repairs...";
+    setMessage("repairMessage", "");
 
     try {
         const repairs = await fetchAssignedRepairs();
 
-        list.innerHTML = "";
+        const filtered = repairs.filter(repair =>
+            view === "history"
+                ? isHistory(repair)
+                : !isHistory(repair)
+        );
 
-        if (repairs.length === 0) {
-            list.textContent =
-                "No repairs assigned to you yet.";
+        list.replaceChildren();
+
+        if (filtered.length === 0) {
+            list.textContent = view === "history"
+                ? "No completed or released repairs yet."
+                : "No active repairs assigned to you.";
             return;
         }
 
-        repairs.forEach((repair) => {
-            createRepairCard(
-                repair,
-                list,
-                showStatusControls
-            );
-        });
-
-        section.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
+        filtered.forEach(repair => {
+            list.appendChild(createRepairCard(repair, view));
         });
 
     } catch (error) {
-        console.error(
-            "Load assigned repairs error:",
-            error
-        );
-
+        console.error("Load repairs error:", error);
         list.textContent = error.message;
     }
 }
 
-// ==================================
-// CREATE REPAIR CARD
-// ==================================
+// =====================================
+// CREATE COMPACT REPAIR CARD
+// =====================================
 
-function createRepairCard(repair, list, showStatusControls) {
-    const card = document.createElement("div");
+function createRepairCard(repair, view) {
+    const card = makeElement("div", "tech-repair-card");
+    const top = makeElement("div", "tech-repair-top");
+    const info = makeElement("div");
 
-    card.className = "registered-device";
-    card.style.padding = "20px";
-    card.style.marginTop = "15px";
-    card.style.marginBottom = "15px";
-
-    const title = document.createElement("h4");
-    title.textContent =
-        `${repair.brand || "Unknown"} ${repair.model || "Device"}`;
-
-    const customer = document.createElement("p");
-    customer.textContent =
-        `Customer: ${repair.first_name || ""} ${repair.last_name || ""}`;
-
-    const deviceType = document.createElement("p");
-    deviceType.textContent =
-        `Device Type: ${repair.device_type || "Not specified"}`;
-
-    const problem = document.createElement("p");
-    problem.textContent =
-        `Problem: ${repair.problem_description || "Not specified"}`;
-
-    const status = document.createElement("p");
-    status.textContent = `Status: ${repair.status}`;
-    status.style.fontWeight = "600";
-
-    const submitted = document.createElement("p");
-    submitted.textContent =
-        `Submitted: ${
-            repair.date_submitted
-                ? new Date(
-                    repair.date_submitted
-                ).toLocaleDateString()
-                : "Not available"
-        }`;
-
-    card.append(
-        title,
-        customer,
-        deviceType,
-        problem,
-        status,
-        submitted
+    const title = makeElement(
+        "h4",
+        "",
+        `${repair.brand || "Unknown"} ${repair.model || "Device"}`
     );
 
-    if (showStatusControls) {
-        addStatusControls(card, repair);
+    const customerName = [
+        repair.first_name,
+        repair.last_name
+    ].filter(Boolean).join(" ");
+
+    info.appendChild(title);
+
+    addDetail(
+        info,
+        "Customer",
+        customerName || "Not available"
+    );
+
+    addDetail(
+        info,
+        "Submitted",
+        formatDate(repair.date_submitted)
+    );
+
+    const badge = makeElement(
+        "span",
+        `tech-status ${normalizeStatus(repair.status).replace(/\s+/g, "-")}`,
+        repair.status || "Unknown"
+    );
+
+    top.append(info, badge);
+    card.appendChild(top);
+
+    const actions = makeElement("div", "tech-actions");
+
+    const detailsBtn = makeElement(
+        "button",
+        "tech-btn secondary",
+        "View Details"
+    );
+    detailsBtn.type = "button";
+
+    const details = makeElement("div", "tech-details");
+
+    addDetail(
+        details,
+        "Repair ID",
+        repair.repair_id
+    );
+
+    addDetail(
+        details,
+        "Device Type",
+        repair.device_type || "Not specified"
+    );
+
+    addDetail(
+        details,
+        "Problem",
+        repair.problem_description || "Not specified"
+    );
+
+    addDetail(
+        details,
+        "Status",
+        repair.status || "Unknown"
+    );
+
+    detailsBtn.addEventListener("click", () => {
+        const isOpen = details.classList.toggle("open");
+
+        detailsBtn.textContent = isOpen
+            ? "Hide Details"
+            : "View Details";
+    });
+
+    actions.appendChild(detailsBtn);
+
+    if (view === "repairs") {
+        const statusBtn = makeElement(
+            "button",
+            "tech-btn secondary",
+            "Update Status"
+        );
+        statusBtn.type = "button";
+
+        const diagnosisBtn = makeElement(
+            "button",
+            "tech-btn",
+            "Diagnosis"
+        );
+        diagnosisBtn.type = "button";
+
+        const statusEditor = makeElement(
+            "div",
+            "tech-status-editor"
+        );
+
+        statusEditor.style.display = "none";
+
+        statusBtn.addEventListener("click", () => {
+            const isHidden =
+                statusEditor.style.display === "none";
+
+            statusEditor.style.display =
+                isHidden ? "block" : "none";
+        });
+
+        diagnosisBtn.addEventListener("click", () => {
+            openDiagnosisSection(repair.repair_id);
+        });
+
+        actions.append(statusBtn, diagnosisBtn);
+
+        addStatusControls(statusEditor, repair);
+
+        card.append(actions, details, statusEditor);
+    } else {
+        card.append(actions, details);
     }
 
-    list.appendChild(card);
+    return card;
 }
 
-// ==================================
-// STATUS UPDATE CONTROLS
-// ==================================
+// =====================================
+// STATUS UPDATE
+// =====================================
 
-function addStatusControls(card, repair) {
-    const label = document.createElement("label");
-
-    label.textContent = "Update Repair Status";
-    label.style.display = "block";
-    label.style.marginTop = "15px";
-    label.style.marginBottom = "8px";
+function addStatusControls(container, repair) {
+    const label = makeElement(
+        "label",
+        "",
+        "Change Repair Status"
+    );
 
     const select = document.createElement("select");
-
-    select.style.width = "100%";
-    select.style.padding = "12px";
-    select.style.marginBottom = "12px";
 
     const statuses = [
         "Pending",
@@ -297,63 +382,56 @@ function addStatusControls(card, repair) {
         "Completed"
     ];
 
-    if (repair.status === "Released") {
-        statuses.push("Released");
+    if (
+        repair.status &&
+        !statuses.includes(repair.status)
+    ) {
+        statuses.push(repair.status);
     }
 
-    statuses.forEach((value) => {
+    statuses.forEach(status => {
         const option = document.createElement("option");
-
-        option.value = value;
-        option.textContent = value;
-
+        option.value = status;
+        option.textContent = status;
         select.appendChild(option);
     });
 
     select.value = repair.status;
 
-    const saveButton = document.createElement("button");
+    const saveBtn = makeElement(
+        "button",
+        "tech-btn",
+        "Save Status"
+    );
+    saveBtn.type = "button";
 
-    saveButton.type = "button";
-    saveButton.textContent = "Save Status";
-    saveButton.className = "save-edit-btn";
-
-    const message = document.createElement("p");
-
+    const message = makeElement("p");
     message.setAttribute("role", "status");
-    message.style.marginTop = "10px";
 
-    if (repair.status === "Released") {
+    if (normalizeStatus(repair.status) === "released") {
         select.disabled = true;
-        saveButton.disabled = true;
-
-        message.textContent =
-            "This repair has already been released.";
+        saveBtn.disabled = true;
+        message.textContent = "This repair has been released.";
     }
 
-    saveButton.addEventListener("click", async () => {
+    saveBtn.addEventListener("click", async () => {
         const newStatus = select.value;
 
         if (newStatus === repair.status) {
-            message.textContent =
-                "No status changes to save.";
+            message.textContent = "No changes to save.";
             return;
         }
 
-        saveButton.disabled = true;
-        saveButton.textContent = "Saving...";
-        message.textContent =
-            "Updating repair status...";
+        saveBtn.disabled = true;
+        saveBtn.textContent = "Saving...";
+        message.textContent = "";
 
         try {
             const response = await fetch(
                 `${API_URL}/technician/${repair.repair_id}/status`,
                 {
                     method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`
-                    },
+                    headers: authHeaders(),
                     body: JSON.stringify({
                         status: newStatus
                     })
@@ -364,193 +442,125 @@ function addStatusControls(card, repair) {
 
             if (!response.ok) {
                 throw new Error(
-                    data.message ||
-                    `Unable to update status (HTTP ${response.status}).`
+                    data.message || "Unable to update status."
                 );
             }
 
-            await loadAssignedRepairs(true);
+            await displayRepairs(currentView);
 
-            const section =
-                document.getElementById("assignedRepairsSection");
-
-            const successMessage =
-                document.createElement("p");
-
-            successMessage.textContent =
-                "Repair status updated successfully!";
-
-            successMessage.style.color = "#15803d";
-            successMessage.style.fontWeight = "600";
-            successMessage.style.marginTop = "12px";
-
-            section.insertBefore(
-                successMessage,
-                section.querySelector("#assignedRepairsList")
+            setMessage(
+                "repairMessage",
+                "Repair status updated successfully."
             );
 
         } catch (error) {
-            console.error(
-                "Update status error:",
-                error
-            );
-
             message.textContent = error.message;
             message.style.color = "#dc2626";
 
         } finally {
-            saveButton.disabled = false;
-            saveButton.textContent = "Save Status";
+            saveBtn.disabled = false;
+            saveBtn.textContent = "Save Status";
         }
     });
 
-    card.append(
-        label,
-        select,
-        saveButton,
-        message
-    );
+    container.append(label, select, saveBtn, message);
 }
 
-// ==================================
-// OPEN MANAGE DIAGNOSIS
-// ==================================
+// =====================================
+// OPEN DIAGNOSIS
+// =====================================
 
-async function openDiagnosisSection() {
-    const section =
-        document.getElementById("diagnosisSection");
+async function openDiagnosisSection(selectedRepairId = null) {
+    showSection("diagnosisSection");
 
-    const repairSelect =
-        document.getElementById("diagnosisRepair");
+    const select = getElement("diagnosisRepair");
 
-    const message =
-        document.getElementById("diagnosisMessage");
+    select.replaceChildren();
 
-    if (!section || !repairSelect) {
-        console.error("Diagnosis elements not found.");
-        return;
-    }
-
-    hideSections();
-
-    section.style.display = "block";
-
-    repairSelect.innerHTML = "";
-
-    const placeholder =
-        document.createElement("option");
-
+    const placeholder = document.createElement("option");
     placeholder.value = "";
-    placeholder.textContent =
-        "Select an assigned repair";
+    placeholder.textContent = "Select an assigned repair";
+    select.appendChild(placeholder);
 
-    repairSelect.appendChild(placeholder);
-
-    if (message) {
-        message.textContent = "";
-    }
+    setMessage("diagnosisMessage", "");
 
     try {
         const repairs = await fetchAssignedRepairs();
 
-        repairs.forEach((repair) => {
-            const option =
-                document.createElement("option");
+        repairs.forEach(repair => {
+            const option = document.createElement("option");
 
             option.value = repair.repair_id;
-
             option.textContent =
-                `#${repair.repair_id} - ${
-                    repair.brand || "Unknown"
-                } ${
-                    repair.model || "Device"
-                } (${repair.status})`;
+                `#${repair.repair_id} - ` +
+                `${repair.brand || "Unknown"} ` +
+                `${repair.model || "Device"} ` +
+                `(${repair.status})`;
 
-            repairSelect.appendChild(option);
+            select.appendChild(option);
         });
 
-        if (repairs.length === 0 && message) {
-            message.textContent =
-                "No assigned repairs available for diagnosis.";
+        if (selectedRepairId !== null) {
+            select.value = String(selectedRepairId);
+        }
+
+        if (repairs.length === 0) {
+            setMessage(
+                "diagnosisMessage",
+                "No assigned repairs available."
+            );
         }
 
     } catch (error) {
-        console.error(
-            "Load diagnosis repairs error:",
-            error
-        );
-
-        if (message) {
-            message.textContent = error.message;
-            message.style.color = "#dc2626";
-        }
+        setMessage("diagnosisMessage", error.message, true);
     }
 
     await loadSavedDiagnoses();
 
-    section.scrollIntoView({
+    getElement("diagnosisSection").scrollIntoView({
         behavior: "smooth",
         block: "start"
     });
 }
 
-// ==================================
+// =====================================
 // SAVE DIAGNOSIS
-// ==================================
+// =====================================
 
 async function saveDiagnosis(event) {
     event.preventDefault();
 
-    const repairSelect =
-        document.getElementById("diagnosisRepair");
-
-    const detailsInput =
-        document.getElementById("diagnosisDetails");
-
-    const actionInput =
-        document.getElementById("recommendedAction");
-
-    const saveButton =
-        document.getElementById("saveDiagnosisBtn");
-
-    const message =
-        document.getElementById("diagnosisMessage");
-
-    const repairId = Number(repairSelect.value);
-    const diagnosisDetails = detailsInput.value.trim();
-    const recommendedAction = actionInput.value.trim();
+    const repairId = Number(getElement("diagnosisRepair").value);
+    const details = getElement("diagnosisDetails").value.trim();
+    const action = getElement("recommendedAction").value.trim();
+    const saveBtn = getElement("saveDiagnosisBtn");
 
     if (
         !Number.isSafeInteger(repairId) ||
         repairId <= 0 ||
-        !diagnosisDetails
+        !details
     ) {
-        message.textContent =
-            "Select a repair and enter diagnosis details.";
-
-        message.style.color = "#dc2626";
+        setMessage(
+            "diagnosisMessage",
+            "Select a repair and enter diagnosis details.",
+            true
+        );
         return;
     }
 
-    saveButton.disabled = true;
-    saveButton.textContent = "Saving...";
-
-    message.textContent = "Saving diagnosis...";
-    message.style.color = "#475569";
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Saving...";
 
     try {
         const response = await fetch(
             `${TECHNICIAN_API}/diagnoses`,
             {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                },
+                headers: authHeaders(),
                 body: JSON.stringify({
                     repair_id: repairId,
-                    diagnosis_details: diagnosisDetails,
-                    recommended_action: recommendedAction
+                    diagnosis_details: details,
+                    recommended_action: action
                 })
             }
         );
@@ -559,63 +569,49 @@ async function saveDiagnosis(event) {
 
         if (!response.ok) {
             throw new Error(
-                data.message ||
-                `Unable to save diagnosis (HTTP ${response.status}).`
+                data.message || "Unable to save diagnosis."
             );
         }
 
-        message.textContent =
-            "Diagnosis saved successfully!";
+        getElement("diagnosisDetails").value = "";
+        getElement("recommendedAction").value = "";
 
-        message.style.color = "#15803d";
-
-        detailsInput.value = "";
-        actionInput.value = "";
+        setMessage(
+            "diagnosisMessage",
+            "Diagnosis saved successfully."
+        );
 
         await loadSavedDiagnoses();
 
     } catch (error) {
-        console.error("Save diagnosis error:", error);
-
-        message.textContent = error.message;
-        message.style.color = "#dc2626";
+        setMessage("diagnosisMessage", error.message, true);
 
     } finally {
-        saveButton.disabled = false;
-        saveButton.textContent = "Save Diagnosis";
+        saveBtn.disabled = false;
+        saveBtn.textContent = "Save Diagnosis";
     }
 }
 
-// ==================================
-// LOAD SAVED DIAGNOSES
-// ==================================
+// =====================================
+// SAVED DIAGNOSES
+// =====================================
 
 async function loadSavedDiagnoses() {
-    const list =
-        document.getElementById("diagnosisList");
-
-    if (!list) {
-        return;
-    }
+    const list = getElement("diagnosisList");
 
     list.textContent = "Loading diagnoses...";
 
     try {
         const response = await fetch(
             `${TECHNICIAN_API}/diagnoses/mine`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }
+            { headers: authHeaders() }
         );
 
         const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
             throw new Error(
-                data.message ||
-                `Unable to load diagnoses (HTTP ${response.status}).`
+                data.message || "Unable to load diagnoses."
             );
         }
 
@@ -623,134 +619,58 @@ async function loadSavedDiagnoses() {
             throw new Error("Invalid diagnosis data.");
         }
 
-        list.innerHTML = "";
+        list.replaceChildren();
 
         if (data.length === 0) {
-            list.textContent =
-                "No diagnoses recorded yet.";
+            list.textContent = "No diagnoses recorded yet.";
             return;
         }
 
-        data.forEach((diagnosis) => {
-            const card = document.createElement("div");
+        data.forEach(diagnosis => {
+            const card = makeElement(
+                "div",
+                "tech-repair-card"
+            );
 
-            card.className = "registered-device";
-            card.style.padding = "20px";
-            card.style.marginTop = "15px";
+            const title = makeElement(
+                "h4",
+                "",
+                `${diagnosis.brand || "Unknown"} ` +
+                `${diagnosis.model || "Device"}`
+            );
 
-            const title = document.createElement("h4");
+            card.appendChild(title);
 
-            title.textContent =
-                `${diagnosis.brand || "Unknown"} ${
-                    diagnosis.model || "Device"
-                }`;
+            addDetail(
+                card,
+                "Diagnosis",
+                diagnosis.diagnosis_details
+            );
 
-            const details = document.createElement("p");
+            addDetail(
+                card,
+                "Recommended Action",
+                diagnosis.recommended_action || "None"
+            );
 
-            details.textContent =
-                `Diagnosis: ${diagnosis.diagnosis_details}`;
-
-            const action = document.createElement("p");
-
-            action.textContent =
-                `Recommended Action: ${
-                    diagnosis.recommended_action || "None"
-                }`;
-
-            const date = document.createElement("p");
-
-            date.textContent =
-                `Diagnosed: ${
-                    diagnosis.date_diagnosed
-                        ? new Date(
-                            diagnosis.date_diagnosed
-                        ).toLocaleDateString()
-                        : "Not available"
-                }`;
-
-            card.append(
-                title,
-                details,
-                action,
-                date
+            addDetail(
+                card,
+                "Diagnosed",
+                formatDate(diagnosis.date_diagnosed)
             );
 
             list.appendChild(card);
         });
 
     } catch (error) {
-        console.error(
-            "Load diagnoses error:",
-            error
-        );
-
+        console.error("Load diagnoses error:", error);
         list.textContent = error.message;
     }
 }
 
-// ==================================
-// REPAIR HISTORY
-// ==================================
-
-async function loadRepairHistory() {
-    const section =
-        document.getElementById("assignedRepairsSection");
-
-    const list =
-        document.getElementById("assignedRepairsList");
-
-    if (!section || !list) {
-        return;
-    }
-
-    hideSections();
-
-    section.style.display = "block";
-
-    const heading = section.querySelector("h3");
-
-    if (heading) {
-        heading.textContent = "My Repair History";
-    }
-
-    list.textContent = "Loading repair history...";
-
-    try {
-        const repairs = await fetchAssignedRepairs();
-
-        const history = repairs.filter(
-            (repair) =>
-                repair.status === "Completed" ||
-                repair.status === "Released"
-        );
-
-        list.innerHTML = "";
-
-        if (history.length === 0) {
-            list.textContent =
-                "No completed or released repairs yet.";
-            return;
-        }
-
-        history.forEach((repair) => {
-            createRepairCard(repair, list, false);
-        });
-
-        section.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-
-    } catch (error) {
-        console.error("Repair history error:", error);
-
-        list.textContent = error.message;
-    }
-}
-
-// ==================================
+// =====================================
 // LOGOUT
-// ==================================
+// =====================================
 
 function logout() {
     localStorage.removeItem("fixtrack_token");
