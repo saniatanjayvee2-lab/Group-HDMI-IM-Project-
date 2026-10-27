@@ -157,7 +157,6 @@ router.post(
 
             await client.query("BEGIN");
 
-            // Create user account
             const userResult = await client.query(
                 `INSERT INTO users (
                     first_name,
@@ -189,7 +188,6 @@ router.post(
 
             const newUser = userResult.rows[0];
 
-            // Create technician record
             const technicianResult = await client.query(
                 `INSERT INTO technicians (
                     user_id,
@@ -245,6 +243,289 @@ router.post(
             res.status(500).json({
                 message:
                     "Unable to create technician account."
+            });
+
+        } finally {
+            if (client) {
+                client.release();
+            }
+        }
+    }
+);
+
+// ==================================
+// EDIT TECHNICIAN - ADMIN
+// ==================================
+
+router.put(
+    "/:id",
+    authenticateToken,
+    requireAdmin,
+    async (req, res) => {
+        const technicianId = Number(req.params.id);
+
+        if (
+            !Number.isSafeInteger(technicianId) ||
+            technicianId <= 0 ||
+            technicianId > 2147483647
+        ) {
+            return res.status(400).json({
+                message: "Invalid technician ID."
+            });
+        }
+
+        const {
+            first_name,
+            middle_name,
+            last_name,
+            email
+        } = req.body || {};
+
+        if (
+            typeof first_name !== "string" ||
+            !first_name.trim() ||
+            first_name.trim().length > 100 ||
+            typeof last_name !== "string" ||
+            !last_name.trim() ||
+            last_name.trim().length > 100 ||
+            typeof email !== "string" ||
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
+            email.trim().length > 255 ||
+            (
+                middle_name != null &&
+                (
+                    typeof middle_name !== "string" ||
+                    middle_name.trim().length > 100
+                )
+            )
+        ) {
+            return res.status(400).json({
+                message:
+                    "Please enter valid technician information."
+            });
+        }
+
+        let client;
+
+        try {
+            client = await pool.connect();
+            await client.query("BEGIN");
+
+            const technicianResult = await client.query(
+                `SELECT t.user_id
+                 FROM technicians t
+                 INNER JOIN users u
+                    ON u.user_id = t.user_id
+                 WHERE t.technician_id = $1
+                   AND u.role = 'technician'
+                 FOR UPDATE OF t`,
+                [technicianId]
+            );
+
+            if (technicianResult.rows.length === 0) {
+                await client.query("ROLLBACK");
+
+                return res.status(404).json({
+                    message: "Technician not found."
+                });
+            }
+
+            const userId =
+                technicianResult.rows[0].user_id;
+
+            const result = await client.query(
+                `UPDATE users
+                 SET first_name = $1,
+                     middle_name = $2,
+                     last_name = $3,
+                     email = $4
+                 WHERE user_id = $5
+                   AND role = 'technician'
+                 RETURNING
+                     user_id,
+                     first_name,
+                     middle_name,
+                     last_name,
+                     email,
+                     role`,
+                [
+                    first_name.trim(),
+                    typeof middle_name === "string"
+                        ? middle_name.trim() || null
+                        : null,
+                    last_name.trim(),
+                    email.trim().toLowerCase(),
+                    userId
+                ]
+            );
+
+            if (result.rows.length === 0) {
+                await client.query("ROLLBACK");
+
+                return res.status(404).json({
+                    message: "Technician account not found."
+                });
+            }
+
+            await client.query("COMMIT");
+
+            res.json({
+                message:
+                    "Technician updated successfully.",
+                technician: result.rows[0]
+            });
+
+        } catch (error) {
+            if (client) {
+                await client.query("ROLLBACK").catch(
+                    rollbackError => console.error(
+                        "Rollback error:",
+                        rollbackError
+                    )
+                );
+            }
+
+            if (error.code === "23505") {
+                return res.status(409).json({
+                    message:
+                        "This email is already registered."
+                });
+            }
+
+            console.error(
+                "Edit technician error:",
+                error
+            );
+
+            res.status(500).json({
+                message: "Unable to update technician."
+            });
+
+        } finally {
+            if (client) {
+                client.release();
+            }
+        }
+    }
+);
+
+// ==================================
+// REMOVE TECHNICIAN - ADMIN
+// SOFT DELETE / DEACTIVATE
+// ==================================
+
+router.delete(
+    "/:id",
+    authenticateToken,
+    requireAdmin,
+    async (req, res) => {
+        const technicianId = Number(req.params.id);
+
+        if (
+            !Number.isSafeInteger(technicianId) ||
+            technicianId <= 0 ||
+            technicianId > 2147483647
+        ) {
+            return res.status(400).json({
+                message: "Invalid technician ID."
+            });
+        }
+
+        let client;
+
+        try {
+            client = await pool.connect();
+            await client.query("BEGIN");
+
+            const technicianResult = await client.query(
+                `SELECT
+                    t.technician_id,
+                    t.user_id,
+                    t.status
+                 FROM technicians t
+                 INNER JOIN users u
+                    ON u.user_id = t.user_id
+                 WHERE t.technician_id = $1
+                   AND u.role = 'technician'
+                 FOR UPDATE OF t`,
+                [technicianId]
+            );
+
+            if (technicianResult.rows.length === 0) {
+                await client.query("ROLLBACK");
+
+                return res.status(404).json({
+                    message: "Technician not found."
+                });
+            }
+
+            if (
+                technicianResult.rows[0].status
+                    ?.toLowerCase() === "inactive"
+            ) {
+                await client.query("ROLLBACK");
+
+                return res.status(409).json({
+                    message:
+                        "This technician is already inactive."
+                });
+            }
+
+            const activeRepairs = await client.query(
+                `SELECT COUNT(*)::integer AS count
+                 FROM repair_requests
+                 WHERE technician_id = $1
+                   AND (
+                       status IS NULL OR
+                       LOWER(status) NOT IN (
+                           'completed',
+                           'released',
+                           'cancelled'
+                       )
+                   )`,
+                [technicianId]
+            );
+
+            if (activeRepairs.rows[0].count > 0) {
+                await client.query("ROLLBACK");
+
+                return res.status(409).json({
+                    message:
+                        "This technician still has assigned repairs. Reassign or complete them before removal."
+                });
+            }
+
+            await client.query(
+                `UPDATE technicians
+                 SET status = 'Inactive'
+                 WHERE technician_id = $1`,
+                [technicianId]
+            );
+
+            await client.query("COMMIT");
+
+            res.json({
+                message:
+                    "Technician deactivated successfully. Repair history has been preserved."
+            });
+
+        } catch (error) {
+            if (client) {
+                await client.query("ROLLBACK").catch(
+                    rollbackError => console.error(
+                        "Rollback error:",
+                        rollbackError
+                    )
+                );
+            }
+
+            console.error(
+                "Remove technician error:",
+                error
+            );
+
+            res.status(500).json({
+                message: "Unable to remove technician."
             });
 
         } finally {
@@ -346,7 +627,6 @@ router.post(
                 });
             }
 
-            // Verify repair belongs to logged-in technician
             const assignedRepair = await pool.query(
                 `SELECT
                     t.technician_id
@@ -368,7 +648,6 @@ router.post(
             const technicianId =
                 assignedRepair.rows[0].technician_id;
 
-            // Save diagnosis
             const result = await pool.query(
                 `INSERT INTO diagnoses (
                     repair_id,
