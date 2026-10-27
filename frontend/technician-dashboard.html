@@ -4,12 +4,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>FixTrack | Technician Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="style.css?v=6">
+
+    <style>
+        .tech-dashboard-menu {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .tech-dashboard-menu .dashboard-card {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .tech-dashboard-menu .dashboard-card button {
+            margin-top: auto;
+        }
+
+        .tech-section {
+            margin-top: 24px;
+        }
+
+        .tech-section h3 {
+            margin-bottom: 16px;
+        }
+
+        .tech-section-description {
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        .tech-action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .tech-action-buttons button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+        }
+
+        .tech-action-buttons button:hover {
+            background: #1d4ed8;
+        }
+
+        #diagnosisForm {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        #diagnosisForm label {
+            font-weight: 600;
+        }
+
+        #diagnosisForm select,
+        #diagnosisForm textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font: inherit;
+        }
+
+        #diagnosisForm button {
+            margin-top: 8px;
+        }
+
+        #diagnosisList {
+            margin-top: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .tech-dashboard-menu {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
+    <!-- HEADER -->
     <header class="dashboard-header">
         <div>
             <h1>FixTrack</h1>
@@ -21,46 +110,47 @@
         </button>
     </header>
 
+    <!-- MAIN CONTENT -->
     <main class="dashboard-container">
 
+        <!-- WELCOME -->
         <section class="dashboard-welcome">
             <h2 id="welcomeUser">
                 Welcome, Technician!
             </h2>
+
             <p>
-                View assigned repair jobs and update repair progress.
+                Manage your assigned repairs and track
+                your repair progress.
             </p>
         </section>
 
-        <section class="dashboard-menu">
+        <!-- MAIN MENU -->
+        <section class="tech-dashboard-menu">
 
+            <!-- MY REPAIRS -->
             <div class="dashboard-card">
-                <h3>Assigned Repairs</h3>
-                <p>View repair jobs assigned to you.</p>
+                <h3>My Repairs</h3>
+
+                <p>
+                    View assigned repair jobs, update
+                    their status, and record diagnoses.
+                </p>
+
                 <button type="button" id="viewRepairsBtn">
-                    View Repairs
+                    View My Repairs
                 </button>
             </div>
 
-            <div class="dashboard-card">
-                <h3>Diagnosis</h3>
-                <p>Record device diagnosis and repair details.</p>
-                <button type="button" id="manageDiagnosisBtn">
-                    Manage Diagnosis
-                </button>
-            </div>
-
-            <div class="dashboard-card">
-                <h3>Repair Status</h3>
-                <p>Update the progress and status of assigned repairs.</p>
-                <button type="button" id="updateStatusBtn">
-                    Update Status
-                </button>
-            </div>
-
+            <!-- REPAIR HISTORY -->
             <div class="dashboard-card">
                 <h3>Repair History</h3>
-                <p>View repairs you previously worked on.</p>
+
+                <p>
+                    View your previous repairs and
+                    saved diagnosis records.
+                </p>
+
                 <button type="button" id="viewHistoryBtn">
                     View History
                 </button>
@@ -69,28 +159,43 @@
         </section>
 
         <!-- ASSIGNED REPAIRS -->
-
         <section
-            class="device-list-card"
+            class="device-list-card tech-section"
             id="assignedRepairsSection"
-            style="display:none; margin-top:24px;"
+            style="display:none;"
         >
             <h3>My Assigned Repairs</h3>
+
+            <p class="tech-section-description">
+                These are the repair jobs assigned to you.
+            </p>
 
             <div id="assignedRepairsList">
                 Loading assigned repairs...
             </div>
+
+            <div class="tech-action-buttons">
+                <button type="button" id="updateStatusBtn">
+                    Update Repair Status
+                </button>
+
+                <button type="button" id="manageDiagnosisBtn">
+                    Manage Diagnosis
+                </button>
+            </div>
         </section>
 
         <!-- MANAGE DIAGNOSIS -->
-
         <section
-            class="device-list-card"
+            class="device-list-card tech-section"
             id="diagnosisSection"
-            style="display:none; margin-top:24px;"
+            style="display:none;"
         >
             <h3>Manage Diagnosis</h3>
-            <p>Record the findings for your assigned repairs.</p>
+
+            <p class="tech-section-description">
+                Record the findings for your assigned repairs.
+            </p>
 
             <form id="diagnosisForm">
 
@@ -136,7 +241,6 @@
                     id="diagnosisMessage"
                     role="status"
                     aria-live="polite"
-                    style="margin-top:12px;"
                 ></p>
 
             </form>
@@ -148,12 +252,12 @@
             <div id="diagnosisList">
                 No diagnoses loaded yet.
             </div>
-
         </section>
 
     </main>
 
-    <script src="technician-dashboard.js"></script>
+    <!-- EXISTING TECHNICIAN FUNCTIONALITY -->
+    <script src="technician-dashboard.js?v=6"></script>
 
 </body>
 </html>
