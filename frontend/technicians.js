@@ -33,6 +33,7 @@ function showMessage(message, isError = false) {
 
 function showListMessage(message, isError = false) {
     const element = document.getElementById("technician-action-message");
+
     if (!element) {
         showMessage(message, isError);
         return;
@@ -58,6 +59,14 @@ function fullName(technician) {
     ].filter(Boolean).join(" ");
 }
 
+function isActiveTechnician(technician) {
+    const status = String(technician.status || "Active")
+        .trim()
+        .toLowerCase();
+
+    return status !== "inactive";
+}
+
 async function initializeTechnicians() {
     if (!technicianForm || !technicianList) {
         console.error("Technician form or list not found.");
@@ -66,42 +75,56 @@ async function initializeTechnicians() {
 
     technicianForm.addEventListener("submit", createTechnician);
     createEditModal();
+
     await loadTechnicians();
 }
+
+// ==========================================
+// LOAD ACTIVE TECHNICIANS ONLY
+// ==========================================
 
 async function loadTechnicians() {
     technicianList.textContent = "Loading technicians...";
 
     try {
         const response = await fetch(TECHNICIANS_API, {
-            headers: apiHeaders()
+            headers: apiHeaders(),
+            cache: "no-store"
         });
 
         const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
-            throw new Error(data.message || "Unable to load technicians.");
+            throw new Error(
+                data.message || "Unable to load technicians."
+            );
         }
 
-        const technicians = Array.isArray(data)
+        const allTechnicians = Array.isArray(data)
             ? data
             : Array.isArray(data.technicians)
                 ? data.technicians
                 : null;
 
-        if (!technicians) {
+        if (!allTechnicians) {
             throw new Error("Invalid technician data received.");
         }
+
+        // IMPORTANT FIX:
+        // Hide technicians whose status is Inactive.
+        // Their database records are preserved.
+        const technicians = allTechnicians.filter(isActiveTechnician);
 
         technicianList.replaceChildren();
 
         if (technicians.length === 0) {
-            technicianList.textContent = "No technicians registered yet.";
+            technicianList.textContent = "No active technicians found.";
             return;
         }
 
         technicians.forEach(technician => {
             const card = document.createElement("div");
+
             card.className = "registered-device";
             card.style.marginBottom = "16px";
             card.style.padding = "18px";
@@ -130,12 +153,15 @@ async function loadTechnicians() {
             }
 
             const actions = document.createElement("div");
+
             actions.style.display = "flex";
             actions.style.gap = "10px";
             actions.style.marginTop = "15px";
             actions.style.flexWrap = "wrap";
 
+            // EDIT BUTTON
             const editButton = document.createElement("button");
+
             editButton.type = "button";
             editButton.textContent = "Edit";
             editButton.style.background = "#2563eb";
@@ -151,23 +177,23 @@ async function loadTechnicians() {
 
             actions.appendChild(editButton);
 
-            if ((technician.status || "").toLowerCase() !== "inactive") {
-                const removeButton = document.createElement("button");
-                removeButton.type = "button";
-                removeButton.textContent = "Remove";
-                removeButton.style.background = "#dc2626";
-                removeButton.style.color = "white";
-                removeButton.style.border = "none";
-                removeButton.style.padding = "10px 20px";
-                removeButton.style.borderRadius = "8px";
-                removeButton.style.cursor = "pointer";
+            // REMOVE BUTTON
+            const removeButton = document.createElement("button");
 
-                removeButton.addEventListener("click", () => {
-                    removeTechnician(technician, removeButton);
-                });
+            removeButton.type = "button";
+            removeButton.textContent = "Remove";
+            removeButton.style.background = "#dc2626";
+            removeButton.style.color = "white";
+            removeButton.style.border = "none";
+            removeButton.style.padding = "10px 20px";
+            removeButton.style.borderRadius = "8px";
+            removeButton.style.cursor = "pointer";
 
-                actions.appendChild(removeButton);
-            }
+            removeButton.addEventListener("click", () => {
+                removeTechnician(technician, removeButton, card);
+            });
+
+            actions.appendChild(removeButton);
 
             card.append(name, email, role, status, date, actions);
             technicianList.appendChild(card);
@@ -178,6 +204,10 @@ async function loadTechnicians() {
         technicianList.textContent = error.message;
     }
 }
+
+// ==========================================
+// ADD TECHNICIAN
+// ==========================================
 
 async function createTechnician(event) {
     event.preventDefault();
@@ -196,11 +226,17 @@ async function createTechnician(event) {
         !technicianData.email ||
         technicianData.password.length < 8
     ) {
-        showMessage("Please complete all required fields. Password must have at least 8 characters.", true);
+        showMessage(
+            "Please complete all required fields. Password must have at least 8 characters.",
+            true
+        );
         return;
     }
 
-    const submitButton = technicianForm.querySelector('button[type="submit"]');
+    const submitButton = technicianForm.querySelector(
+        'button[type="submit"]'
+    );
+
     submitButton.disabled = true;
     submitButton.textContent = "Creating...";
 
@@ -214,11 +250,17 @@ async function createTechnician(event) {
         const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
-            throw new Error(data.message || "Unable to create technician.");
+            throw new Error(
+                data.message || "Unable to create technician."
+            );
         }
 
         technicianForm.reset();
-        showMessage(data.message || "Technician created successfully.");
+
+        showMessage(
+            data.message || "Technician created successfully."
+        );
+
         await loadTechnicians();
 
     } catch (error) {
@@ -236,6 +278,7 @@ async function createTechnician(event) {
 
 function createEditModal() {
     const overlay = document.createElement("div");
+
     overlay.id = "edit-technician-overlay";
 
     Object.assign(overlay.style, {
@@ -260,29 +303,56 @@ function createEditModal() {
             overflow-y:auto;
             box-sizing:border-box;
         ">
-            <h2 style="margin:0 0 8px;">Edit Technician</h2>
+            <h2 style="margin:0 0 8px;">
+                Edit Technician
+            </h2>
+
             <p style="margin-bottom:20px;color:#64748b;">
                 Update technician account information.
             </p>
 
             <form id="edit-technician-form">
+
                 <input type="hidden" id="edit-tech-id">
 
-                <label for="edit-tech-first">First Name</label>
-                <input id="edit-tech-first" type="text"
-                    maxlength="100" required>
+                <label for="edit-tech-first">
+                    First Name
+                </label>
+                <input
+                    id="edit-tech-first"
+                    type="text"
+                    maxlength="100"
+                    required
+                >
 
-                <label for="edit-tech-middle">Middle Name</label>
-                <input id="edit-tech-middle" type="text"
-                    maxlength="100">
+                <label for="edit-tech-middle">
+                    Middle Name
+                </label>
+                <input
+                    id="edit-tech-middle"
+                    type="text"
+                    maxlength="100"
+                >
 
-                <label for="edit-tech-last">Last Name</label>
-                <input id="edit-tech-last" type="text"
-                    maxlength="100" required>
+                <label for="edit-tech-last">
+                    Last Name
+                </label>
+                <input
+                    id="edit-tech-last"
+                    type="text"
+                    maxlength="100"
+                    required
+                >
 
-                <label for="edit-tech-email">Email</label>
-                <input id="edit-tech-email" type="email"
-                    maxlength="255" required>
+                <label for="edit-tech-email">
+                    Email
+                </label>
+                <input
+                    id="edit-tech-email"
+                    type="email"
+                    maxlength="255"
+                    required
+                >
 
                 <p id="edit-tech-message" role="status"></p>
 
@@ -291,7 +361,9 @@ function createEditModal() {
                     gap:10px;
                     margin-top:20px;
                 ">
-                    <button type="button" id="cancel-tech-edit"
+                    <button
+                        type="button"
+                        id="cancel-tech-edit"
                         style="
                             flex:1;
                             background:#e2e8f0;
@@ -300,11 +372,14 @@ function createEditModal() {
                             border:0;
                             border-radius:8px;
                             cursor:pointer;
-                        ">
+                        "
+                    >
                         Cancel
                     </button>
 
-                    <button type="submit" id="save-tech-edit"
+                    <button
+                        type="submit"
+                        id="save-tech-edit"
                         style="
                             flex:1;
                             background:#2563eb;
@@ -313,7 +388,8 @@ function createEditModal() {
                             border:0;
                             border-radius:8px;
                             cursor:pointer;
-                        ">
+                        "
+                    >
                         Save Changes
                     </button>
                 </div>
@@ -323,15 +399,11 @@ function createEditModal() {
 
     document.body.appendChild(overlay);
 
-    document.getElementById("cancel-tech-edit").addEventListener(
-        "click",
-        closeEditModal
-    );
+    document.getElementById("cancel-tech-edit")
+        .addEventListener("click", closeEditModal);
 
-    document.getElementById("edit-technician-form").addEventListener(
-        "submit",
-        saveTechnicianEdit
-    );
+    document.getElementById("edit-technician-form")
+        .addEventListener("submit", saveTechnicianEdit);
 }
 
 function openEditModal(technician) {
@@ -390,20 +462,27 @@ async function saveTechnicianEdit(event) {
     saveButton.textContent = "Saving...";
 
     try {
-        const response = await fetch(`${TECHNICIANS_API}/${id}`, {
-            method: "PUT",
-            headers: apiHeaders(),
-            body: JSON.stringify(technicianData)
-        });
+        const response = await fetch(
+            `${TECHNICIANS_API}/${id}`,
+            {
+                method: "PUT",
+                headers: apiHeaders(),
+                body: JSON.stringify(technicianData)
+            }
+        );
 
         const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
-            throw new Error(data.message || "Unable to update technician.");
+            throw new Error(
+                data.message || "Unable to update technician."
+            );
         }
 
         closeEditModal();
+
         showListMessage("Technician updated successfully.");
+
         await loadTechnicians();
 
     } catch (error) {
@@ -420,7 +499,7 @@ async function saveTechnicianEdit(event) {
 // REMOVE TECHNICIAN
 // ==========================================
 
-async function removeTechnician(technician, button) {
+async function removeTechnician(technician, button, card) {
     const confirmed = confirm(
         `Remove ${fullName(technician)} from the active technician team?\n\n` +
         "Existing repair history will be preserved."
@@ -443,17 +522,25 @@ async function removeTechnician(technician, button) {
         const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
-            throw new Error(data.message || "Unable to remove technician.");
+            throw new Error(
+                data.message || "Unable to remove technician."
+            );
         }
 
+        // Immediately remove the technician card
+        // after the backend confirms success.
+        card.remove();
+
         showListMessage(
-            data.message || "Technician deactivated successfully."
+            data.message || "Technician removed from active list."
         );
 
+        // Reload from the database to keep the list accurate.
         await loadTechnicians();
 
     } catch (error) {
         showListMessage(error.message, true);
+
         button.disabled = false;
         button.textContent = "Remove";
     }
