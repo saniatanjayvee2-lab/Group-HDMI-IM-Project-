@@ -1,6 +1,7 @@
 
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const pool = require("../config/db");
 
 const router = express.Router();
@@ -50,22 +51,29 @@ function validId(value) {
 }
 
 function toCents(value) {
-    const number = Number(value);
-
     if (
         value === null ||
         value === undefined ||
-        value === "" ||
+        value === ""
+    ) {
+        return null;
+    }
+
+    const number = Number(value);
+
+    if (
         !Number.isFinite(number) ||
         number < 0 ||
-        Math.abs(
-            number * 100 - Math.round(number * 100)
-        ) > 0.000001
+        Math.abs(number * 100 - Math.round(number * 100)) > 0.000001
     ) {
         return null;
     }
 
     return Math.round(number * 100);
+}
+
+function money(cents) {
+    return cents / 100;
 }
 
 function validReason(value) {
@@ -79,10 +87,6 @@ function validManualMethod(value) {
         value.trim().length > 0 &&
         value.trim().length <= 100 &&
         !/paymongo/i.test(value);
-}
-
-function money(cents) {
-    return cents / 100;
 }
 
 async function getRepairTotal(repairId, db = pool) {
@@ -129,49 +133,385 @@ async function getRepairAccess(repairId, user) {
         [repairId]
     );
 
-    if (result.rows.length === 0) {
-        return {
-            exists: false,
-            allowed: false
-        };
+    if (!result.rows.length) {
+        return { exists: false, allowed: false };
     }
 
     const ownerId = result.rows[0].user_id;
 
-    const allowed =
-        user.role === "admin" ||
-        (
-            user.role === "customer" &&
-            Number(user.user_id) === Number(ownerId)
-        );
-
     return {
         exists: true,
-        allowed
+        allowed:
+            user.role === "admin" ||
+            (
+                user.role === "customer" &&
+                Number(user.user_id) === Number(ownerId)
+            )
     };
 }
 
 function getPaymentStatus(totalCents, paidCents) {
     if (totalCents <= 0) {
-        return paidCents > 0
-            ? "Overpaid"
-            : "Unpaid";
+        return paidCents > 0 ? "Overpaid" : "Unpaid";
     }
 
-    if (paidCents <= 0) {
-        return "Unpaid";
-    }
-
-    if (paidCents < totalCents) {
-        return "Partially Paid";
-    }
-
-    if (paidCents === totalCents) {
-        return "Paid";
-    }
+    if (paidCents <= 0) return "Unpaid";
+    if (paidCents < totalCents) return "Partially Paid";
+    if (paidCents === totalCents) return "Paid";
 
     return "Overpaid";
 }
+
+// =====================================
+// PAYMONGO TEST MODE CONFIGURATION
+// =====================================
+
+function getPayMongoKey() {
+    const key = process.env.PAYMONGO_SECRET_KEY;
+
+    if (
+        process.env.PAYMONGO_MODE !== "test" ||
+        !key ||
+        !key.startsWith("sk_test_")
+    ) {
+        return null;
+    }
+
+    return key;
+}
+
+function getPayMongoHeaders(key) {
+    return {
+        Authorization:
+            "Basic " +
+            Buffer.from(`${key}:`).toString("base64"),
+        "Content-Type": "application/json",
+        Accept: "application/json"
+    };
+}
+
+// =====================================
+// VERIFY PAYMONGO WEBHOOK SIGNATURE
+// =====================================
+
+function verifyPayMongoSignature(req) {
+    const secret = process.env.PAYMONGO_WEBHOOK_SECRET;
+    const header = req.get("Paymongo-Signature");
+
+    if (
+        process.env.PAYMONGO_MODE !== "test" ||
+        !secret ||
+        !header ||
+        !Buffer.isBuffer(req.rawBody)
+    ) {
+        return false;
+    }
+
+    const fields = {};
+
+    for (const part of header.split(",")) {
+        const separator = part.indexOf("=");
+
+        if (separator > 0) {
+            fields[
+                part.slice(0, separator).trim()
+            ] = part.slice(separator + 1).trim();
+        }
+    }
+
+    const timestamp = fields.t;
+    const signature = fields.te;
+
+    if (
+        !/^\d+$/.test(timestamp || "") ||
+        !/^[0-9a-f]{64}$/i.test(signature || "")
+    ) {
+        return false;
+    }
+
+    // Reject old or future-dated requests.
+    const age = Math.abs(
+        Math.floor(Date.now() / 1000) - Number(timestamp)
+    );
+
+    if (age > 300) return false;
+
+    const signedPayload = Buffer.concat([
+        Buffer.from(`${timestamp}.`, "utf8"),
+        req.rawBody
+    ]);
+
+    const expected = crypto
+        .createHmac("sha256", secret)
+        .update(signedPayload)
+        .digest();
+
+    const received = Buffer.from(signature, "hex");
+
+    return received.length === expected.length &&
+        crypto.timingSafeEqual(received, expected);
+}
+
+// =====================================
+// PAYMONGO WEBHOOK
+// PUBLIC ENDPOINT, SIGNATURE VERIFIED
+// =====================================
+
+router.post("/webhook", async (req, res) => {
+    if (!verifyPayMongoSignature(req)) {
+        return res.status(401).json({
+            message: "Invalid PayMongo webhook signature."
+        });
+    }
+
+    const event = req.body?.data;
+    const attributes = event?.attributes;
+
+    // Checkout events only.
+    if (
+        attributes?.type !==
+        "checkout_session.payment.paid"
+    ) {
+        return res.status(200).json({
+            received: true,
+            ignored: true
+        });
+    }
+
+    // Never process live-mode transactions.
+    if (attributes.livemode !== false) {
+        return res.status(403).json({
+            message: "Live payments are not accepted."
+        });
+    }
+
+    const session = attributes.data;
+    const sessionId = session?.id;
+
+    if (
+        typeof sessionId !== "string" ||
+        !sessionId
+    ) {
+        return res.status(400).json({
+            message: "Missing checkout session ID."
+        });
+    }
+
+    const sessionAttributes = session.attributes || {};
+
+    const payments = Array.isArray(
+        sessionAttributes.payments
+    )
+        ? sessionAttributes.payments
+        : [];
+
+    const paidPayment = payments.find(payment =>
+        payment?.attributes?.status === "paid"
+    );
+
+    if (!paidPayment) {
+        return res.status(200).json({
+            received: true,
+            ignored: true,
+            reason: "No confirmed paid transaction."
+        });
+    }
+
+    const paymentAttributes = paidPayment.attributes;
+    const paidAmountCents = paymentAttributes.amount;
+
+    if (
+        !Number.isSafeInteger(paidAmountCents) ||
+        paidAmountCents <= 0 ||
+        paymentAttributes.currency !== "PHP" ||
+        paymentAttributes.livemode === true
+    ) {
+        return res.status(400).json({
+            message: "Invalid payment details."
+        });
+    }
+
+    const sourceType =
+        paymentAttributes.source?.type ||
+        paymentAttributes.payment_method_details?.type ||
+        "Online";
+
+    const method =
+        `PayMongo ${String(sourceType).slice(0, 80)}`;
+
+    const client = await pool.connect();
+
+    try {
+        await client.query("BEGIN");
+
+        // Find the checkout created by FixTrack.
+        const lookup = await client.query(
+            `SELECT repair_id
+             FROM paymongo_checkout_sessions
+             WHERE checkout_session_id = $1`,
+            [sessionId]
+        );
+
+        if (!lookup.rows.length) {
+            await client.query("ROLLBACK");
+
+            console.warn(
+                "Unknown PayMongo checkout session:",
+                sessionId
+            );
+
+            return res.status(409).json({
+                message: "Checkout session not registered."
+            });
+        }
+
+        const repairId = lookup.rows[0].repair_id;
+
+        // Consistent lock order: repair first.
+        const repairLock = await client.query(
+            `SELECT repair_id
+             FROM repair_requests
+             WHERE repair_id = $1
+             FOR UPDATE`,
+            [repairId]
+        );
+
+        if (!repairLock.rows.length) {
+            await client.query("ROLLBACK");
+
+            return res.status(404).json({
+                message: "Repair not found."
+            });
+        }
+
+        const checkoutResult = await client.query(
+            `SELECT *
+             FROM paymongo_checkout_sessions
+             WHERE checkout_session_id = $1
+             FOR UPDATE`,
+            [sessionId]
+        );
+
+        const checkout = checkoutResult.rows[0];
+
+        // Duplicate webhook deliveries must not
+        // create additional payment records.
+        if (checkout.status === "Completed") {
+            await client.query("COMMIT");
+
+            return res.status(200).json({
+                received: true,
+                duplicate: true
+            });
+        }
+
+        if (
+            checkout.status !== "Pending" ||
+            Number(checkout.amount_cents) !==
+                paidAmountCents ||
+            checkout.reference_number !==
+                sessionAttributes.reference_number
+        ) {
+            await client.query("ROLLBACK");
+
+            return res.status(409).json({
+                message: "Checkout payment does not match."
+            });
+        }
+
+        const existing = await client.query(
+            `SELECT paymongo_id
+             FROM paymongo_transactions
+             WHERE checkout_session_id = $1
+             LIMIT 1`,
+            [sessionId]
+        );
+
+        if (existing.rows.length) {
+            await client.query("ROLLBACK");
+
+            return res.status(409).json({
+                message: "Checkout already linked to a payment."
+            });
+        }
+
+        // Store the confirmed payment.
+        const inserted = await client.query(
+            `INSERT INTO payments (
+                repair_id,
+                amount_paid,
+                payment_method,
+                payment_status,
+                payment_date
+            )
+            VALUES (
+                $1, $2, $3, 'Completed', CURRENT_TIMESTAMP
+            )
+            RETURNING payment_id`,
+            [
+                repairId,
+                money(paidAmountCents),
+                method
+            ]
+        );
+
+        const paymentId = inserted.rows[0].payment_id;
+
+        // Link the gateway transaction to the payment.
+        await client.query(
+            `INSERT INTO paymongo_transactions (
+                payment_id,
+                paymongo_source_id,
+                checkout_session_id,
+                payment_type,
+                raw_response
+            )
+            VALUES ($1, $2, $3, $4, $5)`,
+            [
+                paymentId,
+                paidPayment.id || null,
+                sessionId,
+                sourceType,
+                JSON.stringify(event)
+            ]
+        );
+
+        await client.query(
+            `UPDATE paymongo_checkout_sessions
+             SET status = 'Completed',
+                 payment_id = $1,
+                 completed_at = NOW()
+             WHERE checkout_session_id = $2`,
+            [paymentId, sessionId]
+        );
+
+        await client.query("COMMIT");
+
+        console.log(
+            `PayMongo test payment recorded: #${paymentId}, Repair #${repairId}`
+        );
+
+        return res.status(200).json({
+            received: true,
+            recorded: true
+        });
+
+    } catch (error) {
+        await client.query("ROLLBACK");
+
+        console.error(
+            "PayMongo webhook processing error:",
+            error
+        );
+
+        return res.status(500).json({
+            message: "Unable to process payment notification."
+        });
+
+    } finally {
+        client.release();
+    }
+});
 
 // =====================================
 // GET PAYMENT HISTORY AND BALANCE
@@ -295,7 +635,7 @@ router.post(
                 [repairId]
             );
 
-            if (repairResult.rows.length === 0) {
+            if (!repairResult.rows.length) {
                 await client.query("ROLLBACK");
 
                 return res.status(404).json({
@@ -427,7 +767,6 @@ async function correctPayment(req, res, action) {
         await client.query("BEGIN");
         transactionStarted = true;
 
-        // Find the repair associated with this payment.
         const lookup = await client.query(
             `SELECT repair_id
              FROM payments
@@ -435,7 +774,7 @@ async function correctPayment(req, res, action) {
             [paymentId]
         );
 
-        if (lookup.rows.length === 0) {
+        if (!lookup.rows.length) {
             await client.query("ROLLBACK");
             transactionStarted = false;
 
@@ -446,9 +785,6 @@ async function correctPayment(req, res, action) {
 
         const repairId = lookup.rows[0].repair_id;
 
-        // Lock the repair before locking the payment.
-        // This follows the same lock order used when
-        // recording manual payments.
         await client.query(
             `SELECT repair_id
              FROM repair_requests
@@ -487,7 +823,6 @@ async function correctPayment(req, res, action) {
             });
         }
 
-        // Protect gateway-linked transactions.
         const gatewayResult = await client.query(
             `SELECT paymongo_id
              FROM paymongo_transactions
@@ -508,7 +843,6 @@ async function correctPayment(req, res, action) {
             });
         }
 
-        // Prevent repeated voids and edits to voided payments.
         if (oldPayment.payment_status !== "Completed") {
             await client.query("ROLLBACK");
             transactionStarted = false;
@@ -540,9 +874,6 @@ async function correctPayment(req, res, action) {
             const otherPaymentsCents =
                 totalPaidCents - oldAmountCents;
 
-            // Prevent increasing payments beyond repair cost.
-            // Existing historical overpayments can still be
-            // reduced or voided.
             if (
                 newAmountCents > oldAmountCents &&
                 otherPaymentsCents + newAmountCents >
@@ -590,7 +921,6 @@ async function correctPayment(req, res, action) {
             throw new Error("Unsupported correction action.");
         }
 
-        // Record the original and updated values.
         await client.query(
             `INSERT INTO payment_audit_logs (
                 payment_id,
@@ -650,7 +980,6 @@ async function correctPayment(req, res, action) {
 
 // =====================================
 // EDIT MANUAL PAYMENT
-// ADMIN ONLY
 // =====================================
 
 router.patch(
@@ -662,7 +991,6 @@ router.patch(
 
 // =====================================
 // VOID MANUAL PAYMENT
-// ADMIN ONLY
 // =====================================
 
 router.post(
@@ -674,7 +1002,6 @@ router.post(
 
 // =====================================
 // GET PAYMENT AUDIT HISTORY
-// ADMIN ONLY
 // =====================================
 
 router.get(
@@ -743,14 +1070,9 @@ router.post(
                 });
             }
 
-            const secretKey = process.env.PAYMONGO_SECRET_KEY;
+            const secretKey = getPayMongoKey();
 
-            // Strictly test mode only.
-            if (
-                process.env.PAYMONGO_MODE !== "test" ||
-                !secretKey ||
-                !secretKey.startsWith("sk_test_")
-            ) {
+            if (!secretKey) {
                 return res.status(503).json({
                     message: "PayMongo Test Mode is not configured."
                 });
@@ -773,13 +1095,8 @@ router.post(
                 });
             }
 
-            const totalCents = await getRepairTotal(
-                repairId
-            );
-
-            const paidCents = await getTotalPaid(
-                repairId
-            );
+            const totalCents = await getRepairTotal(repairId);
+            const paidCents = await getTotalPaid(repairId);
 
             const remainingCents = Math.max(
                 0,
@@ -792,7 +1109,6 @@ router.post(
                 });
             }
 
-            // Use deployed frontend for checkout redirects.
             const frontendUrl = (
                 process.env.FRONTEND_URL ||
                 "https://fixtrack-management.vercel.app"
@@ -805,21 +1121,13 @@ router.post(
                 `${frontendUrl}/admin-repairs.html`;
 
             const referenceNumber =
-                `FIXTRACK-${repairId}-${Date.now()}`;
+                `FIXTRACK-${repairId}-${Date.now()}-${crypto.randomBytes(4).toString("hex")}`;
 
             const checkoutResponse = await fetch(
                 "https://api.paymongo.com/v1/checkout_sessions",
                 {
                     method: "POST",
-                    headers: {
-                        Authorization:
-                            "Basic " +
-                            Buffer.from(
-                                `${secretKey}:`
-                            ).toString("base64"),
-                        "Content-Type": "application/json",
-                        Accept: "application/json"
-                    },
+                    headers: getPayMongoHeaders(secretKey),
                     body: JSON.stringify({
                         data: {
                             attributes: {
@@ -879,8 +1187,38 @@ router.post(
                 });
             }
 
-            // Do not record a completed payment here.
-            // Checkout creation is not proof of payment.
+            // Save checkout ID BEFORE redirecting.
+            // This allows the webhook to identify
+            // the repair after payment succeeds.
+            try {
+                await pool.query(
+                    `INSERT INTO paymongo_checkout_sessions (
+                        checkout_session_id,
+                        repair_id,
+                        amount_cents,
+                        reference_number,
+                        status
+                    )
+                    VALUES ($1, $2, $3, $4, 'Pending')`,
+                    [
+                        session.id,
+                        repairId,
+                        remainingCents,
+                        referenceNumber
+                    ]
+                );
+
+            } catch (databaseError) {
+                console.error(
+                    "Save checkout session error:",
+                    databaseError
+                );
+
+                return res.status(500).json({
+                    message: "Unable to register checkout session."
+                });
+            }
+
             return res.status(201).json({
                 message: "PayMongo test checkout created.",
                 checkout_session_id: session.id,
