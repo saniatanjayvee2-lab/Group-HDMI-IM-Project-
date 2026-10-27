@@ -1,3 +1,4 @@
+
 const express = require("express");
 const cors = require("cors");
 const pool = require("./config/db");
@@ -15,6 +16,9 @@ const billingRoutes = require("./routes/billing");
 const paymentRoutes = require("./routes/payments");
 const customerRoutes = require("./routes/customers");
 const reportRoutes = require("./routes/reports");
+
+// NEW: CUSTOMER PROFILE ROUTE
+const createProfileRouter = require("./routes/profile");
 
 // =====================================
 // CREATE EXPRESS APPLICATION
@@ -56,6 +60,9 @@ app.use("/api/parts", partRoutes);
 app.use("/api/billing", billingRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/payments", paymentRoutes);
+
+// NEW: CUSTOMER PROFILE API
+app.use("/api/profile", createProfileRouter(pool));
 
 // =====================================
 // REPORTS MANAGEMENT
