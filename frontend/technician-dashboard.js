@@ -15,10 +15,6 @@ try {
     console.error("Invalid user data:", error);
 }
 
-// =====================================
-// LOGIN CHECK
-// =====================================
-
 if (!token || !currentUser) {
     window.location.replace("index.html");
 } else if (currentUser.role !== "technician") {
@@ -29,37 +25,40 @@ if (!token || !currentUser) {
     );
 } else {
     document.getElementById("welcomeUser").textContent =
-        `Welcome, ${currentUser.first_name}!`;
+        `Welcome, ${currentUser.first_name || "Technician"}!`;
 
     initializeDashboard();
 }
 
-// =====================================
-// HELPERS
-// =====================================
+function el(id) {
+    return document.getElementById(id);
+}
 
-function authHeaders() {
+function headers() {
     return {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
     };
 }
 
-function getElement(id) {
-    return document.getElementById(id);
+function message(id, text, error = false) {
+    const target = el(id);
+    if (!target) return;
+
+    target.textContent = text;
+    target.style.color = error ? "#dc2626" : "#15803d";
 }
 
-function setMessage(id, text, error = false) {
-    const element = getElement(id);
-    if (!element) return;
+function statusOf(repair) {
+    return String(repair.status || "").trim().toLowerCase();
+}
 
-    element.textContent = text;
-    element.style.color = error ? "#dc2626" : "#15803d";
+function isCompleted(repair) {
+    return ["completed", "released"].includes(statusOf(repair));
 }
 
 function formatDate(value) {
     if (!value) return "Not available";
-
     const date = new Date(value);
 
     return Number.isNaN(date.getTime())
@@ -67,80 +66,58 @@ function formatDate(value) {
         : date.toLocaleDateString();
 }
 
-function normalizeStatus(value) {
-    return String(value || "").trim().toLowerCase();
+function make(tag, className = "", text = "") {
+    const node = document.createElement(tag);
+    node.className = className;
+    node.textContent = text;
+    return node;
 }
 
-function isHistory(repair) {
-    return ["completed", "released"].includes(
-        normalizeStatus(repair.status)
-    );
+function detail(parent, label, value) {
+    parent.appendChild(make("p", "", `${label}: ${value}`));
 }
 
-function makeElement(tag, className, text) {
-    const element = document.createElement(tag);
-
-    if (className) element.className = className;
-    if (text !== undefined) element.textContent = text;
-
-    return element;
+function showDiagnosis(show) {
+    el("diagnosisSection").style.display = show ? "block" : "none";
+    el("assignedRepairsSection").style.display = show ? "none" : "block";
 }
 
-function addDetail(parent, label, value) {
-    const p = makeElement("p", "", `${label}: ${value}`);
-    parent.appendChild(p);
+function updateCounts() {
+    el("totalAssigned").textContent = assignedRepairs.length;
+
+    el("totalInProgress").textContent =
+        assignedRepairs.filter(
+            repair => statusOf(repair) === "in progress"
+        ).length;
+
+    el("totalCompleted").textContent =
+        assignedRepairs.filter(isCompleted).length;
 }
-
-function showSection(id) {
-    getElement("assignedRepairsSection").style.display =
-        id === "assignedRepairsSection" ? "block" : "none";
-
-    getElement("diagnosisSection").style.display =
-        id === "diagnosisSection" ? "block" : "none";
-}
-
-// =====================================
-// INITIALIZE
-// =====================================
 
 async function initializeDashboard() {
-    getElement("viewRepairsBtn").addEventListener(
-        "click",
-        () => displayRepairs("repairs")
-    );
+    el("logoutBtn").addEventListener("click", logout);
 
-    getElement("viewHistoryBtn").addEventListener(
-        "click",
-        () => displayRepairs("history")
-    );
+    el("viewRepairsBtn").addEventListener("click", () => {
+        displayRepairs("repairs");
+    });
 
-    getElement("backToRepairsBtn").addEventListener(
-        "click",
-        () => displayRepairs("repairs")
-    );
+    el("viewHistoryBtn").addEventListener("click", () => {
+        displayRepairs("history");
+    });
 
-    getElement("diagnosisForm").addEventListener(
-        "submit",
-        saveDiagnosis
-    );
+    el("backToRepairsBtn").addEventListener("click", () => {
+        displayRepairs("repairs");
+    });
 
-    getElement("logoutBtn").addEventListener(
-        "click",
-        logout
-    );
+    el("diagnosisForm").addEventListener("submit", saveDiagnosis);
 
     await displayRepairs("repairs");
 }
 
-// =====================================
-// FETCH REPAIRS
-// =====================================
-
-async function fetchAssignedRepairs() {
-    const response = await fetch(
-        `${API_URL}/technician`,
-        { headers: authHeaders() }
-    );
+async function fetchRepairs() {
+    const response = await fetch(`${API_URL}/technician`, {
+        headers: headers()
+    });
 
     const data = await response.json().catch(() => ({}));
 
@@ -152,69 +129,48 @@ async function fetchAssignedRepairs() {
     }
 
     if (!Array.isArray(data)) {
-        throw new Error("Invalid repair data received.");
+        throw new Error("Invalid repair data.");
     }
 
     assignedRepairs = data;
-    updateSummary();
+    updateCounts();
 
     return data;
 }
 
-// =====================================
-// SUMMARY CARDS
-// =====================================
-
-function updateSummary() {
-    getElement("totalAssigned").textContent =
-        assignedRepairs.length;
-
-    getElement("totalInProgress").textContent =
-        assignedRepairs.filter(
-            repair => normalizeStatus(repair.status) === "in progress"
-        ).length;
-
-    getElement("totalCompleted").textContent =
-        assignedRepairs.filter(
-            repair => isHistory(repair)
-        ).length;
-}
-
-// =====================================
-// DISPLAY REPAIRS / HISTORY
-// =====================================
-
 async function displayRepairs(view = "repairs") {
     currentView = view;
-    showSection("assignedRepairsSection");
+    showDiagnosis(false);
 
-    const list = getElement("assignedRepairsList");
-    const repairsBtn = getElement("viewRepairsBtn");
-    const historyBtn = getElement("viewHistoryBtn");
+    el("viewRepairsBtn").classList.toggle(
+        "active", view === "repairs"
+    );
 
-    repairsBtn.classList.toggle("active", view === "repairs");
-    historyBtn.classList.toggle("active", view === "history");
+    el("viewHistoryBtn").classList.toggle(
+        "active", view === "history"
+    );
 
-    getElement("repairSectionTitle").textContent =
+    el("repairSectionTitle").textContent =
         view === "history" ? "Repair History" : "My Repairs";
 
+    const list = el("assignedRepairsList");
     list.textContent = "Loading repairs...";
-    setMessage("repairMessage", "");
+    message("repairMessage", "");
 
     try {
-        const repairs = await fetchAssignedRepairs();
+        const repairs = await fetchRepairs();
 
         const filtered = repairs.filter(repair =>
             view === "history"
-                ? isHistory(repair)
-                : !isHistory(repair)
+                ? isCompleted(repair)
+                : !isCompleted(repair)
         );
 
         list.replaceChildren();
 
-        if (filtered.length === 0) {
+        if (!filtered.length) {
             list.textContent = view === "history"
-                ? "No completed or released repairs yet."
+                ? "No completed repairs yet."
                 : "No active repairs assigned to you.";
             return;
         }
@@ -224,163 +180,113 @@ async function displayRepairs(view = "repairs") {
         });
 
     } catch (error) {
-        console.error("Load repairs error:", error);
         list.textContent = error.message;
+        console.error(error);
     }
 }
 
-// =====================================
-// CREATE COMPACT REPAIR CARD
-// =====================================
-
 function createRepairCard(repair, view) {
-    const card = makeElement("div", "tech-repair-card");
-    const top = makeElement("div", "tech-repair-top");
-    const info = makeElement("div");
+    const card = make("div", "tw-card");
+    const top = make("div", "tw-card-top");
+    const info = make("div");
 
-    const title = makeElement(
+    const title = make(
         "h4",
         "",
         `${repair.brand || "Unknown"} ${repair.model || "Device"}`
     );
 
-    const customerName = [
+    const customer = [
         repair.first_name,
         repair.last_name
-    ].filter(Boolean).join(" ");
+    ].filter(Boolean).join(" ") || "Not available";
 
     info.appendChild(title);
+    detail(info, "Customer", customer);
+    detail(info, "Submitted", formatDate(repair.date_submitted));
 
-    addDetail(
-        info,
-        "Customer",
-        customerName || "Not available"
-    );
-
-    addDetail(
-        info,
-        "Submitted",
-        formatDate(repair.date_submitted)
-    );
-
-    const badge = makeElement(
+    const badge = make(
         "span",
-        `tech-status ${normalizeStatus(repair.status).replace(/\s+/g, "-")}`,
+        `tw-badge ${statusOf(repair).replace(/\s+/g, "-")}`,
         repair.status || "Unknown"
     );
 
     top.append(info, badge);
     card.appendChild(top);
 
-    const actions = makeElement("div", "tech-actions");
+    const actions = make("div", "tw-actions");
 
-    const detailsBtn = makeElement(
-        "button",
-        "tech-btn secondary",
-        "View Details"
-    );
+    const detailsBtn = make("button", "tw-btn light", "Details");
     detailsBtn.type = "button";
 
-    const details = makeElement("div", "tech-details");
+    const detailsBox = make("div", "tw-expand");
+    detailsBox.hidden = true;
 
-    addDetail(
-        details,
-        "Repair ID",
-        repair.repair_id
-    );
-
-    addDetail(
-        details,
+    detail(detailsBox, "Repair ID", repair.repair_id);
+    detail(
+        detailsBox,
         "Device Type",
         repair.device_type || "Not specified"
     );
-
-    addDetail(
-        details,
+    detail(
+        detailsBox,
         "Problem",
         repair.problem_description || "Not specified"
     );
-
-    addDetail(
-        details,
-        "Status",
-        repair.status || "Unknown"
-    );
+    detail(detailsBox, "Status", repair.status || "Unknown");
 
     detailsBtn.addEventListener("click", () => {
-        const isOpen = details.classList.toggle("open");
-
-        detailsBtn.textContent = isOpen
-            ? "Hide Details"
-            : "View Details";
+        detailsBox.hidden = !detailsBox.hidden;
+        detailsBtn.textContent = detailsBox.hidden
+            ? "Details"
+            : "Hide Details";
     });
 
     actions.appendChild(detailsBtn);
 
     if (view === "repairs") {
-        const statusBtn = makeElement(
+        const statusBtn = make(
             "button",
-            "tech-btn secondary",
+            "tw-btn light",
             "Update Status"
         );
         statusBtn.type = "button";
 
-        const diagnosisBtn = makeElement(
+        const diagnosisBtn = make(
             "button",
-            "tech-btn",
+            "tw-btn",
             "Diagnosis"
         );
         diagnosisBtn.type = "button";
 
-        const statusEditor = makeElement(
-            "div",
-            "tech-status-editor"
-        );
+        const statusBox = make("div", "tw-expand");
+        statusBox.hidden = true;
 
-        statusEditor.style.display = "none";
+        addStatusEditor(statusBox, repair);
 
         statusBtn.addEventListener("click", () => {
-            const isHidden =
-                statusEditor.style.display === "none";
-
-            statusEditor.style.display =
-                isHidden ? "block" : "none";
+            statusBox.hidden = !statusBox.hidden;
         });
 
         diagnosisBtn.addEventListener("click", () => {
-            openDiagnosisSection(repair.repair_id);
+            openDiagnosis(repair.repair_id);
         });
 
         actions.append(statusBtn, diagnosisBtn);
+        card.append(actions, detailsBox, statusBox);
 
-        addStatusControls(statusEditor, repair);
-
-        card.append(actions, details, statusEditor);
     } else {
-        card.append(actions, details);
+        card.append(actions, detailsBox);
     }
 
     return card;
 }
 
-// =====================================
-// STATUS UPDATE
-// =====================================
-
-function addStatusControls(container, repair) {
-    const label = makeElement(
-        "label",
-        "",
-        "Change Repair Status"
-    );
-
+function addStatusEditor(container, repair) {
+    const label = make("label", "", "Change Repair Status");
     const select = document.createElement("select");
 
-    const statuses = [
-        "Pending",
-        "In Progress",
-        "Completed"
-    ];
+    const statuses = ["Pending", "In Progress", "Completed"];
 
     if (
         repair.status &&
@@ -389,51 +295,38 @@ function addStatusControls(container, repair) {
         statuses.push(repair.status);
     }
 
-    statuses.forEach(status => {
+    statuses.forEach(value => {
         const option = document.createElement("option");
-        option.value = status;
-        option.textContent = status;
+        option.value = value;
+        option.textContent = value;
         select.appendChild(option);
     });
 
     select.value = repair.status;
 
-    const saveBtn = makeElement(
-        "button",
-        "tech-btn",
-        "Save Status"
-    );
+    const saveBtn = make("button", "tw-btn", "Save Status");
     saveBtn.type = "button";
 
-    const message = makeElement("p");
-    message.setAttribute("role", "status");
-
-    if (normalizeStatus(repair.status) === "released") {
-        select.disabled = true;
-        saveBtn.disabled = true;
-        message.textContent = "This repair has been released.";
-    }
+    const feedback = make("p");
+    feedback.setAttribute("role", "status");
 
     saveBtn.addEventListener("click", async () => {
-        const newStatus = select.value;
-
-        if (newStatus === repair.status) {
-            message.textContent = "No changes to save.";
+        if (select.value === repair.status) {
+            feedback.textContent = "No changes to save.";
             return;
         }
 
         saveBtn.disabled = true;
         saveBtn.textContent = "Saving...";
-        message.textContent = "";
 
         try {
             const response = await fetch(
                 `${API_URL}/technician/${repair.repair_id}/status`,
                 {
                     method: "PUT",
-                    headers: authHeaders(),
+                    headers: headers(),
                     body: JSON.stringify({
-                        status: newStatus
+                        status: select.value
                     })
                 }
             );
@@ -442,20 +335,16 @@ function addStatusControls(container, repair) {
 
             if (!response.ok) {
                 throw new Error(
-                    data.message || "Unable to update status."
+                    data.message || "Unable to update repair status."
                 );
             }
 
             await displayRepairs(currentView);
-
-            setMessage(
-                "repairMessage",
-                "Repair status updated successfully."
-            );
+            message("repairMessage", "Repair status updated successfully.");
 
         } catch (error) {
-            message.textContent = error.message;
-            message.style.color = "#dc2626";
+            feedback.textContent = error.message;
+            feedback.style.color = "#dc2626";
 
         } finally {
             saveBtn.disabled = false;
@@ -463,84 +352,60 @@ function addStatusControls(container, repair) {
         }
     });
 
-    container.append(label, select, saveBtn, message);
+    container.append(label, select, saveBtn, feedback);
 }
 
-// =====================================
-// OPEN DIAGNOSIS
-// =====================================
+async function openDiagnosis(repairId) {
+    showDiagnosis(true);
 
-async function openDiagnosisSection(selectedRepairId = null) {
-    showSection("diagnosisSection");
-
-    const select = getElement("diagnosisRepair");
-
+    const select = el("diagnosisRepair");
     select.replaceChildren();
 
     const placeholder = document.createElement("option");
     placeholder.value = "";
-    placeholder.textContent = "Select an assigned repair";
+    placeholder.textContent = "Select a repair";
     select.appendChild(placeholder);
 
-    setMessage("diagnosisMessage", "");
+    message("diagnosisMessage", "");
 
     try {
-        const repairs = await fetchAssignedRepairs();
+        const repairs = await fetchRepairs();
 
         repairs.forEach(repair => {
             const option = document.createElement("option");
-
             option.value = repair.repair_id;
             option.textContent =
                 `#${repair.repair_id} - ` +
                 `${repair.brand || "Unknown"} ` +
-                `${repair.model || "Device"} ` +
-                `(${repair.status})`;
+                `${repair.model || "Device"}`;
 
             select.appendChild(option);
         });
 
-        if (selectedRepairId !== null) {
-            select.value = String(selectedRepairId);
-        }
-
-        if (repairs.length === 0) {
-            setMessage(
-                "diagnosisMessage",
-                "No assigned repairs available."
-            );
-        }
+        select.value = String(repairId);
 
     } catch (error) {
-        setMessage("diagnosisMessage", error.message, true);
+        message("diagnosisMessage", error.message, true);
     }
 
-    await loadSavedDiagnoses();
+    await loadDiagnoses();
 
-    getElement("diagnosisSection").scrollIntoView({
+    el("diagnosisSection").scrollIntoView({
         behavior: "smooth",
         block: "start"
     });
 }
 
-// =====================================
-// SAVE DIAGNOSIS
-// =====================================
-
 async function saveDiagnosis(event) {
     event.preventDefault();
 
-    const repairId = Number(getElement("diagnosisRepair").value);
-    const details = getElement("diagnosisDetails").value.trim();
-    const action = getElement("recommendedAction").value.trim();
-    const saveBtn = getElement("saveDiagnosisBtn");
+    const repairId = Number(el("diagnosisRepair").value);
+    const details = el("diagnosisDetails").value.trim();
+    const action = el("recommendedAction").value.trim();
+    const button = el("saveDiagnosisBtn");
 
-    if (
-        !Number.isSafeInteger(repairId) ||
-        repairId <= 0 ||
-        !details
-    ) {
-        setMessage(
+    if (!repairId || !details) {
+        message(
             "diagnosisMessage",
             "Select a repair and enter diagnosis details.",
             true
@@ -548,15 +413,15 @@ async function saveDiagnosis(event) {
         return;
     }
 
-    saveBtn.disabled = true;
-    saveBtn.textContent = "Saving...";
+    button.disabled = true;
+    button.textContent = "Saving...";
 
     try {
         const response = await fetch(
             `${TECHNICIAN_API}/diagnoses`,
             {
                 method: "POST",
-                headers: authHeaders(),
+                headers: headers(),
                 body: JSON.stringify({
                     repair_id: repairId,
                     diagnosis_details: details,
@@ -573,38 +438,30 @@ async function saveDiagnosis(event) {
             );
         }
 
-        getElement("diagnosisDetails").value = "";
-        getElement("recommendedAction").value = "";
+        el("diagnosisDetails").value = "";
+        el("recommendedAction").value = "";
 
-        setMessage(
-            "diagnosisMessage",
-            "Diagnosis saved successfully."
-        );
+        message("diagnosisMessage", "Diagnosis saved successfully.");
 
-        await loadSavedDiagnoses();
+        await loadDiagnoses();
 
     } catch (error) {
-        setMessage("diagnosisMessage", error.message, true);
+        message("diagnosisMessage", error.message, true);
 
     } finally {
-        saveBtn.disabled = false;
-        saveBtn.textContent = "Save Diagnosis";
+        button.disabled = false;
+        button.textContent = "Save Diagnosis";
     }
 }
 
-// =====================================
-// SAVED DIAGNOSES
-// =====================================
-
-async function loadSavedDiagnoses() {
-    const list = getElement("diagnosisList");
-
+async function loadDiagnoses() {
+    const list = el("diagnosisList");
     list.textContent = "Loading diagnoses...";
 
     try {
         const response = await fetch(
             `${TECHNICIAN_API}/diagnoses/mine`,
-            { headers: authHeaders() }
+            { headers: headers() }
         );
 
         const data = await response.json().catch(() => ({}));
@@ -621,39 +478,30 @@ async function loadSavedDiagnoses() {
 
         list.replaceChildren();
 
-        if (data.length === 0) {
+        if (!data.length) {
             list.textContent = "No diagnoses recorded yet.";
             return;
         }
 
         data.forEach(diagnosis => {
-            const card = makeElement(
-                "div",
-                "tech-repair-card"
+            const card = make("div", "tw-card");
+
+            card.appendChild(
+                make(
+                    "h4",
+                    "",
+                    `${diagnosis.brand || "Unknown"} ` +
+                    `${diagnosis.model || "Device"}`
+                )
             );
 
-            const title = makeElement(
-                "h4",
-                "",
-                `${diagnosis.brand || "Unknown"} ` +
-                `${diagnosis.model || "Device"}`
-            );
-
-            card.appendChild(title);
-
-            addDetail(
-                card,
-                "Diagnosis",
-                diagnosis.diagnosis_details
-            );
-
-            addDetail(
+            detail(card, "Diagnosis", diagnosis.diagnosis_details);
+            detail(
                 card,
                 "Recommended Action",
                 diagnosis.recommended_action || "None"
             );
-
-            addDetail(
+            detail(
                 card,
                 "Diagnosed",
                 formatDate(diagnosis.date_diagnosed)
@@ -663,18 +511,12 @@ async function loadSavedDiagnoses() {
         });
 
     } catch (error) {
-        console.error("Load diagnoses error:", error);
         list.textContent = error.message;
     }
 }
 
-// =====================================
-// LOGOUT
-// =====================================
-
 function logout() {
     localStorage.removeItem("fixtrack_token");
     localStorage.removeItem("fixtrack_user");
-
     window.location.href = "index.html";
 }
