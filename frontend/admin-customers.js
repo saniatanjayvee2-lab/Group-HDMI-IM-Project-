@@ -239,7 +239,6 @@
             group.append(wrapper);
         }
 
-        // NEW: REMOVE BUTTON
         const removeButton = node(
             "button",
             idKey === "phone_id"
@@ -300,112 +299,254 @@
 
     function details(customer) {
         const target = el("customer-details");
-
         target.replaceChildren();
 
-        const info = node("dl", undefined, "customer-info");
+        const display = value =>
+            value === undefined ||
+            value === null ||
+            value === ""
+                ? "Not provided"
+                : String(value);
 
-        const information = [
-            ["Customer ID", customer.user_id],
-            ["Full Name", fullName(customer)],
-            ["Email", customer.email],
-            [
-                "Contact Numbers",
-                (customer.phones || [])
-                    .map(phone =>
-                        `${phone.phone_number}${
-                            phone.type ? ` (${phone.type})` : ""
-                        }`
-                    )
-                    .join(", ") || "Not provided"
-            ],
-            ["Registered Date", date(customer.created_at)],
-            [
-                "Addresses",
-                (customer.addresses || [])
-                    .map(address =>
-                        [
-                            address.street_address,
-                            address.city,
-                            address.province,
-                            address.postal_code
-                        ].filter(Boolean).join(", ")
-                    )
-                    .join("; ") || "Not provided"
-            ]
-        ];
-
-        for (const [label, value] of information) {
-            info.append(
-                node("dt", label),
-                node("dd", String(value ?? ""))
+        function detailRow(parent, label, value) {
+            const row = node(
+                "div",
+                undefined,
+                "customer-detail-row"
             );
+
+            row.append(
+                node(
+                    "span",
+                    label,
+                    "customer-detail-label"
+                ),
+                node(
+                    "span",
+                    display(value),
+                    "customer-detail-value"
+                )
+            );
+
+            parent.append(row);
         }
 
-        target.append(info);
+        // CUSTOMER PROFILE
 
-        const sections = [
-            [
-                "Registered Devices",
-                customer.devices || [],
-                device =>
-                    `#${device.device_id} · ${
-                        [
-                            device.device_type,
-                            device.brand,
-                            device.model
-                        ].filter(Boolean).join(" ")
-                    } · Serial: ${
-                        device.serial_number || "Not provided"
-                    }${
-                        device.accessories_included
-                            ? ` · Accessories: ${device.accessories_included}`
-                            : ""
-                    }`
-            ],
-            [
-                "Repair Requests",
-                customer.repairs || [],
-                repair =>
-                    `#${repair.repair_id} · Device #${
-                        repair.device_id
-                    } ${
-                        [
-                            repair.brand,
-                            repair.model
-                        ].filter(Boolean).join(" ")
-                    } · ${repair.status} · ${
-                        repair.problem_description
-                    } · Submitted: ${
-                        date(repair.date_submitted)
-                    } · Completed: ${
-                        date(repair.date_completed)
-                    }`
-            ]
-        ];
+        const profile = node(
+            "section",
+            undefined,
+            "customer-profile-card"
+        );
 
-        for (const [title, records, format] of sections) {
+        detailRow(
+            profile,
+            "Customer ID",
+            customer.user_id
+        );
+
+        detailRow(
+            profile,
+            "Full Name",
+            fullName(customer)
+        );
+
+        detailRow(
+            profile,
+            "Email",
+            customer.email
+        );
+
+        detailRow(
+            profile,
+            "Contact Numbers",
+            (customer.phones || [])
+                .map(phone =>
+                    phone.phone_number +
+                    (phone.type ? ` (${phone.type})` : "")
+                )
+                .join(", ") || "Not provided"
+        );
+
+        detailRow(
+            profile,
+            "Registered Date",
+            date(customer.created_at)
+        );
+
+        detailRow(
+            profile,
+            "Addresses",
+            (customer.addresses || [])
+                .map(address =>
+                    [
+                        address.street_address,
+                        address.city,
+                        address.province,
+                        address.postal_code
+                    ].filter(Boolean).join(", ")
+                )
+                .join("; ") || "Not provided"
+        );
+
+        target.append(profile);
+
+        // REGISTERED DEVICES
+
+        const devices = customer.devices || [];
+
+        target.append(
+            node(
+                "h3",
+                `Registered Devices (${devices.length})`,
+                "customer-section-title"
+            )
+        );
+
+        if (!devices.length) {
             target.append(
-                node("h3", `${title} (${records.length})`)
+                node("p", "No registered devices found.")
+            );
+        }
+
+        devices.forEach(device => {
+            const card = node(
+                "article",
+                undefined,
+                "customer-record-card"
             );
 
-            if (!records.length) {
-                target.append(
-                    node(
-                        "p",
-                        `No ${title.toLowerCase()} found.`
-                    )
-                );
-            } else {
-                const list = node("ul");
+            card.append(
+                node(
+                    "h4",
+                    [device.brand, device.model]
+                        .filter(Boolean)
+                        .join(" ") || "Device",
+                    "customer-record-title"
+                )
+            );
 
-                records.forEach(record => {
-                    list.append(node("li", format(record)));
-                });
+            detailRow(
+                card,
+                "Device ID",
+                `#${device.device_id}`
+            );
 
-                target.append(list);
-            }
+            detailRow(
+                card,
+                "Device Type",
+                device.device_type
+            );
+
+            detailRow(
+                card,
+                "Serial Number",
+                device.serial_number
+            );
+
+            detailRow(
+                card,
+                "Accessories",
+                device.accessories_included
+            );
+
+            target.append(card);
+        });
+
+        // REPAIR REQUESTS
+
+        const repairs = customer.repairs || [];
+
+        target.append(
+            node(
+                "h3",
+                `Repair Requests (${repairs.length})`,
+                "customer-section-title"
+            )
+        );
+
+        if (!repairs.length) {
+            target.append(
+                node("p", "No repair requests found.")
+            );
         }
+
+        repairs.forEach(repair => {
+            const card = node(
+                "article",
+                undefined,
+                "customer-record-card"
+            );
+
+            const header = node(
+                "div",
+                undefined,
+                "customer-record-header"
+            );
+
+            header.append(
+                node(
+                    "h4",
+                    `Repair #${repair.repair_id}`,
+                    "customer-record-title"
+                )
+            );
+
+            const status = node(
+                "span",
+                display(repair.status),
+                "customer-status-badge"
+            );
+
+            const normalized = String(
+                repair.status || ""
+            ).toLowerCase();
+
+            status.classList.add(
+                normalized === "completed"
+                    ? "customer-status-completed"
+                    : normalized === "cancelled"
+                        ? "customer-status-cancelled"
+                        : "customer-status-pending"
+            );
+
+            header.append(status);
+            card.append(header);
+
+            detailRow(
+                card,
+                "Device ID",
+                `#${repair.device_id}`
+            );
+
+            detailRow(
+                card,
+                "Device",
+                [repair.brand, repair.model]
+                    .filter(Boolean)
+                    .join(" ")
+            );
+
+            detailRow(
+                card,
+                "Problem",
+                repair.problem_description
+            );
+
+            detailRow(
+                card,
+                "Submitted",
+                date(repair.date_submitted)
+            );
+
+            detailRow(
+                card,
+                "Completed",
+                date(repair.date_completed)
+            );
+
+            target.append(card);
+        });
     }
 
     // =====================================
@@ -431,18 +572,26 @@
             "Loading customer..."
         );
 
-        dialog.showModal();
+        if (!dialog.open) {
+            dialog.showModal();
+        }
 
         try {
             const customer = await request(`/${id}`);
 
-            if (version !== detailRequest || !dialog.open) {
+            if (
+                version !== detailRequest ||
+                !dialog.open
+            ) {
                 return;
             }
 
             selected = customer;
 
-            message(el("customer-dialog-message"), "");
+            message(
+                el("customer-dialog-message"),
+                ""
+            );
 
             if (mode === "view") {
                 details(customer);
@@ -492,8 +641,15 @@
         }
     }
 
-    el("customer-close").addEventListener("click", close);
-    el("customer-cancel").addEventListener("click", close);
+    el("customer-close").addEventListener(
+        "click",
+        close
+    );
+
+    el("customer-cancel").addEventListener(
+        "click",
+        close
+    );
 
     dialog.addEventListener("cancel", event => {
         if (saving) {
@@ -502,8 +658,6 @@
     });
 
     dialog.addEventListener("close", () => {
-        if (dialog.open) return;
-
         ++detailRequest;
         selected = null;
 
@@ -515,18 +669,66 @@
     });
 
     // =====================================
-    // BUTTON EVENTS
+    // ADD CONTACT NUMBER
     // =====================================
 
     el("customer-add-phone").addEventListener(
         "click",
-        () => addPhone()
+        () => {
+            if (saving || !selected || form.hidden) {
+                return;
+            }
+
+            addPhone();
+
+            const newest =
+                el("customer-phone-fields").lastElementChild;
+
+            if (newest) {
+                newest.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest"
+                });
+
+                newest.querySelector("input")?.focus({
+                    preventScroll: true
+                });
+            }
+        }
     );
+
+    // =====================================
+    // ADD ADDRESS
+    // =====================================
 
     el("customer-add-address").addEventListener(
         "click",
-        () => addAddress()
+        () => {
+            if (saving || !selected || form.hidden) {
+                return;
+            }
+
+            addAddress();
+
+            const newest =
+                el("customer-address-fields").lastElementChild;
+
+            if (newest) {
+                newest.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest"
+                });
+
+                newest.querySelector("input")?.focus({
+                    preventScroll: true
+                });
+            }
+        }
     );
+
+    // =====================================
+    // SEARCH AND REFRESH
+    // =====================================
 
     el("customer-search-form").addEventListener(
         "submit",
@@ -541,13 +743,16 @@
         () => load()
     );
 
-    el("customer-search").addEventListener("input", () => {
-        clearTimeout(searchTimer);
+    el("customer-search").addEventListener(
+        "input",
+        () => {
+            clearTimeout(searchTimer);
 
-        searchTimer = setTimeout(() => {
-            load();
-        }, 300);
-    });
+            searchTimer = setTimeout(() => {
+                load();
+            }, 300);
+        }
+    );
 
     // =====================================
     // COLLECT CONTACT INFORMATION
@@ -560,12 +765,16 @@
             const row = {};
 
             if (group.dataset.recordId) {
-                row[key] = Number(group.dataset.recordId);
+                row[key] = Number(
+                    group.dataset.recordId
+                );
             }
 
-            group.querySelectorAll("input").forEach(input => {
-                row[input.name] = input.value.trim();
-            });
+            group.querySelectorAll("input").forEach(
+                input => {
+                    row[input.name] = input.value.trim();
+                }
+            );
 
             return row;
         });
@@ -575,84 +784,87 @@
     // SAVE CUSTOMER CHANGES
     // =====================================
 
-    form.addEventListener("submit", async event => {
-        event.preventDefault();
+    form.addEventListener(
+        "submit",
+        async event => {
+            event.preventDefault();
 
-        if (
-            saving ||
-            !selected ||
-            !form.reportValidity()
-        ) {
-            return;
-        }
+            if (
+                saving ||
+                !selected ||
+                !form.reportValidity()
+            ) {
+                return;
+            }
 
-        const body = {};
+            const body = {};
 
-        for (const key of [
-            "first_name",
-            "middle_name",
-            "last_name",
-            "email"
-        ]) {
-            body[key] =
-                form.elements.namedItem(key).value.trim();
-        }
+            for (const key of [
+                "first_name",
+                "middle_name",
+                "last_name",
+                "email"
+            ]) {
+                body[key] =
+                    form.elements.namedItem(key).value.trim();
+            }
 
-        body.phones = collect(
-            el("customer-phone-fields"),
-            "phone_id"
-        );
-
-        body.addresses = collect(
-            el("customer-address-fields"),
-            "address_id"
-        );
-
-        saving = true;
-
-        const controls = [
-            ...form.querySelectorAll("input, button"),
-            el("customer-close")
-        ];
-
-        controls.forEach(control => {
-            control.disabled = true;
-        });
-
-        message(
-            el("customer-dialog-message"),
-            "Saving changes..."
-        );
-
-        try {
-            const result = await request(
-                `/${selected.user_id}`,
-                {
-                    method: "PUT",
-                    body: JSON.stringify(body)
-                }
+            body.phones = collect(
+                el("customer-phone-fields"),
+                "phone_id"
             );
 
-            saving = false;
-            dialog.close();
-
-            await load(result.message);
-
-        } catch (error) {
-            message(
-                el("customer-dialog-message"),
-                error.message,
-                true
+            body.addresses = collect(
+                el("customer-address-fields"),
+                "address_id"
             );
 
-        } finally {
-            saving = false;
+            saving = true;
+
+            const controls = [
+                ...form.querySelectorAll("input, button"),
+                el("customer-close")
+            ];
 
             controls.forEach(control => {
-                control.disabled = false;
+                control.disabled = true;
             });
+
+            message(
+                el("customer-dialog-message"),
+                "Saving changes..."
+            );
+
+            try {
+                const result = await request(
+                    `/${selected.user_id}`,
+                    {
+                        method: "PUT",
+                        body: JSON.stringify(body)
+                    }
+                );
+
+                saving = false;
+                dialog.close();
+
+                await load(result.message);
+
+            } catch (error) {
+                message(
+                    el("customer-dialog-message"),
+                    error.message,
+                    true
+                );
+
+            } finally {
+                saving = false;
+
+                controls.forEach(control => {
+                    control.disabled = false;
+                });
+            }
         }
-    });
+    );
 
     // =====================================
     // INITIAL LOAD
