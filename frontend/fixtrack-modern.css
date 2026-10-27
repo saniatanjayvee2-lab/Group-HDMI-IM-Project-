@@ -1,0 +1,47 @@
+/* FixTrack professional UI layer. Scope dashboard improvements to avoid disrupting forms. */
+:root{--ft-bg:#f4f7fc;--ft-panel:#fff;--ft-ink:#142238;--ft-muted:#64748b;--ft-blue:#2563eb;--ft-line:#e3eaf3;--ft-shadow:0 9px 30px rgba(25,48,78,.055)}
+body{background:var(--ft-bg);color:var(--ft-ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,a,input,select,textarea{font-family:inherit}
+button,a{transition:background-color .16s,color .16s,box-shadow .16s,transform .16s}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
+.dashboard-header{background:#0f1d33;padding:20px clamp(20px,5%,72px);box-shadow:0 3px 12px rgba(6,18,37,.09)}
+.dashboard-header h1{color:#fff;font-size:26px;font-weight:800;letter-spacing:-.75px}
+.dashboard-header p{color:#a9bedb;font-size:12px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase}
+.dashboard-header button,.dashboard-header a{border-radius:9px}
+.dashboard-container{max-width:1240px;margin:38px auto;padding:0 28px}
+.dashboard-welcome{border:1px solid #dce7fa;border-radius:20px;padding:32px 35px;background:linear-gradient(115deg,#fff 15%,#eef5ff 100%);box-shadow:var(--ft-shadow);margin-bottom:28px}
+.dashboard-welcome h2{font-size:clamp(25px,3vw,35px);font-weight:800;letter-spacing:-1.1px;color:#101d35}
+.dashboard-welcome p{font-size:15px;line-height:1.75;margin-top:8px}
+.dashboard-menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.dashboard-card{border:1px solid var(--ft-line);border-radius:16px;box-shadow:var(--ft-shadow);padding:26px;display:flex;flex-direction:column;min-height:214px;position:relative;overflow:hidden}
+.dashboard-card:before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:#2563eb}
+.dashboard-card:nth-child(2):before{background:#0d9488}.dashboard-card:nth-child(3):before{background:#8b5cf6}.dashboard-card:nth-child(4):before{background:#f59e0b}.dashboard-card:nth-child(5):before{background:#06b6d4}.dashboard-card:nth-child(6):before{background:#64748b}
+.dashboard-card:hover{box-shadow:0 13px 37px rgba(30,60,105,.11);transform:translateY(-2px)}
+.dashboard-card h3{font-size:19px;letter-spacing:-.5px;font-weight:750;margin-bottom:10px}
+.dashboard-card p{font-size:14px;line-height:1.65;flex:1;color:var(--ft-muted);margin-bottom:20px}
+.dashboard-card button{background:#eff5ff;color:#1755ba;font-weight:750;text-align:left;width:100%;border:1px solid #dbe8ff;padding:12px 16px;border-radius:10px}
+.dashboard-card button:hover{background:#2563eb;color:#fff}
+.ft-layout{min-height:100vh;display:grid;grid-template-columns:244px minmax(0,1fr)}
+.ft-sidebar{background:#101d32;color:#c7d5e8;padding:28px 15px;display:flex;flex-direction:column;gap:26px;position:sticky;top:0;height:100vh}
+.ft-logo{padding:0 13px;color:#fff;font-size:24px;font-weight:850;letter-spacing:-1px}
+.ft-logo span{color:#60a5fa}
+.ft-sidebar-caption{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:#7186a6;padding:0 12px 10px;font-weight:700}
+.ft-nav{display:grid;gap:5px}.ft-nav a{padding:12px 13px;color:#b8cae3;text-decoration:none;font-size:13px;border-radius:9px;font-weight:600}.ft-nav a:hover,.ft-nav a[aria-current=page]{background:#253953;color:#fff}
+.ft-sidebar-foot{margin-top:auto;padding:16px 12px;color:#8194ae;font-size:12px;border-top:1px solid #263751;line-height:1.65}
+.ft-main{min-width:0}.ft-main .dashboard-header{background:#fff;border-bottom:1px solid var(--ft-line);box-shadow:none;padding:22px 36px;color:var(--ft-ink)}
+.ft-main .dashboard-header h1{color:#16253c;font-size:20px}.ft-main .dashboard-header p{color:#64748b}
+.ft-main .dashboard-header #logoutBtn{background:#eff3fa;color:#35445c;border:1px solid var(--ft-line)}
+.ft-main .dashboard-header #logoutBtn:hover{background:#fef2f2;color:#b91c1c}
+.ft-main .dashboard-container{padding:0 34px;margin:32px auto;max-width:1350px}
+.ft-eyebrow{color:#2563eb;letter-spacing:1.4px;text-transform:uppercase;font-weight:800;font-size:11px;margin-bottom:12px}
+.ft-quick-note{margin-bottom:20px;color:#64748b;font-size:13px}
+.auth-container .brand-section{background:radial-gradient(circle at 10% 15%,#194575 0%,#101e35 58%,#091426 100%)}
+.auth-container .brand-section h1{color:#fff;letter-spacing:-2px;font-weight:800}
+.auth-container .brand-section h2{font-weight:650;line-height:1.3}
+.auth-container .auth-box{border-radius:20px;border:1px solid #e4eaf5;box-shadow:0 20px 60px rgba(20,40,75,.09)}
+.auth-container .auth-box h2{letter-spacing:-.9px;font-weight:800}
+.auth-container form input{border-radius:10px}
+.auth-container form button[type=submit]{border-radius:10px}
+@media(max-width:1150px){.dashboard-menu{grid-template-columns:repeat(2,minmax(0,1fr))}.ft-layout{grid-template-columns:210px minmax(0,1fr)}}
+@media(max-width:780px){.ft-layout{display:block}.ft-sidebar{position:static;height:auto;gap:12px;padding:17px}.ft-logo{font-size:22px}.ft-sidebar-caption,.ft-sidebar-foot{display:none}.ft-nav{display:flex;overflow-x:auto;gap:6px}.ft-nav a{white-space:nowrap;padding:10px 12px}.ft-main .dashboard-header{padding:18px 22px}.ft-main .dashboard-container{padding:0 18px;margin:24px auto}.dashboard-container{padding:0 18px}.dashboard-welcome{padding:26px}.dashboard-menu{grid-template-columns:1fr}.dashboard-card{min-height:190px}}
+@media(prefers-reduced-motion:reduce){button,a,.dashboard-card{transition:none!important;transform:none!important}}
