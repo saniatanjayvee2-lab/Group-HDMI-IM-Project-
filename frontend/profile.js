@@ -102,7 +102,7 @@ function drawPhones() {
 
     if (!phones.length) {
         phonesList.appendChild(
-            element("p", "empty", "No phone numbers added.")
+            element("p", "empty", "No contact number yet. Select Edit Profile to add one.")
         );
         return;
     }
@@ -111,10 +111,10 @@ function drawPhones() {
         const card = element("div", "entry");
 
         card.appendChild(
-            element("div", "entry-title", `Phone ${index + 1}`)
+            element("div", "entry-title", `Contact Number ${index + 1}`)
         );
 
-        const grid = element("div", "grid two");
+        const grid = element("div", "profile-phone-fields");
 
         grid.appendChild(createInput(
             "Phone Number",
@@ -123,12 +123,7 @@ function drawPhones() {
             30
         ));
 
-        grid.appendChild(createInput(
-            "Type (Mobile, Home, etc.)",
-            phone.type,
-            value => phone.type = value,
-            50
-        ));
+        // Preserve the saved phone type in data, without displaying an unnecessary field.
 
         card.appendChild(grid);
 
@@ -153,7 +148,7 @@ function drawAddresses() {
 
     if (!addresses.length) {
         addressesList.appendChild(
-            element("p", "empty", "No addresses added.")
+            element("p", "empty", "No saved address yet. Select Edit Profile to add one.")
         );
         return;
     }

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FixTrack | My Profile</title>
-  <link rel="stylesheet" href="style.css?v=profile-ui-2">
+  <link rel="stylesheet" href="style.css?v=profile-ui-3">
 </head>
 <body class="customer-profile-page">
   <header class="dashboard-header">
@@ -13,22 +13,22 @@
   </header>
   <main class="customer-profile-layout">
     <div class="profile-intro">
-      <div class="profile-intro-icon" aria-hidden="true">👤</div>
+      <div class="profile-intro-icon" aria-hidden="true"><span>FT</span></div>
       <div class="profile-intro-copy">
-        <p class="profile-eyebrow">MY ACCOUNT</p>
-        <h2>Profile Settings</h2>
-        <p>Manage your personal details, phone numbers, and saved addresses.</p>
+        <p class="profile-eyebrow">ACCOUNT CENTER / CUSTOMER</p>
+        <h2>Account Profile</h2>
+        <p>Your information in one secure place. View your details or update them whenever needed.</p>
       </div>
       <div class="profile-edit-toolbar">
-        <button id="edit-profile-btn" type="button" disabled>Edit Profile</button>
+        <button id="edit-profile-btn" type="button" disabled>✎ Edit Profile</button>
       </div>
     </div>
     <p id="message" role="status" aria-live="polite"></p>
     <form id="profile-form" autocomplete="on">
-      <section class="customer-profile-panel" aria-labelledby="personal-heading">
+      <section class="customer-profile-panel" aria-labelledby="personal-heading"><div class="profile-card-topline"></div>
         <div class="profile-card-title">
           <span class="profile-card-icon" aria-hidden="true">01</span>
-          <div><h3 id="personal-heading">Personal Information</h3><p>Basic information associated with your account.</p></div>
+          <div><h3 id="personal-heading">Personal Information</h3><p>Your name, email address and account access.</p></div>
         </div>
         <div class="profile-field-grid">
           <label for="first_name">First Name <input id="first_name" name="first_name" type="text" maxlength="100" autocomplete="given-name" required readonly></label>
@@ -38,16 +38,16 @@
           <label for="role" class="profile-role-field">Account Role <input id="role" name="role" type="text" value="Customer" readonly aria-readonly="true"><small>Your account role cannot be changed here.</small></label>
         </div>
       </section>
-      <section class="customer-profile-panel" aria-labelledby="phone-heading">
+      <section class="customer-profile-panel" aria-labelledby="phone-heading"><div class="profile-card-topline"></div>
         <div class="profile-section-heading">
-          <div class="profile-card-title"><span class="profile-card-icon" aria-hidden="true">02</span><div><h3 id="phone-heading">Contact Numbers</h3><p>Phone numbers we can use for repair updates.</p></div></div>
+          <div class="profile-card-title"><span class="profile-card-icon" aria-hidden="true">02</span><div><h3 id="phone-heading">Contact Numbers</h3><p>The contact number used for service updates.</p></div></div>
           <button type="button" id="add-phone" hidden>+ Add Phone</button>
         </div>
         <div id="phones-list" aria-live="polite"></div>
       </section>
-      <section class="customer-profile-panel" aria-labelledby="address-heading">
+      <section class="customer-profile-panel" aria-labelledby="address-heading"><div class="profile-card-topline"></div>
         <div class="profile-section-heading">
-          <div class="profile-card-title"><span class="profile-card-icon" aria-hidden="true">03</span><div><h3 id="address-heading">Saved Addresses</h3><p>Manage your address details and choose a primary address.</p></div></div>
+          <div class="profile-card-title"><span class="profile-card-icon" aria-hidden="true">03</span><div><h3 id="address-heading">Saved Addresses</h3><p>Your saved location and preferred primary address.</p></div></div>
           <button type="button" id="add-address" hidden>+ Add Address</button>
         </div>
         <div id="addresses-list" aria-live="polite"></div>
@@ -58,6 +58,6 @@
       </div>
     </form>
   </main>
-  <script src="profile.js?v=profile-ui-2"></script>
+  <script src="profile.js?v=profile-ui-3"></script>
 </body>
 </html>
