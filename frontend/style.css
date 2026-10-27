@@ -5503,3 +5503,22 @@ body.admin-repairs-page {
         padding: 12px 17px;
     }
 }
+
+/* CUSTOMER PROFILE READ-ONLY MODE */
+
+#profile-form [hidden],
+.profile-edit-toolbar [hidden] {
+    display: none !important;
+}
+
+#profile-form input[readonly] {
+    background: #f8fafc;
+    color: #334155;
+    cursor: default;
+}
+
+#profile-form input:disabled {
+    background: #f8fafc;
+    color: #334155;
+    cursor: default;
+}
