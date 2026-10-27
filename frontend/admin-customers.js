@@ -38,6 +38,9 @@
     let returnFocus = null;
     let searchTimer;
 
+    // Custom validation handles collapsed fields.
+    form.noValidate = true;
+
     const fullName = customer =>
         [
             customer.first_name,
@@ -45,27 +48,32 @@
             customer.last_name
         ].filter(Boolean).join(" ");
 
-    const date = value =>
-        value
-            ? new Date(value).toLocaleDateString()
-            : "Not provided";
+    const date = value => {
+        if (!value) return "Not provided";
 
-    function node(tag, text, className) {
-        const item = document.createElement(tag);
+        const parsed = new Date(value);
 
-        if (text !== undefined) {
-            item.textContent = text;
+        return Number.isNaN(parsed.getTime())
+            ? "Not provided"
+            : parsed.toLocaleDateString();
+    };
+
+    function node(tag, content, className) {
+        const element = document.createElement(tag);
+
+        if (content !== undefined) {
+            element.textContent = content;
         }
 
         if (className) {
-            item.className = className;
+            element.className = className;
         }
 
-        return item;
+        return element;
     }
 
-    function message(target, text, error = false) {
-        target.textContent = text;
+    function message(target, content, error = false) {
+        target.textContent = content;
         target.classList.toggle("customer-error", error);
     }
 
@@ -74,7 +82,8 @@
             ...options,
             headers: {
                 Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                ...(options.headers || {})
             }
         });
 
@@ -83,30 +92,28 @@
         try {
             data = await response.json();
         } catch {
-            throw new Error(
-                "Unexpected server response. Please try again."
-            );
+            throw new Error("Unexpected server response.");
         }
 
         if (!response.ok) {
             throw new Error(
-                data.message || "Unable to complete the request."
+                data.message || "Unable to complete request."
             );
         }
 
         return data;
     }
 
-    // =====================================
-    // CUSTOMER LIST
-    // =====================================
+    // ==========================================
+    // CUSTOMER TABLE
+    // ==========================================
 
     async function load(success = "") {
         const version = ++listRequest;
-        const rows = el("customer-rows");
+        const tbody = el("customer-rows");
 
-        rows.replaceChildren();
-        rows.setAttribute("aria-busy", "true");
+        tbody.replaceChildren();
+        tbody.setAttribute("aria-busy", "true");
 
         message(el("customer-message"), "Loading customers...");
 
@@ -120,7 +127,7 @@
             if (version !== listRequest) return;
 
             for (const customer of customers) {
-                const row = node("tr");
+                const tr = node("tr");
 
                 const values = [
                     customer.user_id,
@@ -133,7 +140,7 @@
                 ];
 
                 values.forEach(value => {
-                    row.append(node("td", String(value ?? "")));
+                    tr.append(node("td", String(value ?? "")));
                 });
 
                 const actions = node("td");
@@ -143,8 +150,8 @@
                     ["Edit", "edit"]
                 ]) {
                     const button = node("button", label);
-                    button.type = "button";
 
+                    button.type = "button";
                     button.setAttribute(
                         "aria-label",
                         `${label}: ${fullName(customer)}`
@@ -157,8 +164,8 @@
                     actions.append(button);
                 }
 
-                row.append(actions);
-                rows.append(row);
+                tr.append(actions);
+                tbody.append(tr);
             }
 
             message(
@@ -169,7 +176,6 @@
                         : "No customers found."
                 }`
             );
-
         } catch (error) {
             if (version === listRequest) {
                 message(
@@ -180,79 +186,149 @@
             }
         } finally {
             if (version === listRequest) {
-                rows.removeAttribute("aria-busy");
+                tbody.removeAttribute("aria-busy");
             }
         }
     }
 
-    // =====================================
-    // COMPACT CONTACT AND ADDRESS CARDS
-    // =====================================
+    // ==========================================
+    // MODERN EDITABLE CONTACT CARDS
+    // ==========================================
 
-    const phoneDefinitions = [
+    const phoneFields = [
         ["phone_number", "Contact Number", 30, true],
         ["type", "Type (optional)", 50, false]
     ];
 
-    const addressDefinitions = [
+    const addressFields = [
         ["street_address", "Street Address", 255, false],
         ["city", "City", 100, false],
         ["province", "Province", 100, false],
         ["postal_code", "Postal Code", 20, false]
     ];
 
-    function fieldset(container, row, definitions, idKey) {
-        const isPhone = idKey === "phone_id";
-        const existing = row[idKey] != null;
+    function makeIcon(name) {
+        const icons = {
+            edit: "✎",
+            remove: "×",
+            phone: "☎",
+            address: "⌖"
+        };
 
-        const group = node(
+        const span = node(
+            "span",
+            icons[name] || "",
+            "customer-ui-icon"
+        );
+
+        span.setAttribute("aria-hidden", "true");
+
+        return span;
+    }
+
+    function makeAction(label, iconName, className) {
+        const button = node(
+            "button",
+            undefined,
+            className
+        );
+
+        button.type = "button";
+        button.title = label;
+        button.setAttribute("aria-label", label);
+
+        button.append(makeIcon(iconName));
+
+        return button;
+    }
+
+    function makeContactCard(
+        container,
+        data,
+        definitions,
+        idKey
+    ) {
+        const isPhone = idKey === "phone_id";
+        const existing = data[idKey] != null;
+
+        const card = node(
             "fieldset",
             undefined,
-            "customer-contact-group customer-compact-group"
+            "customer-modern-card"
         );
 
         if (existing) {
-            group.dataset.recordId = String(row[idKey]);
+            card.dataset.recordId = String(data[idKey]);
         }
 
         const header = node(
             "div",
             undefined,
-            "customer-compact-header"
+            "customer-modern-card-header"
+        );
+
+        const identity = node(
+            "div",
+            undefined,
+            "customer-modern-card-identity"
+        );
+
+        const symbol = node(
+            "span",
+            undefined,
+            "customer-modern-card-symbol"
+        );
+
+        symbol.append(
+            makeIcon(isPhone ? "phone" : "address")
         );
 
         const summary = node(
             "div",
-            "",
-            "customer-compact-summary"
+            undefined,
+            "customer-modern-card-summary"
         );
+
+        const primary = node(
+            "div",
+            "",
+            "customer-modern-card-primary"
+        );
+
+        const secondary = node(
+            "div",
+            "",
+            "customer-modern-card-secondary"
+        );
+
+        summary.append(primary, secondary);
+        identity.append(symbol, summary);
 
         const actions = node(
             "div",
             undefined,
-            "customer-compact-actions"
+            "customer-modern-card-actions"
         );
 
-        const editButton = node(
-            "button",
-            existing ? "Edit" : "Collapse",
-            "customer-compact-edit"
+        const editButton = makeAction(
+            "Edit",
+            "edit",
+            "customer-modern-icon-button"
         );
 
-        editButton.type = "button";
-
-        const removeButton = node(
-            "button",
+        const removeButton = makeAction(
             "Remove",
-            "customer-compact-remove"
+            "remove",
+            "customer-modern-icon-button customer-modern-delete"
         );
 
-        removeButton.type = "button";
+        actions.append(editButton, removeButton);
+        header.append(identity, actions);
 
         const fields = node(
             "div",
             undefined,
-            "customer-compact-fields"
+            "customer-modern-card-fields"
         );
 
         const inputs = {};
@@ -264,7 +340,8 @@
             input.name = name;
             input.maxLength = max;
             input.required = Boolean(required);
-            input.value = row[name] || "";
+            input.value = data[name] || "";
+            input.autocomplete = "off";
 
             if (name === "phone_number") {
                 input.type = "tel";
@@ -276,41 +353,65 @@
             fields.append(wrapper);
         }
 
+        const fieldActions = node(
+            "div",
+            undefined,
+            "customer-modern-field-actions"
+        );
+
+        const doneButton = node(
+            "button",
+            "Done",
+            "customer-modern-done"
+        );
+
+        doneButton.type = "button";
+        fieldActions.append(doneButton);
+        fields.append(fieldActions);
+
         function updateSummary() {
             if (isPhone) {
-                const number =
+                primary.textContent =
                     inputs.phone_number.value.trim() ||
                     "New Contact Number";
 
-                const type = inputs.type.value.trim();
-
-                summary.textContent = type
-                    ? `${number} (${type})`
-                    : number;
+                secondary.textContent =
+                    inputs.type.value.trim() || "";
             } else {
-                const address = [
-                    inputs.street_address.value.trim(),
+                const street =
+                    inputs.street_address.value.trim();
+
+                const rest = [
                     inputs.city.value.trim(),
                     inputs.province.value.trim(),
                     inputs.postal_code.value.trim()
                 ].filter(Boolean).join(", ");
 
-                summary.textContent =
-                    address || "New Address";
+                primary.textContent =
+                    street || rest || "New Address";
+
+                secondary.textContent =
+                    street ? rest : "";
             }
         }
 
-        function setExpanded(expanded) {
-            fields.hidden = !expanded;
-            group.classList.toggle(
-                "customer-expanded",
-                expanded
+        function expand(open, focus = true) {
+            fields.hidden = !open;
+            card.classList.toggle(
+                "customer-modern-expanded",
+                open
             );
 
-            editButton.textContent =
-                expanded ? "Done" : "Edit";
+            editButton.setAttribute(
+                "aria-expanded",
+                String(open)
+            );
 
-            if (expanded) {
+            editButton.title = open
+                ? "Close editor"
+                : "Edit";
+
+            if (open && focus) {
                 fields.querySelector("input")?.focus();
             }
         }
@@ -318,29 +419,34 @@
         editButton.addEventListener("click", () => {
             if (saving) return;
 
-            setExpanded(fields.hidden);
+            expand(fields.hidden);
+        });
+
+        doneButton.addEventListener("click", () => {
+            if (saving) return;
+
+            for (const input of Object.values(inputs)) {
+                if (!input.checkValidity()) {
+                    input.reportValidity();
+                    input.focus();
+                    return;
+                }
+            }
+
+            updateSummary();
+            expand(false, false);
         });
 
         removeButton.addEventListener("click", () => {
             if (saving) return;
 
-            const label = isPhone
-                ? "contact number"
-                : "address";
-
-            if (
-                !window.confirm(
-                    `Remove this ${label}? Click Save Changes to confirm the change.`
-                )
-            ) {
-                return;
-            }
-
-            group.remove();
+            // Only removes it from the form.
+            // Database changes happen on Save Changes.
+            card.remove();
 
             message(
                 el("customer-dialog-message"),
-                `${label} removed from the form. Click Save Changes to apply.`
+                "Unsaved changes. Click Save Changes to apply."
             );
         });
 
@@ -348,43 +454,49 @@
             input.addEventListener("input", updateSummary);
         }
 
-        actions.append(editButton, removeButton);
-        header.append(summary, actions);
-        group.append(header, fields);
-        container.append(group);
+        card.append(header, fields);
+        container.append(card);
 
         updateSummary();
-        setExpanded(!existing);
+        expand(!existing, false);
 
         if (!existing) {
-            group.scrollIntoView({
-                behavior: "smooth",
-                block: "nearest"
+            requestAnimationFrame(() => {
+                card.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest"
+                });
+
+                fields.querySelector("input")?.focus({
+                    preventScroll: true
+                });
             });
         }
+
+        return card;
     }
 
-    function addPhone(row = {}) {
-        fieldset(
+    function addPhone(data = {}) {
+        return makeContactCard(
             el("customer-phone-fields"),
-            row,
-            phoneDefinitions,
+            data,
+            phoneFields,
             "phone_id"
         );
     }
 
-    function addAddress(row = {}) {
-        fieldset(
+    function addAddress(data = {}) {
+        return makeContactCard(
             el("customer-address-fields"),
-            row,
-            addressDefinitions,
+            data,
+            addressFields,
             "address_id"
         );
     }
 
-    // =====================================
+    // ==========================================
     // CUSTOMER DETAILS
-    // =====================================
+    // ==========================================
 
     function details(customer) {
         const target = el("customer-details");
@@ -582,31 +694,17 @@
                     .join(" ")
             );
 
-            detailRow(
-                card,
-                "Problem",
-                repair.problem_description
-            );
-
-            detailRow(
-                card,
-                "Submitted",
-                date(repair.date_submitted)
-            );
-
-            detailRow(
-                card,
-                "Completed",
-                date(repair.date_completed)
-            );
+            detailRow(card, "Problem", repair.problem_description);
+            detailRow(card, "Submitted", date(repair.date_submitted));
+            detailRow(card, "Completed", date(repair.date_completed));
 
             target.append(card);
         });
     }
 
-    // =====================================
+    // ==========================================
     // OPEN CUSTOMER
-    // =====================================
+    // ==========================================
 
     async function openCustomer(id, mode, trigger) {
         const version = ++detailRequest;
@@ -681,9 +779,9 @@
         }
     }
 
-    // =====================================
-    // CLOSE DIALOG
-    // =====================================
+    // ==========================================
+    // CLOSE / CANCEL
+    // ==========================================
 
     function close() {
         if (!saving) {
@@ -704,6 +802,11 @@
         ++detailRequest;
         selected = null;
 
+        // Discard all unsaved form changes.
+        form.reset();
+        el("customer-phone-fields").replaceChildren();
+        el("customer-address-fields").replaceChildren();
+
         if (returnFocus?.isConnected) {
             returnFocus.focus();
         } else {
@@ -711,23 +814,25 @@
         }
     });
 
-    // =====================================
+    // ==========================================
     // ADD BUTTONS
-    // =====================================
+    // ==========================================
 
     el("customer-add-phone").addEventListener("click", () => {
         if (saving || !selected || form.hidden) return;
+
         addPhone();
     });
 
     el("customer-add-address").addEventListener("click", () => {
         if (saving || !selected || form.hidden) return;
+
         addAddress();
     });
 
-    // =====================================
-    // SEARCH AND REFRESH
-    // =====================================
+    // ==========================================
+    // SEARCH / REFRESH
+    // ==========================================
 
     el("customer-search-form").addEventListener(
         "submit",
@@ -750,21 +855,21 @@
         }, 300);
     });
 
-    // =====================================
-    // COLLECT CONTACT INFORMATION
-    // =====================================
+    // ==========================================
+    // COLLECT PHONE / ADDRESS DATA
+    // ==========================================
 
     function collect(container, key) {
         return Array.from(
-            container.querySelectorAll("fieldset")
-        ).map(group => {
+            container.querySelectorAll(".customer-modern-card")
+        ).map(card => {
             const row = {};
 
-            if (group.dataset.recordId) {
-                row[key] = Number(group.dataset.recordId);
+            if (card.dataset.recordId) {
+                row[key] = Number(card.dataset.recordId);
             }
 
-            group.querySelectorAll("input").forEach(input => {
+            card.querySelectorAll("input").forEach(input => {
                 row[input.name] = input.value.trim();
             });
 
@@ -772,37 +877,50 @@
         });
     }
 
-    // =====================================
-    // SAVE CUSTOMER CHANGES
-    // =====================================
+    // ==========================================
+    // FORM VALIDATION
+    // ==========================================
 
-    form.addEventListener("submit", async event => {
-        event.preventDefault();
+    function validateForm() {
+        const inputs = form.querySelectorAll("input");
 
-        if (saving || !selected) {
-            return;
-        }
-
-        // Expand any collapsed group containing invalid fields
-        for (const input of form.querySelectorAll("input")) {
+        for (const input of inputs) {
             if (!input.checkValidity()) {
-                const group = input.closest(
-                    ".customer-compact-group"
+                const card = input.closest(
+                    ".customer-modern-card"
                 );
 
-                if (group) {
-                    group.querySelector(
-                        ".customer-compact-fields"
-                    ).hidden = false;
+                if (card) {
+                    const fields = card.querySelector(
+                        ".customer-modern-card-fields"
+                    );
 
-                    group.classList.add("customer-expanded");
+                    fields.hidden = false;
+                    card.classList.add(
+                        "customer-modern-expanded"
+                    );
                 }
 
                 input.focus();
                 input.reportValidity();
-                return;
+
+                return false;
             }
         }
+
+        return true;
+    }
+
+    // ==========================================
+    // SAVE CUSTOMER
+    // ==========================================
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        if (saving || !selected) return;
+
+        if (!validateForm()) return;
 
         const body = {};
 
