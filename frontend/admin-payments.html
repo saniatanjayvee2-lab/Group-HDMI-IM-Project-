@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixTrack | Payment History</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin-payments.css">
+</head>
+<body class="admin-payments-page">
+
+    <header class="dashboard-header">
+        <div>
+            <h1>FixTrack</h1>
+            <p>Admin / Payment Management</p>
+        </div>
+
+        <button
+            type="button"
+            onclick="window.location.href='admin-dashboard.html'">
+            Back to Dashboard
+        </button>
+    </header>
+
+    <main class="payments-dashboard">
+        <section class="payments-heading">
+            <div>
+                <h2>Payments & Transactions</h2>
+                <p>Monitor repair payments and transaction history.</p>
+            </div>
+            <button type="button" id="refreshPayments">
+                Refresh
+            </button>
+        </section>
+
+        <section class="payments-stat-grid">
+            <div class="payments-stat">
+                <span>Total Collected</span>
+                <strong id="totalCollected">₱0.00</strong>
+            </div>
+
+            <div class="payments-stat">
+                <span>Total Outstanding</span>
+                <strong id="totalOutstanding">₱0.00</strong>
+            </div>
+
+            <div class="payments-stat">
+                <span>Completed Transactions</span>
+                <strong id="transactionCount">0</strong>
+            </div>
+        </section>
+
+        <section class="payments-panel">
+            <div class="payments-panel-heading">
+                <h3>Transaction History</h3>
+                <input
+                    type="search"
+                    id="paymentSearch"
+                    placeholder="Search repair, method, or status"
+                    aria-label="Search payments">
+            </div>
+
+            <p id="paymentsMessage" role="status">
+                Loading payments...
+            </p>
+
+            <div class="payments-table-scroll">
+                <table class="payments-table">
+                    <thead>
+                        <tr>
+                            <th>Transaction</th>
+                            <th>Repair ID</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentHistoryBody"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="admin-payments.js"></script>
+</body>
+</html>
