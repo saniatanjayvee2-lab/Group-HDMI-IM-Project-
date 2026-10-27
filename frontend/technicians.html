@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,11 +7,12 @@
 
     <title>FixTrack | Manage Technicians</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 
 <body>
 
+    <!-- HEADER -->
     <header class="dashboard-header">
 
         <div>
@@ -27,30 +29,28 @@
 
     </header>
 
-
+    <!-- MAIN CONTENT -->
     <main class="dashboard-container">
 
+        <!-- PAGE HEADING -->
         <section class="dashboard-welcome">
 
             <h2>Manage Technicians</h2>
 
             <p>
-                Create technician accounts and manage
-                your repair team.
+                Create technician accounts, edit technician
+                information, and manage your repair team.
             </p>
 
         </section>
 
-
+        <!-- TECHNICIAN MANAGEMENT -->
         <section class="device-section">
 
-
             <!-- ADD TECHNICIAN -->
-
             <div class="device-form-card">
 
                 <h3>Add Technician</h3>
-
 
                 <form id="technician-form">
 
@@ -61,9 +61,9 @@
                     <input
                         type="text"
                         id="tech-first-name"
+                        maxlength="100"
                         required
                     >
-
 
                     <label for="tech-middle-name">
                         Middle Name
@@ -72,8 +72,8 @@
                     <input
                         type="text"
                         id="tech-middle-name"
+                        maxlength="100"
                     >
-
 
                     <label for="tech-last-name">
                         Last Name
@@ -82,9 +82,9 @@
                     <input
                         type="text"
                         id="tech-last-name"
+                        maxlength="100"
                         required
                     >
-
 
                     <label for="tech-email">
                         Email
@@ -93,9 +93,9 @@
                     <input
                         type="email"
                         id="tech-email"
+                        maxlength="255"
                         required
                     >
-
 
                     <label for="tech-password">
                         Temporary Password
@@ -108,11 +108,9 @@
                         required
                     >
 
-
                     <button type="submit">
                         Add Technician
                     </button>
-
 
                     <p id="technician-message"></p>
 
@@ -120,18 +118,21 @@
 
             </div>
 
-
             <!-- TECHNICIAN LIST -->
-
             <div class="device-list-card">
 
                 <h3>Technicians</h3>
 
+                <p>
+                    View technician accounts and use
+                    Edit or Remove to manage your team.
+                </p>
+
+                <p id="technician-action-message"></p>
+
                 <div id="technician-list">
 
-                    <p>
-                        Loading technicians...
-                    </p>
+                    <p>Loading technicians...</p>
 
                 </div>
 
@@ -141,8 +142,11 @@
 
     </main>
 
+    <!-- EXISTING ADD TECHNICIAN FUNCTIONALITY -->
+    <script src="technicians.js?v=3"></script>
 
-    <script src="technicians.js"></script>
+    <!-- NEW EDIT AND REMOVE FUNCTIONALITY -->
+    <script src="admin-technicians.js?v=3" defer></script>
 
 </body>
 </html>
