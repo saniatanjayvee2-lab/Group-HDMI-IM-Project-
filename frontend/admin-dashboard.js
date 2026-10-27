@@ -56,49 +56,36 @@ function initializeAdminDashboard() {
     const reportsBtn =
         document.getElementById("viewReportsBtn");
 
-    // =====================================
     // DISPLAY ADMIN NAME
-    // =====================================
-
     if (welcomeUser) {
         welcomeUser.textContent =
             `Welcome, ${currentUser.first_name}!`;
     }
 
-    // =====================================
     // LOGOUT
-    // =====================================
-
     if (logoutBtn) {
         logoutBtn.addEventListener("click", logout);
     }
 
-    // =====================================
     // CUSTOMER MANAGEMENT
-    // =====================================
-
     if (customersBtn) {
         customersBtn.addEventListener("click", () => {
-            alert(
-                "Customer Management will be implemented next."
+            window.location.assign(
+                customersBtn.dataset.customerUrl || "admin-customers.html"
             );
         });
     }
 
-    // =====================================
-    // PAYMENT MANAGEMENT
-    // =====================================
-
+    // PAYMENTS - NOT IMPLEMENTED YET
     if (paymentsBtn) {
         paymentsBtn.addEventListener("click", () => {
-            window.location.href = "admin-payments.html";
+            alert(
+                "Payment Management is not available yet."
+            );
         });
     }
 
-    // =====================================
-    // REPORTS
-    // =====================================
-
+    // REPORTS - NOT IMPLEMENTED YET
     if (reportsBtn) {
         reportsBtn.addEventListener("click", () => {
             alert(

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixTrack | Manage Customers</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="customer-management">
+    <header class="dashboard-header">
+        <div><h1>FixTrack</h1><p>Administrator Panel</p></div>
+        <a class="customer-button" href="admin-dashboard.html">Back to Dashboard</a>
+    </header>
+    <main class="dashboard-container">
+        <section class="dashboard-welcome"><h2>Manage Customers</h2><p>View customer accounts, update contact information, and check devices and repairs.</p></section>
+        <section class="customer-panel" aria-label="Registered customers">
+            <form id="customer-search-form" class="customer-toolbar" role="search">
+                <div><label for="customer-search">Search by name or email</label><input id="customer-search" type="search" maxlength="255" placeholder="Name or email"></div>
+                <button type="submit">Search</button><button type="button" id="customer-refresh">Refresh</button>
+            </form>
+            <p id="customer-message" role="status" aria-live="polite"></p>
+            <div class="customer-table-wrap" tabindex="0" role="region" aria-label="Customer table, scroll horizontally on small screens">
+                <table class="customer-table"><caption class="customer-sr-only">Registered customer accounts</caption>
+                    <thead><tr><th scope="col">Customer ID</th><th scope="col">Full Name</th><th scope="col">Email</th><th scope="col">Contact Number</th><th scope="col">Registered Date</th><th scope="col">Actions</th></tr></thead>
+                    <tbody id="customer-rows"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <dialog id="customer-dialog" aria-labelledby="customer-dialog-title">
+        <div class="customer-modal-header"><h2 id="customer-dialog-title">Customer Details</h2><button type="button" id="customer-close" aria-label="Close customer dialog">Close</button></div>
+        <p id="customer-dialog-message" role="status" aria-live="polite"></p>
+        <div id="customer-details"></div>
+        <form id="customer-edit-form" hidden>
+            <div class="customer-form-grid">
+                <label>First Name<input name="first_name" maxlength="100" required autocomplete="given-name"></label>
+                <label>Middle Name<input name="middle_name" maxlength="100" autocomplete="additional-name"></label>
+                <label>Last Name<input name="last_name" maxlength="100" required autocomplete="family-name"></label>
+                <label>Email<input name="email" type="email" maxlength="255" required autocomplete="email"></label>
+            </div>
+            <h3>Contact Numbers</h3><div id="customer-phone-fields"></div><button type="button" id="customer-add-phone">Add Contact Number</button>
+            <h3>Addresses</h3><div id="customer-address-fields"></div><button type="button" id="customer-add-address">Add Address</button>
+            <div class="customer-form-actions"><button type="submit" id="customer-save">Save Changes</button><button type="button" id="customer-cancel">Cancel</button></div>
+        </form>
+    </dialog>
+    <script src="admin-customers.js"></script>
+</body>
+</html>

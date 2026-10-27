@@ -14,6 +14,7 @@ const repairRoutes = require("./routes/repairs");
 const partRoutes = require("./routes/parts");
 const billingRoutes = require("./routes/billing");
 const paymentRoutes = require("./routes/payments");
+const customerRoutes = require("./routes/customers");
 
 // =====================================
 // CREATE EXPRESS APPLICATION
@@ -53,6 +54,7 @@ app.use("/api/technicians", technicianRoutes);
 app.use("/api/repairs", repairRoutes);
 app.use("/api/parts", partRoutes);
 app.use("/api/billing", billingRoutes);
+app.use("/api/customers", customerRoutes);
 app.use("/api/payments", paymentRoutes);
 
 // =====================================
