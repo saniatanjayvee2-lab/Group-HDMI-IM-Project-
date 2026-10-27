@@ -1,13 +1,7 @@
-"use strict";
+// FIXTRACK CUSTOMER PROFILE API
 
-// FIXTRACK CUSTOMER PROFILE
-
-const API_BASE = (
-    window.FIXTRACK_API_BASE ||
-    `${window.location.origin}/api`
-).replace(/\/$/, "");
-
-const PROFILE_API = `${API_BASE}/profile`;
+const PROFILE_API =
+    "https://fixtrack-backend.vercel.app/api/profile";
 
 const token = localStorage.getItem("fixtrack_token");
 
