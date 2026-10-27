@@ -5558,3 +5558,49 @@ body.admin-repairs-page {
   .customer-profile-page #profile-form .grid.two { grid-template-columns: 1fr; }
   .customer-profile-page .profile-form-actions { flex-wrap: wrap; }
 }
+
+/* CUSTOMER PROFILE UI V2 - scoped so admin and payment styling is unchanged */
+.customer-profile-page {background:#f3f6fb;color:#14253d;min-height:100vh}
+.customer-profile-page .dashboard-header{padding:18px max(24px,calc((100% - 1110px)/2))}
+.customer-profile-page .profile-back-link{display:inline-flex;align-items:center;gap:8px;color:white;text-decoration:none;font-weight:600;font-size:14px;border:1px solid #ffffff50;border-radius:9px;padding:10px 14px}
+.customer-profile-page .profile-back-link:hover{background:#ffffff18}
+.customer-profile-layout{width:min(1030px,calc(100% - 36px));margin:34px auto 72px}
+.customer-profile-page .profile-intro{display:flex;align-items:center;gap:18px;margin-bottom:26px}
+.customer-profile-page .profile-intro-icon{width:66px;height:66px;flex:none;display:grid;place-items:center;border-radius:20px;background:#e7efff;font-size:30px}
+.customer-profile-page .profile-intro-copy{flex:1;min-width:0}
+.customer-profile-page .profile-eyebrow{font-size:11px;letter-spacing:1.5px;color:#315ee3;font-weight:800;margin:0 0 4px}
+.customer-profile-page .profile-intro h2{font-size:29px;line-height:1.2;margin:0 0 6px;color:#17263f}
+.customer-profile-page .profile-intro-copy>p:last-child{color:#65758b;font-size:14px;margin:0}
+.customer-profile-page .profile-edit-toolbar{margin:0;width:auto;flex-shrink:0}
+.customer-profile-page #edit-profile-btn{padding:12px 19px;border-radius:10px;box-shadow:0 4px 12px #2563eb1f}
+.customer-profile-page #message{margin:0;min-height:0}
+.customer-profile-page #message:not(:empty){margin:0 0 16px;padding:13px 16px;border:1px solid #d9e3f2;border-radius:10px;background:white;font-size:14px}
+.customer-profile-page #profile-form{display:grid;gap:18px}
+.customer-profile-page .customer-profile-panel{padding:26px 30px;border:1px solid #e0e8f1;border-radius:15px;background:#fff;box-shadow:0 5px 22px #1a33500a}
+.customer-profile-page .profile-card-title{display:flex;align-items:center;gap:13px;min-width:0;margin:0}
+.customer-profile-page .profile-card-icon{display:grid;place-items:center;flex:none;width:39px;height:39px;background:#edf3ff;color:#2563eb;font-size:12px;font-weight:800;border-radius:11px}
+.customer-profile-page #profile-form .profile-card-title h3{margin:0 0 4px;font-size:17px;color:#15243c}
+.customer-profile-page .profile-card-title p{margin:0;color:#708096;font-size:13px}
+.customer-profile-page .profile-field-grid{margin-top:25px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 20px}
+.customer-profile-page #profile-form label{font-size:13px;color:#364860;font-weight:700}
+.customer-profile-page #profile-form input[type=text],.customer-profile-page #profile-form input[type=email]{display:block;width:100%;height:44px;box-sizing:border-box;padding:10px 13px;margin-top:7px;border:1px solid #d9e3ee;border-radius:9px;font-size:14px;color:#20324c}
+.customer-profile-page #profile-form input:focus{outline:2px solid #93b4fc;outline-offset:1px}
+.customer-profile-page #profile-form input[readonly],.customer-profile-page #profile-form input:disabled{background:#f6f8fc;color:#4b5d75}
+.customer-profile-page .profile-role-field small{display:block;margin-top:7px;color:#8793a4;font-size:12px;font-weight:400}
+.customer-profile-page .profile-section-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;margin:0}
+.customer-profile-page #phones-list,.customer-profile-page #addresses-list{margin-top:17px}
+.customer-profile-page #phones-list .entry,.customer-profile-page #addresses-list .entry{background:#fafcff;border:1px solid #e2eaf3;border-radius:11px;padding:18px;margin:12px 0}
+.customer-profile-page .entry-title{font-size:14px;color:#243750;margin-bottom:12px}
+.customer-profile-page #profile-form .grid.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.customer-profile-page #profile-form .empty{background:#f8faff;border:1px dashed #d7e2f1;border-radius:11px;padding:24px;text-align:center;margin:0;color:#697b94;font-size:14px}
+.customer-profile-page #profile-form button{padding:10px 16px;border-radius:9px;font-weight:700;font-size:13px}
+.customer-profile-page #add-phone,.customer-profile-page #add-address{background:#edf3ff;color:#245bce;border:1px solid #d3e0ff}
+.customer-profile-page #profile-form .remove{background:#fff3f3;color:#b4232e;border:1px solid #f6d3d5;margin-top:13px}
+.customer-profile-page .primary-choice{display:flex!important;align-items:center;gap:9px;margin-top:16px}
+.customer-profile-page .primary-choice input{margin:0}
+.customer-profile-page .profile-form-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:0;padding:18px 0}
+.customer-profile-page #save-button{background:#2563eb;color:white;border:1px solid #2563eb}
+.customer-profile-page #cancel-edit-btn{background:white;color:#43546c;border:1px solid #d7e0ed}
+.customer-profile-page #profile-form [hidden],.customer-profile-page .profile-edit-toolbar [hidden]{display:none!important}
+@media(max-width:720px){.customer-profile-page .profile-intro{flex-wrap:wrap;gap:12px}.customer-profile-page .profile-edit-toolbar{width:100%;justify-content:flex-start}.customer-profile-page #edit-profile-btn{width:100%}.customer-profile-page .customer-profile-panel{padding:19px}.customer-profile-page .profile-field-grid,.customer-profile-page #profile-form .grid.two{grid-template-columns:1fr}.customer-profile-page .profile-section-heading{align-items:flex-start;flex-wrap:wrap}.customer-profile-page .profile-intro h2{font-size:24px}}
+@media(max-width:430px){.customer-profile-page .profile-back-link{font-size:12px;padding:9px}.customer-profile-page .profile-intro-icon{width:54px;height:54px}.customer-profile-page .profile-card-title p{line-height:1.5}.customer-profile-page .profile-form-actions button{flex:1}}

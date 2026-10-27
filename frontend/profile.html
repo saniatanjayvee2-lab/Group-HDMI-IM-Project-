@@ -4,68 +4,60 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FixTrack | My Profile</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=profile-ui-2">
 </head>
 <body class="customer-profile-page">
   <header class="dashboard-header">
-    <div>
-      <h1>FixTrack</h1>
-      <p>Computer Repair Management System</p>
-    </div>
-    <a class="profile-back-link" href="dashboard.html">Back to Dashboard</a>
+    <div><h1>FixTrack</h1><p>Computer Repair Management System</p></div>
+    <a class="profile-back-link" href="dashboard.html">← Dashboard</a>
   </header>
-
   <main class="customer-profile-layout">
-    <section class="profile-page-heading">
-      <h2>My Profile</h2>
-      <p>Review your account and contact information. Select Edit Profile to make changes.</p>
-    </section>
-
-    <section class="customer-profile-panel" aria-label="Customer profile">
+    <div class="profile-intro">
+      <div class="profile-intro-icon" aria-hidden="true">👤</div>
+      <div class="profile-intro-copy">
+        <p class="profile-eyebrow">MY ACCOUNT</p>
+        <h2>Profile Settings</h2>
+        <p>Manage your personal details, phone numbers, and saved addresses.</p>
+      </div>
       <div class="profile-edit-toolbar">
         <button id="edit-profile-btn" type="button" disabled>Edit Profile</button>
       </div>
-      <p id="message" role="status" aria-live="polite"></p>
-
-      <form id="profile-form" autocomplete="on">
-        <h3>Account Information</h3>
-        <div class="profile-field-grid">
-          <label for="first_name">First Name
-            <input id="first_name" name="first_name" type="text" maxlength="100" autocomplete="given-name" required readonly>
-          </label>
-          <label for="middle_name">Middle Name
-            <input id="middle_name" name="middle_name" type="text" maxlength="100" readonly>
-          </label>
-          <label for="last_name">Last Name
-            <input id="last_name" name="last_name" type="text" maxlength="100" autocomplete="family-name" required readonly>
-          </label>
-          <label for="email">Email Address
-            <input id="email" name="email" type="email" maxlength="255" autocomplete="email" required readonly>
-          </label>
-          <label for="role">Account Role
-            <input id="role" name="role" type="text" value="Customer" readonly aria-readonly="true">
-          </label>
+    </div>
+    <p id="message" role="status" aria-live="polite"></p>
+    <form id="profile-form" autocomplete="on">
+      <section class="customer-profile-panel" aria-labelledby="personal-heading">
+        <div class="profile-card-title">
+          <span class="profile-card-icon" aria-hidden="true">01</span>
+          <div><h3 id="personal-heading">Personal Information</h3><p>Basic information associated with your account.</p></div>
         </div>
-
+        <div class="profile-field-grid">
+          <label for="first_name">First Name <input id="first_name" name="first_name" type="text" maxlength="100" autocomplete="given-name" required readonly></label>
+          <label for="middle_name">Middle Name <input id="middle_name" name="middle_name" type="text" maxlength="100" readonly></label>
+          <label for="last_name">Last Name <input id="last_name" name="last_name" type="text" maxlength="100" autocomplete="family-name" required readonly></label>
+          <label for="email">Email Address <input id="email" name="email" type="email" maxlength="255" autocomplete="email" required readonly></label>
+          <label for="role" class="profile-role-field">Account Role <input id="role" name="role" type="text" value="Customer" readonly aria-readonly="true"><small>Your account role cannot be changed here.</small></label>
+        </div>
+      </section>
+      <section class="customer-profile-panel" aria-labelledby="phone-heading">
         <div class="profile-section-heading">
-          <h3>Phone Numbers</h3>
-          <button type="button" id="add-phone" hidden>Add Phone</button>
+          <div class="profile-card-title"><span class="profile-card-icon" aria-hidden="true">02</span><div><h3 id="phone-heading">Contact Numbers</h3><p>Phone numbers we can use for repair updates.</p></div></div>
+          <button type="button" id="add-phone" hidden>+ Add Phone</button>
         </div>
         <div id="phones-list" aria-live="polite"></div>
-
+      </section>
+      <section class="customer-profile-panel" aria-labelledby="address-heading">
         <div class="profile-section-heading">
-          <h3>Addresses</h3>
-          <button type="button" id="add-address" hidden>Add Address</button>
+          <div class="profile-card-title"><span class="profile-card-icon" aria-hidden="true">03</span><div><h3 id="address-heading">Saved Addresses</h3><p>Manage your address details and choose a primary address.</p></div></div>
+          <button type="button" id="add-address" hidden>+ Add Address</button>
         </div>
         <div id="addresses-list" aria-live="polite"></div>
-
-        <div id="profile-actions" class="profile-form-actions" hidden>
-          <button type="button" id="cancel-edit-btn" class="profile-secondary-button">Cancel</button>
-          <button type="submit" id="save-button">Save Changes</button>
-        </div>
-      </form>
-    </section>
+      </section>
+      <div id="profile-actions" class="profile-form-actions" hidden>
+        <button type="button" id="cancel-edit-btn" class="profile-secondary-button">Cancel</button>
+        <button type="submit" id="save-button">Save Changes</button>
+      </div>
+    </form>
   </main>
-  <script src="profile.js"></script>
+  <script src="profile.js?v=profile-ui-2"></script>
 </body>
 </html>
