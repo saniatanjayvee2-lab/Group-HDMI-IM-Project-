@@ -1,187 +1,213 @@
-// FIXTRACK CUSTOMER PROFILE API
 
-const PROFILE_API =
-    "https://fixtrack-backend.vercel.app/api/profile";
+const PROFILE_API = "https://fixtrack-backend.vercel.app/api/profile";
 
 const token = localStorage.getItem("fixtrack_token");
+const savedUser = localStorage.getItem("fixtrack_user");
 
-const message = document.getElementById("message");
+const form = document.getElementById("profile-form");
+const messageBox = document.getElementById("message");
 const phonesList = document.getElementById("phones-list");
 const addressesList = document.getElementById("addresses-list");
 
+const editButton = document.getElementById("edit-profile-btn");
+const cancelButton = document.getElementById("cancel-edit-btn");
+const saveButton = document.getElementById("save-button");
+const actions = document.getElementById("profile-actions");
+const addPhoneButton = document.getElementById("add-phone");
+const addAddressButton = document.getElementById("add-address");
+
 let phones = [];
 let addresses = [];
-let editingProfile = false;
+let editing = false;
+let profileLoaded = false;
 
-// DISPLAY MESSAGES
-
-function notify(text, type = "") {
-    message.textContent = text;
-    message.className = type;
+function field(id) {
+    return document.getElementById(id);
 }
 
-// CREATE SAFE HTML ELEMENTS
-
-function createElement(tag, options = {}, children = []) {
-    const element = document.createElement(tag);
-
-    Object.entries(options).forEach(([key, value]) => {
-        if (key === "className") {
-            element.className = value;
-        } else if (key === "textContent") {
-            element.textContent = value;
-        } else if (key === "value") {
-            element.value = value;
-        } else {
-            element.setAttribute(key, value);
-        }
-    });
-
-    children.forEach(child => element.append(child));
-
-    return element;
+function notify(text, isError = false) {
+    messageBox.textContent = text;
+    messageBox.style.color = isError ? "#dc2626" : "#15803d";
 }
 
-// CREATE INPUT FIELD
-
-function createInput(labelText, value, onChange, maxLength = 255) {
-    const field = createElement("input", {
-        type: "text",
-        value: value || "",
-        maxlength: String(maxLength)
-    });
-
-    field.disabled = !editingProfile;
-
-    field.addEventListener("input", () => {
-        onChange(field.value);
-    });
-
-    return createElement("label", {}, [
-        document.createTextNode(labelText),
-        field
-    ]);
+function element(tag, className = "", text = "") {
+    const item = document.createElement(tag);
+    item.className = className;
+    item.textContent = text;
+    return item;
 }
 
-// PHONE NUMBERS
+async function api(method, data) {
+    const response = await fetch(PROFILE_API, {
+        method,
+        headers: {
+            Authorization: `Bearer ${token}`,
+            ...(data ? { "Content-Type": "application/json" } : {})
+        },
+        ...(data ? { body: JSON.stringify(data) } : {})
+    });
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+        throw new Error(
+            result.error ||
+            result.message ||
+            `Request failed (${response.status})`
+        );
+    }
+
+    return result;
+}
+
+function setEditMode(enabled) {
+    editing = enabled;
+
+    ["first_name", "middle_name", "last_name", "email"].forEach(id => {
+        field(id).readOnly = !enabled;
+    });
+
+    field("role").readOnly = true;
+
+    actions.hidden = !enabled;
+    addPhoneButton.hidden = !enabled;
+    addAddressButton.hidden = !enabled;
+
+    editButton.textContent = enabled ? "Cancel Editing" : "Edit Profile";
+
+    drawPhones();
+    drawAddresses();
+}
+
+function createInput(labelText, value, onChange, maxLength) {
+    const label = element("label");
+    label.append(document.createTextNode(labelText));
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = value || "";
+    input.maxLength = maxLength;
+    input.disabled = !editing;
+
+    input.addEventListener("input", () => {
+        onChange(input.value);
+    });
+
+    label.appendChild(input);
+    return label;
+}
 
 function drawPhones() {
     phonesList.replaceChildren();
 
-    if (phones.length === 0) {
-        phonesList.append(
-            createElement("p", {
-                className: "empty",
-                textContent: "No phone numbers registered."
-            })
+    if (!phones.length) {
+        phonesList.appendChild(
+            element("p", "empty", "No phone numbers added.")
         );
+        return;
     }
 
     phones.forEach((phone, index) => {
-        const fields = createElement("div", {
-            className: "grid two"
-        }, [
-            createInput(
-                "Phone Number",
-                phone.phone_number,
-                value => phone.phone_number = value,
-                30
-            ),
-            createInput(
-                "Type (Mobile, Home, etc.)",
-                phone.type,
-                value => phone.type = value,
-                50
-            )
-        ]);
+        const card = element("div", "entry");
 
-        const removeButton = createElement("button", {
-            type: "button",
-            className: "remove",
-            textContent: "Remove Phone"
-        });
-
-        removeButton.hidden = !editingProfile;
-
-        removeButton.addEventListener("click", () => {
-            phones.splice(index, 1);
-            drawPhones();
-        });
-
-        phonesList.append(
-            createElement("div", {
-                className: "entry"
-            }, [
-                createElement("div", {
-                    className: "entry-title",
-                    textContent: `Phone ${index + 1}`
-                }),
-                fields,
-                removeButton
-            ])
+        card.appendChild(
+            element("div", "entry-title", `Phone ${index + 1}`)
         );
+
+        const grid = element("div", "grid two");
+
+        grid.appendChild(createInput(
+            "Phone Number",
+            phone.phone_number,
+            value => phone.phone_number = value,
+            30
+        ));
+
+        grid.appendChild(createInput(
+            "Type (Mobile, Home, etc.)",
+            phone.type,
+            value => phone.type = value,
+            50
+        ));
+
+        card.appendChild(grid);
+
+        if (editing) {
+            const remove = element("button", "remove", "Remove Phone");
+            remove.type = "button";
+
+            remove.addEventListener("click", () => {
+                phones.splice(index, 1);
+                drawPhones();
+            });
+
+            card.appendChild(remove);
+        }
+
+        phonesList.appendChild(card);
     });
 }
-
-// ADDRESSES
 
 function drawAddresses() {
     addressesList.replaceChildren();
 
-    if (addresses.length === 0) {
-        addressesList.append(
-            createElement("p", {
-                className: "empty",
-                textContent: "No addresses registered."
-            })
+    if (!addresses.length) {
+        addressesList.appendChild(
+            element("p", "empty", "No addresses added.")
         );
+        return;
     }
 
     addresses.forEach((address, index) => {
-        const fields = createElement("div", {}, [
-            createElement("div", {
-                className: "grid two"
-            }, [
-                createInput(
-                    "Street Address",
-                    address.street_address,
-                    value => address.street_address = value,
-                    255
-                ),
-                createInput(
-                    "City",
-                    address.city,
-                    value => address.city = value,
-                    100
-                )
-            ]),
-            createElement("div", {
-                className: "grid two"
-            }, [
-                createInput(
-                    "Province",
-                    address.province,
-                    value => address.province = value,
-                    100
-                ),
-                createInput(
-                    "Postal Code",
-                    address.postal_code,
-                    value => address.postal_code = value,
-                    20
-                )
-            ])
-        ]);
+        const card = element("div", "entry");
 
-        const primaryInput = createElement("input", {
-            type: "radio",
-            name: "primary-address"
-        });
+        card.appendChild(
+            element("div", "entry-title", `Address ${index + 1}`)
+        );
 
-        primaryInput.checked = Boolean(address.is_primary);
-        primaryInput.disabled = !editingProfile;
+        const firstGrid = element("div", "grid two");
 
-        primaryInput.addEventListener("change", () => {
+        firstGrid.appendChild(createInput(
+            "Street Address",
+            address.street_address,
+            value => address.street_address = value,
+            255
+        ));
+
+        firstGrid.appendChild(createInput(
+            "City",
+            address.city,
+            value => address.city = value,
+            100
+        ));
+
+        const secondGrid = element("div", "grid two");
+
+        secondGrid.appendChild(createInput(
+            "Province",
+            address.province,
+            value => address.province = value,
+            100
+        ));
+
+        secondGrid.appendChild(createInput(
+            "Postal Code",
+            address.postal_code,
+            value => address.postal_code = value,
+            20
+        ));
+
+        card.append(firstGrid, secondGrid);
+
+        const primaryLabel = element("label", "primary-choice");
+        const primaryRadio = document.createElement("input");
+
+        primaryRadio.type = "radio";
+        primaryRadio.name = "primary-address";
+        primaryRadio.checked = Boolean(address.is_primary);
+        primaryRadio.disabled = !editing;
+
+        primaryRadio.addEventListener("change", () => {
             addresses.forEach((item, i) => {
                 item.is_primary = i === index;
             });
@@ -189,285 +215,226 @@ function drawAddresses() {
             drawAddresses();
         });
 
-        const primaryLabel = createElement("label", {
-            className: "primary-choice"
-        }, [
-            primaryInput,
+        primaryLabel.append(
+            primaryRadio,
             document.createTextNode("Primary Address")
-        ]);
-
-        const removeButton = createElement("button", {
-            type: "button",
-            className: "remove",
-            textContent: "Remove Address"
-        });
-
-        removeButton.hidden = !editingProfile;
-
-        removeButton.addEventListener("click", () => {
-            const wasPrimary = address.is_primary;
-
-            addresses.splice(index, 1);
-
-            if (wasPrimary && addresses.length > 0) {
-                addresses[0].is_primary = true;
-            }
-
-            drawAddresses();
-        });
-
-        addressesList.append(
-            createElement("div", {
-                className: "entry"
-            }, [
-                createElement("div", {
-                    className: "entry-title",
-                    textContent: `Address ${index + 1}`
-                }),
-                fields,
-                primaryLabel,
-                removeButton
-            ])
         );
+
+        card.appendChild(primaryLabel);
+
+        if (editing) {
+            const remove = element("button", "remove", "Remove Address");
+            remove.type = "button";
+
+            remove.addEventListener("click", () => {
+                const wasPrimary = address.is_primary;
+
+                addresses.splice(index, 1);
+
+                if (wasPrimary && addresses.length) {
+                    addresses.forEach((item, i) => {
+                        item.is_primary = i === 0;
+                    });
+                }
+
+                drawAddresses();
+            });
+
+            card.appendChild(remove);
+        }
+
+        addressesList.appendChild(card);
     });
 }
 
-// API REQUEST
-
-async function request(method, body = null) {
-    const response = await fetch(PROFILE_API, {
-        method,
-        headers: {
-            Authorization: `Bearer ${token}`,
-            ...(body ? {
-                "Content-Type": "application/json"
-            } : {})
-        },
-        ...(body ? {
-            body: JSON.stringify(body)
-        } : {})
-    });
-
-    const result = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-        throw new Error(
-            result.error || `Request failed (${response.status})`
-        );
-    }
-
-    return result;
+function populateUser(user) {
+    field("first_name").value = user.first_name || "";
+    field("middle_name").value = user.middle_name || "";
+    field("last_name").value = user.last_name || "";
+    field("email").value = user.email || "";
+    field("role").value = user.role || "customer";
 }
-
-// PROFILE EDIT MODE
-
-function setEditMode(editing) {
-    editingProfile = editing;
-
-    [
-        "first_name",
-        "middle_name",
-        "last_name",
-        "email"
-    ].forEach(id => {
-        document.getElementById(id).readOnly = !editing;
-    });
-
-    document.getElementById("role").readOnly = true;
-
-    document.getElementById("save-button").hidden = !editing;
-    document.getElementById("add-phone").hidden = !editing;
-    document.getElementById("add-address").hidden = !editing;
-
-    document.getElementById("edit-profile-btn").textContent =
-        editing ? "Cancel Editing" : "Edit Profile";
-
-    document.querySelectorAll(
-        "#phones-list input, #addresses-list input"
-    ).forEach(input => {
-        input.disabled = !editing;
-    });
-
-    document.querySelectorAll(
-        "#phones-list .remove, #addresses-list .remove"
-    ).forEach(button => {
-        button.hidden = !editing;
-    });
-}
-
-// LOAD PROFILE
 
 async function loadProfile() {
-    try {
-        notify("Loading your profile...");
+    notify("Loading profile...");
 
-        const data = await request("GET");
+    try {
+        const data = await api("GET");
 
         if (!data.user) {
             throw new Error("Customer information not found.");
         }
 
-        const user = data.user;
+        populateUser(data.user);
 
-        document.getElementById("first_name").value =
-            user.first_name || "";
+        phones = Array.isArray(data.phones) ? data.phones : [];
+        addresses = Array.isArray(data.addresses) ? data.addresses : [];
 
-        document.getElementById("middle_name").value =
-            user.middle_name || "";
-
-        document.getElementById("last_name").value =
-            user.last_name || "";
-
-        document.getElementById("email").value =
-            user.email || "";
-
-        document.getElementById("role").value =
-            user.role || "customer";
-
-        phones = data.phones || [];
-        addresses = data.addresses || [];
-
-        drawPhones();
-        drawAddresses();
+        profileLoaded = true;
+        editButton.disabled = false;
 
         setEditMode(false);
         notify("");
 
     } catch (error) {
-        console.error("Profile loading error:", error);
-
-        notify(
-            "Failed to load profile: " + error.message,
-            "error"
-        );
+        console.error("Profile loading failed:", error);
+        notify("Failed to load profile: " + error.message, true);
     }
 }
 
-// EDIT PROFILE BUTTON
-
-document.getElementById("edit-profile-btn")
-    .addEventListener("click", async () => {
-        if (editingProfile) {
-            await loadProfile();
-        } else {
-            setEditMode(true);
-        }
-    });
-
-// ADD PHONE
-
-document.getElementById("add-phone")
-    .addEventListener("click", () => {
-        if (phones.length >= 10) {
-            return notify(
-                "Maximum 10 phone numbers.",
-                "error"
-            );
-        }
-
-        phones.push({
-            phone_number: "",
-            type: "Mobile"
-        });
-
-        drawPhones();
-        setEditMode(true);
-    });
-
-// ADD ADDRESS
-
-document.getElementById("add-address")
-    .addEventListener("click", () => {
-        if (addresses.length >= 10) {
-            return notify(
-                "Maximum 10 addresses.",
-                "error"
-            );
-        }
-
-        addresses.push({
-            street_address: "",
-            city: "",
-            province: "",
-            postal_code: "",
-            is_primary: addresses.length === 0
-        });
-
-        drawAddresses();
-        setEditMode(true);
-    });
-
-// SAVE PROFILE
-
-document.getElementById("profile-form")
-    .addEventListener("submit", async event => {
-        event.preventDefault();
-
-        if (!editingProfile) return;
-
-        const saveButton = document.getElementById("save-button");
-
-        saveButton.disabled = true;
-        saveButton.textContent = "Saving...";
-
-        try {
-            await request("PUT", {
-                first_name: document.getElementById("first_name").value,
-                middle_name: document.getElementById("middle_name").value,
-                last_name: document.getElementById("last_name").value,
-                email: document.getElementById("email").value,
-                phones,
-                addresses
-            });
-
-            // UPDATE SAVED CUSTOMER NAME
-
-            const savedUser = JSON.parse(
-                localStorage.getItem("fixtrack_user") || "{}"
-            );
-
-            savedUser.first_name =
-                document.getElementById("first_name").value;
-
-            savedUser.middle_name =
-                document.getElementById("middle_name").value;
-
-            savedUser.last_name =
-                document.getElementById("last_name").value;
-
-            savedUser.email =
-                document.getElementById("email").value;
-
-            localStorage.setItem(
-                "fixtrack_user",
-                JSON.stringify(savedUser)
-            );
-
-            await loadProfile();
-
-            notify(
-                "Profile updated successfully!",
-                "success"
-            );
-
-        } catch (error) {
-            notify(error.message, "error");
-
-        } finally {
-            saveButton.disabled = false;
-            saveButton.textContent = "Save Changes";
-        }
-    });
-
-// START PAGE
-
-setEditMode(false);
-
-if (!token) {
-    notify("Please log in to view your profile.", "error");
-
-    document.getElementById("profile-form").hidden = true;
-    document.getElementById("edit-profile-btn").hidden = true;
-} else {
+function cancelEditing() {
+    setEditMode(false);
     loadProfile();
 }
+
+editButton.addEventListener("click", () => {
+    if (!profileLoaded) return;
+
+    if (editing) {
+        cancelEditing();
+    } else {
+        setEditMode(true);
+    }
+});
+
+cancelButton.addEventListener("click", cancelEditing);
+
+addPhoneButton.addEventListener("click", () => {
+    if (!editing) return;
+
+    if (phones.length >= 10) {
+        notify("Maximum of 10 phone numbers.", true);
+        return;
+    }
+
+    phones.push({
+        phone_number: "",
+        type: "Mobile"
+    });
+
+    drawPhones();
+});
+
+addAddressButton.addEventListener("click", () => {
+    if (!editing) return;
+
+    if (addresses.length >= 10) {
+        notify("Maximum of 10 addresses.", true);
+        return;
+    }
+
+    addresses.push({
+        street_address: "",
+        city: "",
+        province: "",
+        postal_code: "",
+        is_primary: addresses.length === 0
+    });
+
+    drawAddresses();
+});
+
+form.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (!editing || !profileLoaded) return;
+
+    const firstName = field("first_name").value.trim();
+    const middleName = field("middle_name").value.trim();
+    const lastName = field("last_name").value.trim();
+    const email = field("email").value.trim();
+
+    if (!firstName || !lastName || !email) {
+        notify("Please complete your name and email.", true);
+        return;
+    }
+
+    const cleanPhones = phones.filter(phone =>
+        String(phone.phone_number || "").trim() !== ""
+    );
+
+    const cleanAddresses = addresses.filter(address =>
+        [
+            address.street_address,
+            address.city,
+            address.province,
+            address.postal_code
+        ].some(value => String(value || "").trim() !== "")
+    );
+
+    saveButton.disabled = true;
+    saveButton.textContent = "Saving...";
+
+    try {
+        await api("PUT", {
+            first_name: firstName,
+            middle_name: middleName,
+            last_name: lastName,
+            email,
+            phones: cleanPhones,
+            addresses: cleanAddresses
+        });
+
+        let user = {};
+
+        try {
+            user = JSON.parse(
+                localStorage.getItem("fixtrack_user") || "{}"
+            );
+        } catch (_) {
+            user = {};
+        }
+
+        user.first_name = firstName;
+        user.middle_name = middleName;
+        user.last_name = lastName;
+        user.email = email;
+
+        localStorage.setItem(
+            "fixtrack_user",
+            JSON.stringify(user)
+        );
+
+        await loadProfile();
+
+        if (!editing) {
+            notify("Profile updated successfully!");
+        }
+
+    } catch (error) {
+        console.error("Profile save failed:", error);
+        notify(error.message, true);
+
+    } finally {
+        saveButton.disabled = false;
+        saveButton.textContent = "Save Changes";
+    }
+});
+
+function startProfile() {
+    actions.hidden = true;
+    addPhoneButton.hidden = true;
+    addAddressButton.hidden = true;
+    editButton.disabled = true;
+
+    if (!token) {
+        notify("Please log in to view your profile.", true);
+        form.hidden = true;
+        editButton.hidden = true;
+        return;
+    }
+
+    // Show saved login details while the database loads.
+    if (savedUser) {
+        try {
+            const user = JSON.parse(savedUser);
+            populateUser(user);
+        } catch (error) {
+            console.warn("Unable to read saved login information.");
+        }
+    }
+
+    loadProfile();
+}
+
+startProfile();
