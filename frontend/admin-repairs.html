@@ -3,468 +3,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FixTrack | Manage Repairs</title>
-
-    <link rel="stylesheet" href="style.css?v=5">
-
-    <style>
-        body.admin-repairs-page {
-            background: #f4f7fb;
-            color: #1e293b;
-        }
-
-        body.repair-modal-open {
-            overflow: hidden;
-        }
-
-        .repairs-dashboard {
-            width: min(1200px, 94%);
-            max-width: 1200px;
-            margin: 30px auto 60px;
-        }
-
-        .repairs-page-heading {
-            margin-bottom: 24px;
-        }
-
-        .repairs-page-heading h2 {
-            margin: 0 0 7px;
-            color: #0f172a;
-            font-size: 26px;
-        }
-
-        .repairs-page-heading p,
-        .repairs-section-header p {
-            color: #64748b;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-
-        .repairs-workspace {
-            background: transparent;
-            border: 0;
-            box-shadow: none;
-            padding: 0;
-        }
-
-        .repairs-section-header {
-            margin-bottom: 18px;
-        }
-
-        .repairs-section-header h3 {
-            margin-bottom: 5px;
-            color: #0f172a;
-            font-size: 19px;
-        }
-
-        #admin-repair-list {
-            display: grid;
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-            align-items: start;
-            gap: 18px;
-        }
-
-        #admin-repair-list > .repair-update-message {
-            grid-column: 1 / -1;
-        }
-
-        #admin-repair-list > .admin-repair-card {
-            width: 100%;
-            min-width: 0;
-            box-sizing: border-box;
-            margin: 0;
-            padding: 21px;
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 13px;
-            box-shadow: 0 3px 12px rgba(0,0,0,.03);
-        }
-
-        .repair-card-overview {
-            display: flex;
-            flex-direction: column;
-            gap: 13px;
-        }
-
-        .repair-card-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 12px;
-        }
-
-        .repair-card-title {
-            min-width: 0;
-        }
-
-        .repair-card-title h4 {
-            margin: 0 0 6px;
-            color: #0f172a;
-            font-size: 16px;
-            overflow-wrap: anywhere;
-        }
-
-        .repair-card-id {
-            color: #94a3b8;
-            font-size: 12px;
-        }
-
-        .repair-status-pill {
-            display: inline-flex;
-            align-items: center;
-            flex-shrink: 0;
-            padding: 6px 11px;
-            border-radius: 999px;
-            background: #eef2ff;
-            color: #4338ca;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .repair-status-pill.completed,
-        .repair-status-pill.released {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .repair-status-pill.pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .repair-status-pill.in-progress {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-
-        .repair-card-meta {
-            display: grid;
-            gap: 9px;
-        }
-
-        .repair-card-meta p {
-            margin: 0;
-            color: #475569;
-            font-size: 13px;
-            line-height: 1.5;
-            overflow-wrap: anywhere;
-        }
-
-        .repair-card-meta strong {
-            color: #334155;
-        }
-
-        .repair-manage-btn {
-            width: 100%;
-            padding: 12px 16px;
-            margin-top: 6px;
-            background: #4f46e5;
-            border: 1px solid #4f46e5;
-            border-radius: 8px;
-            color: white;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .repair-manage-btn:hover {
-            background: #4338ca;
-        }
-
-        /* MODAL */
-
-        .repair-modal {
-            position: fixed;
-            inset: 0;
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 18px;
-            box-sizing: border-box;
-            background: rgba(15,23,42,.65);
-        }
-
-        .repair-modal[hidden] {
-            display: none !important;
-        }
-
-        .repair-modal-dialog {
-            display: flex;
-            flex-direction: column;
-            width: min(760px, 100%);
-            max-height: 92vh;
-            overflow: hidden;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 25px 70px rgba(0,0,0,.22);
-        }
-
-        .repair-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 16px;
-            padding: 22px 25px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .repair-modal-header h2 {
-            margin: 0 0 5px;
-            font-size: 20px;
-            color: #0f172a;
-        }
-
-        .repair-modal-header p {
-            margin: 0;
-            color: #64748b;
-            font-size: 12px;
-        }
-
-        .repair-modal-close {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 34px;
-            height: 34px;
-            flex-shrink: 0;
-            padding: 0;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            background: white;
-            color: #64748b;
-            font-size: 22px;
-            cursor: pointer;
-        }
-
-        .repair-modal-tabs {
-            display: flex;
-            gap: 8px;
-            padding: 12px 25px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .repair-tab {
-            width: auto;
-            padding: 10px 17px;
-            background: transparent;
-            border: 0;
-            border-radius: 8px;
-            color: #64748b;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .repair-tab.active {
-            background: #eef2ff;
-            color: #4338ca;
-        }
-
-        .repair-modal-body {
-            flex: 1;
-            min-height: 0;
-            overflow-y: auto;
-            padding: 24px 25px 30px;
-        }
-
-        .repair-tab-panel[hidden] {
-            display: none !important;
-        }
-
-        .repair-panel-heading {
-            margin: 0 0 20px;
-            color: #0f172a;
-            font-size: 16px;
-            font-weight: 700;
-        }
-
-        .repair-info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 23px;
-        }
-
-        .repair-info-item {
-            padding: 13px;
-            background: #f8fafc;
-            border: 1px solid #edf2f7;
-            border-radius: 9px;
-        }
-
-        .repair-info-item span {
-            display: block;
-            margin-bottom: 6px;
-            color: #64748b;
-            font-size: 11px;
-        }
-
-        .repair-info-item strong {
-            color: #334155;
-            font-size: 13px;
-            overflow-wrap: anywhere;
-        }
-
-        .repair-controls > label {
-            display: block;
-            margin: 16px 0 7px;
-            color: #334155;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .repair-controls > select {
-            display: block;
-            width: 100%;
-            box-sizing: border-box;
-            padding: 11px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            background: white;
-            color: #334155;
-            font-size: 13px;
-        }
-
-        .repair-controls > .save-edit-btn {
-            width: auto;
-            min-width: 130px;
-            padding: 11px 17px;
-            margin-top: 18px;
-        }
-
-        .repair-modal .repair-billing-section {
-            border: 0;
-            margin: 0;
-            padding: 0;
-        }
-
-        .repair-modal .repair-billing-content {
-            display: block;
-            margin: 0;
-        }
-
-        .repair-modal .repair-billing-content[hidden] {
-            display: none !important;
-        }
-
-        .repair-modal .billing-entry-form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin: 16px 0 24px;
-        }
-
-        .repair-modal .billing-entry-form label {
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .repair-modal .billing-entry-form input,
-        .repair-modal .billing-entry-form select {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 11px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-        }
-
-        .repair-modal .billing-charge-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .repair-modal .billing-charge-row span {
-            min-width: 0;
-            overflow-wrap: anywhere;
-        }
-
-        .repair-modal .billing-remove-btn {
-            width: auto;
-            flex-shrink: 0;
-        }
-
-        .repair-modal .billing-totals {
-            margin: 20px 0;
-        }
-
-        .repair-modal .payment-section {
-            margin-top: 0;
-        }
-
-        .repair-modal .payment-summary {
-            margin: 15px 0;
-        }
-
-        .repair-modal .paymongo-checkout-btn {
-            width: 100%;
-        }
-
-        .repair-modal-footer {
-            padding: 13px 25px;
-            border-top: 1px solid #e2e8f0;
-            text-align: right;
-        }
-
-        .repair-modal-footer button {
-            width: auto;
-            padding: 10px 20px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            background: white;
-            color: #334155;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        @media (max-width: 800px) {
-            #admin-repair-list {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .repair-modal {
-                padding: 8px;
-            }
-
-            .repair-modal-dialog {
-                max-height: 96vh;
-            }
-
-            .repair-modal-header,
-            .repair-modal-body {
-                padding: 17px;
-            }
-
-            .repair-modal-tabs {
-                padding: 10px 12px;
-                gap: 4px;
-            }
-
-            .repair-tab {
-                flex: 1;
-                padding: 10px 6px;
-                font-size: 12px;
-            }
-
-            .repair-info-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .repair-modal-footer {
-                padding: 12px 17px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css?v=6">
 </head>
 
 <body class="admin-repairs-page">
@@ -474,645 +15,514 @@
             <h1>FixTrack</h1>
             <p>Admin / Repair Management</p>
         </div>
-
-        <button
-            type="button"
-            onclick="window.location.href='admin-dashboard.html'"
-        >
+        <button type="button" onclick="window.location.href='admin-dashboard.html'">
             Back to Dashboard
         </button>
     </header>
 
     <main class="repairs-dashboard">
-
         <section class="repairs-page-heading">
             <h2>Repair Management</h2>
-            <p>
-                View and manage customer repairs
-                in one organized place.
-            </p>
+            <p>View and manage customer repairs in one organized place.</p>
         </section>
 
         <section class="repairs-workspace">
-
             <div class="repairs-section-header">
                 <h3>All Repair Requests</h3>
-                <p>
-                    Select Manage Repair to open
-                    the repair management window.
-                </p>
+                <p>Select Manage Repair to open the repair management window.</p>
             </div>
-
             <div id="admin-repair-list">
                 <p>Loading repair requests...</p>
             </div>
-
         </section>
-
     </main>
 
     <!-- REPAIR MANAGEMENT MODAL -->
-
-    <div
-        id="repair-modal"
-        class="repair-modal"
-        hidden
-    >
-        <div
-            class="repair-modal-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="repair-modal-title"
-            tabindex="-1"
-        >
+    <div id="repair-modal" class="repair-modal" hidden>
+        <div class="repair-modal-dialog"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="repair-modal-title"
+             tabindex="-1">
 
             <div class="repair-modal-header">
                 <div>
-                    <h2 id="repair-modal-title">
-                        Manage Repair
-                    </h2>
-                    <p id="repair-modal-subtitle">
-                        Repair information
-                    </p>
+                    <h2 id="repair-modal-title">Manage Repair</h2>
+                    <p id="repair-modal-subtitle">Repair information</p>
                 </div>
-
-                <button
-                    id="repair-modal-x"
-                    class="repair-modal-close"
-                    type="button"
-                    aria-label="Close"
-                >
-                    ×
-                </button>
+                <button id="repair-modal-x"
+                        class="repair-modal-close"
+                        type="button"
+                        aria-label="Close">×</button>
             </div>
 
-            <div class="repair-modal-tabs">
-                <button
-                    type="button"
-                    class="repair-tab active"
-                    data-tab="repair"
-                >
+            <div class="repair-modal-tabs" role="tablist">
+                <button type="button" class="repair-tab active" data-tab="repair">
                     Repair
                 </button>
-
-                <button
-                    type="button"
-                    class="repair-tab"
-                    data-tab="billing"
-                >
+                <button type="button" class="repair-tab" data-tab="billing">
                     Billing
                 </button>
-
-                <button
-                    type="button"
-                    class="repair-tab"
-                    data-tab="payments"
-                >
+                <button type="button" class="repair-tab" data-tab="payments">
                     Payments
                 </button>
             </div>
 
             <div class="repair-modal-body">
-
-                <section
-                    id="repair-panel-repair"
-                    class="repair-tab-panel"
-                ></section>
-
-                <section
-                    id="repair-panel-billing"
-                    class="repair-tab-panel"
-                    hidden
-                ></section>
-
-                <section
-                    id="repair-panel-payments"
-                    class="repair-tab-panel"
-                    hidden
-                ></section>
-
+                <section id="repair-panel-repair" class="repair-tab-panel"></section>
+                <section id="repair-panel-billing" class="repair-tab-panel" hidden></section>
+                <section id="repair-panel-payments" class="repair-tab-panel" hidden></section>
             </div>
 
             <div class="repair-modal-footer">
-                <button
-                    id="repair-modal-close"
-                    type="button"
-                >
-                    Close
-                </button>
+                <button id="repair-modal-close" type="button">Close</button>
             </div>
-
         </div>
     </div>
 
-    <!-- EXISTING REPAIR FUNCTIONS -->
+    <!-- EXISTING REPAIR, BILLING AND PAYMENT FUNCTIONS -->
     <script src="admin-repairs.js"></script>
 
-    <!-- UI ORGANIZER -->
     <script>
-        (() => {
-            const list = document.getElementById(
-                "admin-repair-list"
+    (() => {
+        const list = document.getElementById("admin-repair-list");
+        const modal = document.getElementById("repair-modal");
+        const dialog = modal.querySelector(".repair-modal-dialog");
+        const title = document.getElementById("repair-modal-title");
+        const subtitle = document.getElementById("repair-modal-subtitle");
+
+        const panels = {
+            repair: document.getElementById("repair-panel-repair"),
+            billing: document.getElementById("repair-panel-billing"),
+            payments: document.getElementById("repair-panel-payments")
+        };
+
+        const prepared = new WeakSet();
+        let activeCard = null;
+        let previousFocus = null;
+        let billingLoadedFor = null;
+        let billingLoading = null;
+
+        function text(tag, value, className = "") {
+            const element = document.createElement(tag);
+            element.textContent = value;
+            if (className) element.className = className;
+            return element;
+        }
+
+        function readField(elements, prefix) {
+            const found = elements.find(element =>
+                element.tagName === "P" &&
+                element.textContent.startsWith(prefix)
             );
+            return found
+                ? found.textContent.slice(prefix.length).trim()
+                : "—";
+        }
 
-            const modal = document.getElementById(
-                "repair-modal"
-            );
+        function showTab(name) {
+            Object.entries(panels).forEach(([key, panel]) => {
+                panel.hidden = key !== name;
+            });
 
-            const dialog = modal.querySelector(
-                ".repair-modal-dialog"
-            );
+            modal.querySelectorAll(".repair-tab").forEach(button => {
+                const selected = button.dataset.tab === name;
+                button.classList.toggle("active", selected);
+                button.setAttribute("aria-selected", String(selected));
+            });
+        }
 
-            const title = document.getElementById(
-                "repair-modal-title"
-            );
+        function movePaymentSection() {
+            const payment = panels.billing.querySelector(".payment-section");
+            if (payment) panels.payments.append(payment);
+        }
 
-            const subtitle = document.getElementById(
-                "repair-modal-subtitle"
-            );
+        async function loadBillingIfNeeded(card) {
+            if (!card || billingLoadedFor === card) return;
+            if (billingLoading) return billingLoading;
 
-            const panels = {
-                repair: document.getElementById(
-                    "repair-panel-repair"
-                ),
-                billing: document.getElementById(
-                    "repair-panel-billing"
-                ),
-                payments: document.getElementById(
-                    "repair-panel-payments"
-                )
-            };
+            const section = panels.billing.querySelector(".repair-billing-section");
+            if (!section) return;
 
-            const prepared = new WeakSet();
+            const button = section.querySelector(":scope > button");
+            const content = section.querySelector(".repair-billing-content");
 
-            let activeCard = null;
-            let previousFocus = null;
-            let billingLoadedFor = null;
+            if (!button || !content) return;
 
-            function text(tag, value, className = "") {
-                const element = document.createElement(tag);
-                element.textContent = value;
-
-                if (className) {
-                    element.className = className;
+            billingLoading = (async () => {
+                if (content.hidden) {
+                    button.click();
                 }
 
-                return element;
-            }
+                // Wait for the original billing renderer to finish.
+                for (let attempt = 0; attempt < 100; attempt++) {
+                    if (!activeCard || activeCard !== card) return;
 
-            function readField(elements, prefix) {
-                const found = elements.find(
-                    element =>
-                        element.tagName === "P" &&
-                        element.textContent.startsWith(prefix)
-                );
-
-                return found
-                    ? found.textContent.slice(prefix.length).trim()
-                    : "—";
-            }
-
-            function showTab(name) {
-                Object.entries(panels).forEach(
-                    ([key, panel]) => {
-                        panel.hidden = key !== name;
-                    }
-                );
-
-                modal.querySelectorAll(
-                    ".repair-tab"
-                ).forEach(button => {
-                    const selected =
-                        button.dataset.tab === name;
-
-                    button.classList.toggle(
-                        "active",
-                        selected
-                    );
-
-                    button.setAttribute(
-                        "aria-selected",
-                        String(selected)
-                    );
-                });
-            }
-
-            async function loadBillingIfNeeded(card) {
-                if (!card || billingLoadedFor === card) {
-                    return;
-                }
-
-                const billingButton = card.querySelector(
-                    ".repair-billing-section > button"
-                );
-
-                if (!billingButton) return;
-
-                const content = card.querySelector(
-                    ".repair-billing-content"
-                );
-
-                if (content && content.hidden) {
-                    billingButton.click();
-                }
-
-                billingLoadedFor = card;
-            }
-
-            function movePaymentSection() {
-                const payment = panels.billing.querySelector(
-                    ".payment-section"
-                );
-
-                if (payment) {
-                    panels.payments.append(payment);
-                }
-            }
-
-            function openModal(card) {
-                previousFocus = document.activeElement;
-                activeCard = card;
-                billingLoadedFor = null;
-
-                const overview = card.querySelector(
-                    ".repair-card-overview"
-                );
-
-                const cardTitle = overview.querySelector("h4");
-                const cardId = overview.querySelector(
-                    ".repair-card-id"
-                );
-
-                title.textContent = cardTitle
-                    ? cardTitle.textContent
-                    : "Manage Repair";
-
-                subtitle.textContent = cardId
-                    ? cardId.textContent
-                    : "Repair details";
-
-                const controls = card.querySelector(
-                    ".repair-card-controls"
-                );
-
-                const billing = card.querySelector(
-                    ".repair-billing-section"
-                );
-
-                if (controls) {
-                    panels.repair.append(controls);
-                }
-
-                if (billing) {
-                    panels.billing.append(billing);
-                }
-
-                modal.hidden = false;
-                document.body.classList.add(
-                    "repair-modal-open"
-                );
-
-                showTab("repair");
-                dialog.focus();
-            }
-
-            function closeModal() {
-                if (!activeCard) return;
-
-                const card = activeCard;
-
-                const controls = panels.repair.querySelector(
-                    ".repair-card-controls"
-                );
-
-                const billing = panels.billing.querySelector(
-                    ".repair-billing-section"
-                );
-
-                // Restore payment content before
-                // returning billing to the card.
-                const payment = panels.payments.querySelector(
-                    ".payment-section"
-                );
-
-                const billingContent = billing?.querySelector(
-                    ".repair-billing-content"
-                );
-
-                if (payment && billingContent) {
-                    billingContent.append(payment);
-                }
-
-                if (controls) {
-                    card.append(controls);
-                }
-
-                if (billing) {
-                    card.append(billing);
-                }
-
-                activeCard = null;
-                billingLoadedFor = null;
-
-                modal.hidden = true;
-                document.body.classList.remove(
-                    "repair-modal-open"
-                );
-
-                if (
-                    previousFocus &&
-                    previousFocus.isConnected
-                ) {
-                    previousFocus.focus();
-                }
-            }
-
-            function organizeCard(card) {
-                if (prepared.has(card)) return;
-
-                prepared.add(card);
-
-                const original = Array.from(card.children);
-
-                const heading = original.find(
-                    item => item.tagName === "H4"
-                );
-
-                const paragraphs = original.filter(
-                    item => item.tagName === "P"
-                );
-
-                const name = heading
-                    ? heading.textContent
-                    : "Unknown Device";
-
-                const repairId = readField(
-                    paragraphs,
-                    "Repair ID:"
-                );
-
-                const customer = readField(
-                    paragraphs,
-                    "Customer:"
-                );
-
-                const technician = readField(
-                    paragraphs,
-                    "Assigned Technician:"
-                );
-
-                const problem = readField(
-                    paragraphs,
-                    "Problem:"
-                );
-
-                const submitted = readField(
-                    paragraphs,
-                    "Submitted:"
-                );
-
-                const status = readField(
-                    paragraphs,
-                    "Current Status:"
-                );
-
-                const overview = document.createElement("div");
-                overview.className = "repair-card-overview";
-
-                const top = document.createElement("div");
-                top.className = "repair-card-top";
-
-                const titleBox = document.createElement("div");
-                titleBox.className = "repair-card-title";
-
-                titleBox.append(
-                    text("h4", name),
-                    text("span", repairId, "repair-card-id")
-                );
-
-                const badge = text(
-                    "span",
-                    status,
-                    "repair-status-pill"
-                );
-
-                const statusClass = status
-                    .toLowerCase()
-                    .replace(/\s+/g, "-");
-
-                if ([
-                    "pending",
-                    "in-progress",
-                    "completed",
-                    "released"
-                ].includes(statusClass)) {
-                    badge.classList.add(statusClass);
-                }
-
-                top.append(titleBox, badge);
-
-                const meta = document.createElement("div");
-                meta.className = "repair-card-meta";
-
-                [
-                    ["Customer", customer],
-                    ["Technician", technician],
-                    ["Problem", problem],
-                    ["Submitted", submitted]
-                ].forEach(([label, value]) => {
-                    const row = document.createElement("p");
-                    const strong = document.createElement("strong");
-
-                    strong.textContent = label + ": ";
-
-                    row.append(
-                        strong,
-                        document.createTextNode(value)
-                    );
-
-                    meta.append(row);
-                });
-
-                const manageButton = text(
-                    "button",
-                    "Manage Repair",
-                    "repair-manage-btn"
-                );
-
-                manageButton.type = "button";
-
-                const controls = document.createElement("div");
-                controls.className = "repair-card-controls";
-
-                const billing = original.find(
-                    item =>
-                        item.classList.contains(
-                            "repair-billing-section"
-                        )
-                );
-
-                const infoPrefixes = [
-                    "Repair ID:",
-                    "Customer:",
-                    "Problem:",
-                    "Submitted:",
-                    "Current Status:",
-                    "Assigned Technician:"
-                ];
-
-                original.forEach(item => {
                     if (
-                        item === heading ||
-                        item === billing ||
-                        (
-                            item.tagName === "P" &&
-                            infoPrefixes.some(prefix =>
-                                item.textContent.startsWith(prefix)
-                            )
-                        )
+                        content.querySelector(".billing-totals") ||
+                        content.querySelector(".payment-section") ||
+                        content.querySelector(".billing-entry-form")
                     ) {
+                        billingLoadedFor = card;
+                        organizeBillingForms();
+                        movePaymentSection();
                         return;
                     }
 
-                    controls.append(item);
-                });
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+            })();
 
-                // Keep controls connected to the
-                // document so existing events work.
+            try {
+                await billingLoading;
+            } finally {
+                billingLoading = null;
+            }
+        }
+
+        function openModal(card) {
+            if (activeCard) closeModal();
+
+            previousFocus = document.activeElement;
+            activeCard = card;
+            billingLoadedFor = null;
+
+            const overview = card.querySelector(".repair-card-overview");
+            const cardTitle = overview.querySelector("h4");
+            const cardId = overview.querySelector(".repair-card-id");
+
+            title.textContent = cardTitle
+                ? cardTitle.textContent
+                : "Manage Repair";
+
+            subtitle.textContent = cardId
+                ? cardId.textContent
+                : "Repair details";
+
+            const controls = card.querySelector(".repair-card-controls");
+            const billing = card.querySelector(".repair-billing-section");
+
+            if (controls) {
+                panels.repair.append(controls);
+                controls.hidden = false;
+            }
+
+            if (billing) {
+                panels.billing.append(billing);
+                billing.hidden = false;
+            }
+
+            modal.hidden = false;
+            document.body.classList.add("repair-modal-open");
+            showTab("repair");
+            dialog.focus();
+        }
+
+        function closeModal() {
+            if (!activeCard) return;
+
+            const card = activeCard;
+            const controls = panels.repair.querySelector(".repair-card-controls");
+            const billing = panels.billing.querySelector(".repair-billing-section");
+            const payment = panels.payments.querySelector(".payment-section");
+            const billingContent = billing?.querySelector(".repair-billing-content");
+
+            if (payment && billingContent) billingContent.append(payment);
+
+            if (controls) {
                 controls.hidden = true;
-
-                card.replaceChildren(
-                    overview,
-                    controls
-                );
-
-                if (billing) {
-                    billing.hidden = true;
-                    card.append(billing);
-                }
-
-                overview.append(
-                    top,
-                    meta,
-                    manageButton
-                );
-
-                manageButton.addEventListener(
-                    "click",
-                    () => openModal(card)
-                );
+                card.append(controls);
             }
 
-            function organizeCards() {
-                list.querySelectorAll(
-                    ":scope > .admin-repair-card"
-                ).forEach(organizeCard);
-
-                // If repairs are reloaded while a
-                // popup is open, close the old popup.
-                if (
-                    activeCard &&
-                    !activeCard.isConnected
-                ) {
-                    closeModal();
-                }
+            if (billing) {
+                billing.hidden = true;
+                card.append(billing);
             }
 
-            const observer = new MutationObserver(
-                organizeCards
+            activeCard = null;
+            billingLoadedFor = null;
+            billingLoading = null;
+
+            modal.hidden = true;
+            document.body.classList.remove("repair-modal-open");
+
+            if (previousFocus && previousFocus.isConnected) {
+                previousFocus.focus();
+            }
+        }
+
+        function organizeCard(card) {
+            if (prepared.has(card)) return;
+            prepared.add(card);
+
+            const original = Array.from(card.children);
+            const heading = original.find(item => item.tagName === "H4");
+            const paragraphs = original.filter(item => item.tagName === "P");
+
+            const name = heading ? heading.textContent : "Unknown Device";
+            const repairId = readField(paragraphs, "Repair ID:");
+            const customer = readField(paragraphs, "Customer:");
+            const technician = readField(paragraphs, "Assigned Technician:");
+            const problem = readField(paragraphs, "Problem:");
+            const submitted = readField(paragraphs, "Submitted:");
+            const status = readField(paragraphs, "Current Status:");
+
+            const overview = document.createElement("div");
+            overview.className = "repair-card-overview";
+
+            const top = document.createElement("div");
+            top.className = "repair-card-top";
+
+            const titleBox = document.createElement("div");
+            titleBox.className = "repair-card-title";
+            titleBox.append(
+                text("h4", name),
+                text("span", repairId, "repair-card-id")
             );
 
-            observer.observe(list, {
-                childList: true
+            const badge = text("span", status, "repair-status-pill");
+            const statusClass = status.toLowerCase().replace(/\s+/g, "-");
+
+            if (["pending", "in-progress", "completed", "released"].includes(statusClass)) {
+                badge.classList.add(statusClass);
+            }
+
+            top.append(titleBox, badge);
+
+            const meta = document.createElement("div");
+            meta.className = "repair-card-meta";
+
+            [
+                ["Customer", customer],
+                ["Technician", technician],
+                ["Problem", problem],
+                ["Submitted", submitted]
+            ].forEach(([label, value]) => {
+                const row = document.createElement("p");
+                const strong = document.createElement("strong");
+                strong.textContent = label + ": ";
+                row.append(strong, document.createTextNode(value));
+                meta.append(row);
             });
 
-            organizeCards();
+            const manageButton = text(
+                "button",
+                "Manage Repair",
+                "repair-manage-btn"
+            );
+            manageButton.type = "button";
 
-            modal.querySelectorAll(
-                ".repair-tab"
-            ).forEach(button => {
-                button.addEventListener("click", async () => {
-                    if (!activeCard) return;
+            const controls = document.createElement("div");
+            controls.className = "repair-card-controls";
 
-                    const tab = button.dataset.tab;
+            const billing = original.find(item =>
+                item.classList.contains("repair-billing-section")
+            );
 
-                    if (
-                        tab === "billing" ||
-                        tab === "payments"
-                    ) {
-                        await loadBillingIfNeeded(
-                            activeCard
-                        );
+            const infoPrefixes = [
+                "Repair ID:",
+                "Customer:",
+                "Problem:",
+                "Submitted:",
+                "Current Status:",
+                "Assigned Technician:"
+            ];
 
-                        movePaymentSection();
-                    }
-
-                    showTab(tab);
-                });
-            });
-
-            document.getElementById(
-                "repair-modal-x"
-            ).addEventListener("click", closeModal);
-
-            document.getElementById(
-                "repair-modal-close"
-            ).addEventListener("click", closeModal);
-
-            modal.addEventListener("click", event => {
-                if (event.target === modal) {
-                    closeModal();
-                }
-            });
-
-            document.addEventListener("keydown", event => {
+            original.forEach(item => {
                 if (
-                    event.key === "Escape" &&
-                    !modal.hidden
-                ) {
-                    closeModal();
-                }
-
-                if (
-                    event.key !== "Tab" ||
-                    modal.hidden
-                ) {
-                    return;
-                }
-
-                const focusable = Array.from(
-                    modal.querySelectorAll(
-                        "button:not([disabled]), " +
-                        "input:not([disabled]), " +
-                        "select:not([disabled]), " +
-                        "a[href]"
+                    item === heading ||
+                    item === billing ||
+                    (
+                        item.tagName === "P" &&
+                        infoPrefixes.some(prefix =>
+                            item.textContent.startsWith(prefix)
+                        )
                     )
-                ).filter(element =>
-                    element.getClientRects().length > 0
+                ) return;
+
+                controls.append(item);
+            });
+
+            controls.hidden = true;
+            card.replaceChildren(overview, controls);
+
+            if (billing) {
+                billing.hidden = true;
+                card.append(billing);
+            }
+
+            overview.append(top, meta, manageButton);
+            manageButton.addEventListener("click", () => openModal(card));
+        }
+
+        function organizeCards() {
+            list.querySelectorAll(":scope > .admin-repair-card")
+                .forEach(organizeCard);
+
+            if (activeCard && !activeCard.isConnected) {
+                closeModal();
+            }
+        }
+
+        // =====================================
+        // COLLAPSIBLE BILLING FORMS
+        // =====================================
+
+        function organizeBillingForms() {
+            const billingContent = panels.billing.querySelector(
+                ".repair-billing-content"
+            );
+
+            if (!billingContent) return;
+
+            const forms = Array.from(
+                billingContent.querySelectorAll(
+                    ".billing-entry-form:not([data-billing-organized])"
+                )
+            );
+
+            forms.forEach((form, index) => {
+                form.dataset.billingOrganized = "true";
+
+                const labels = Array.from(form.querySelectorAll("label"))
+                    .map(label => label.textContent.toLowerCase())
+                    .join(" ");
+
+                const fields = Array.from(
+                    form.querySelectorAll("input, select")
                 );
 
-                if (!focusable.length) return;
+                const isLabor =
+                    labels.includes("labor") ||
+                    fields.some(field =>
+                        field.name?.toLowerCase().includes("labor") ||
+                        field.name?.toLowerCase().includes("description") ||
+                        field.placeholder?.toLowerCase().includes("labor")
+                    ) ||
+                    (!labels.includes("part") && index > 0);
 
-                const first = focusable[0];
-                const last = focusable[
-                    focusable.length - 1
-                ];
+                const label = isLabor ? "Add Labor" : "Add Part";
 
-                if (
-                    event.shiftKey &&
-                    document.activeElement === first
-                ) {
-                    event.preventDefault();
-                    last.focus();
-                } else if (
-                    !event.shiftKey &&
-                    document.activeElement === last
-                ) {
-                    event.preventDefault();
-                    first.focus();
+                const wrapper = document.createElement("div");
+                wrapper.className = "billing-form-wrapper";
+
+                const toggle = document.createElement("button");
+                toggle.type = "button";
+                toggle.className = "billing-form-toggle";
+                toggle.textContent = "+ " + label;
+                toggle.setAttribute("aria-expanded", "false");
+
+                const cancel = document.createElement("button");
+                cancel.type = "button";
+                cancel.className = "billing-form-cancel";
+                cancel.textContent = "Cancel";
+
+                form.before(wrapper);
+                wrapper.append(toggle, form);
+                form.append(cancel);
+                form.hidden = true;
+
+                function closeForm() {
+                    form.hidden = true;
+                    toggle.setAttribute("aria-expanded", "false");
                 }
+
+                toggle.addEventListener("click", () => {
+                    const shouldOpen = form.hidden;
+
+                    billingContent.querySelectorAll(
+                        ".billing-form-wrapper"
+                    ).forEach(other => {
+                        const otherForm = other.querySelector(".billing-entry-form");
+                        const otherToggle = other.querySelector(".billing-form-toggle");
+
+                        if (otherForm) otherForm.hidden = true;
+                        if (otherToggle) {
+                            otherToggle.setAttribute("aria-expanded", "false");
+                        }
+                    });
+
+                    form.hidden = !shouldOpen;
+                    toggle.setAttribute(
+                        "aria-expanded",
+                        String(shouldOpen)
+                    );
+                });
+
+                cancel.addEventListener("click", closeForm);
             });
-        })();
+        }
+
+        const billingFormsObserver = new MutationObserver(() => {
+            organizeBillingForms();
+            movePaymentSection();
+        });
+
+        billingFormsObserver.observe(panels.billing, {
+            childList: true,
+            subtree: true
+        });
+
+        const observer = new MutationObserver(organizeCards);
+        observer.observe(list, { childList: true });
+        organizeCards();
+
+        modal.querySelectorAll(".repair-tab").forEach(button => {
+            button.addEventListener("click", async () => {
+                if (!activeCard) return;
+
+                const card = activeCard;
+                const tab = button.dataset.tab;
+
+                if (tab === "billing" || tab === "payments") {
+                    await loadBillingIfNeeded(card);
+                    if (activeCard !== card) return;
+                    organizeBillingForms();
+                    movePaymentSection();
+                }
+
+                showTab(tab);
+            });
+        });
+
+        document.getElementById("repair-modal-x")
+            .addEventListener("click", closeModal);
+
+        document.getElementById("repair-modal-close")
+            .addEventListener("click", closeModal);
+
+        modal.addEventListener("click", event => {
+            if (event.target === modal) closeModal();
+        });
+
+        document.addEventListener("keydown", event => {
+            if (event.key === "Escape" && !modal.hidden) {
+                closeModal();
+            }
+
+            if (event.key !== "Tab" || modal.hidden) return;
+
+            const focusable = Array.from(
+                modal.querySelectorAll(
+                    "button:not([disabled]), input:not([disabled]), " +
+                    "select:not([disabled]), a[href]"
+                )
+            ).filter(element => element.getClientRects().length > 0);
+
+            if (!focusable.length) return;
+
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        });
+    })();
     </script>
 
 </body>
