@@ -1,0 +1,53 @@
+/* FixTrack 2026 admin workspace. Presentation only; existing controls and APIs remain intact. */
+body.ft-admin-workspace{--ft-navy:#101d32;--ft-accent:#2563eb;--ft-border:#e0e8f2;--ft-muted:#6c7f99;--ft-bg:#f4f7fb;padding-left:244px;background:var(--ft-bg)!important;font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif!important;color:#15263d}
+.ft-admin-workspace *{box-sizing:border-box}
+.ft-admin-workspace .ft-module-side{position:fixed;left:0;top:0;bottom:0;width:244px;z-index:80;background:#101d32;color:#b9cbe5;display:flex;flex-direction:column;padding:28px 14px;box-shadow:4px 0 19px rgba(12,28,51,.06)}
+.ft-module-side .ft-side-brand{display:block;padding:2px 13px 30px;color:white;text-decoration:none;font-size:25px;letter-spacing:-1px;font-weight:850}
+.ft-module-side .ft-side-brand span{color:#60a5fa}
+.ft-side-label{padding:0 13px 10px;font-size:10px;font-weight:800;color:#7791b2;letter-spacing:1.7px;text-transform:uppercase}
+.ft-side-nav{display:grid;gap:4px}
+.ft-side-nav a{padding:12px 14px;color:#bad0e9;text-decoration:none;font-size:13px;border-radius:9px;font-weight:650;display:flex;align-items:center;gap:11px;transition:background .15s}
+.ft-side-nav a:hover,.ft-side-nav a[aria-current=page]{background:#263c59;color:#fff}
+.ft-side-nav a[aria-current=page]{box-shadow:inset 3px 0 #60a5fa}
+.ft-side-nav .ft-nav-mark{width:22px;text-align:center;font-size:14px;color:#8db9fa}
+.ft-side-foot{margin-top:auto;border-top:1px solid #2c3c54;padding:20px 13px 6px;color:#849ab7;font-size:12px;line-height:1.7}
+body.ft-admin-workspace>.dashboard-header{background:#fff!important;color:#18304b!important;border-bottom:1px solid var(--ft-border);box-shadow:none!important;padding:19px clamp(24px,3vw,48px)!important;min-height:86px}
+.ft-admin-workspace>.dashboard-header h1{color:#152238!important;font-size:21px!important;font-weight:800;letter-spacing:-.6px}
+.ft-admin-workspace>.dashboard-header p{color:var(--ft-muted)!important;letter-spacing:.8px;text-transform:uppercase;font-size:11px;margin-top:5px}
+.ft-admin-workspace>.dashboard-header button,.ft-admin-workspace>.dashboard-header a{background:#eff4fc!important;color:#254f8f!important;border:1px solid #dce7f7!important;border-radius:9px;padding:11px 16px;text-decoration:none;font-weight:700;box-shadow:none}
+.ft-admin-workspace>.dashboard-header button:hover,.ft-admin-workspace>.dashboard-header a:hover{background:#e2edff!important}
+.ft-admin-workspace .dashboard-container,.ft-admin-workspace .repairs-dashboard,.ft-admin-workspace .payments-dashboard,.ft-admin-workspace .reports-container{max-width:1370px!important;width:calc(100% - 72px)!important;margin:32px auto 62px!important;padding:0!important}
+.ft-admin-workspace .dashboard-welcome,.ft-admin-workspace .repairs-page-heading,.ft-admin-workspace .payments-heading,.ft-admin-workspace .reports-heading{border:1px solid #deebfb!important;background:linear-gradient(114deg,#fff 32%,#edf5ff)!important;border-radius:18px;padding:26px 30px!important;margin-bottom:24px!important;box-shadow:0 7px 30px rgba(27,55,91,.045)!important}
+.ft-admin-workspace .dashboard-welcome h2,.ft-admin-workspace .repairs-page-heading h2,.ft-admin-workspace .payments-heading h2,.ft-admin-workspace .reports-heading h2{font-size:clamp(25px,2.5vw,32px)!important;font-weight:800!important;letter-spacing:-1px!important;color:#13233a!important}
+.ft-admin-workspace .dashboard-welcome p,.ft-admin-workspace .repairs-page-heading p,.ft-admin-workspace .payments-heading p,.ft-admin-workspace .reports-heading p{color:#677c98!important;line-height:1.6}
+.ft-admin-workspace .customer-panel,.ft-admin-workspace .repairs-workspace,.ft-admin-workspace .device-form-card,.ft-admin-workspace .device-list-card,.ft-admin-workspace .payments-panel,.ft-admin-workspace .reports-panel,.ft-admin-workspace .reports-table-panel,.ft-admin-workspace .payments-stat,.ft-admin-workspace .reports-stat-card{background:#fff!important;border:1px solid var(--ft-border)!important;border-radius:16px!important;box-shadow:0 9px 29px rgba(24,50,88,.055)!important}
+.ft-admin-workspace .customer-panel,.ft-admin-workspace .repairs-workspace,.ft-admin-workspace .payments-panel,.ft-admin-workspace .reports-panel,.ft-admin-workspace .reports-table-panel{padding:25px!important}
+.ft-admin-workspace .device-form-card,.ft-admin-workspace .device-list-card{padding:27px!important}
+.ft-admin-workspace .device-section{gap:20px}
+.ft-admin-workspace .customer-table-wrap,.ft-admin-workspace .payments-table-scroll,.ft-admin-workspace .reports-table-wrap{border-radius:12px;border:1px solid #e2eaf4;overflow:auto}
+.ft-admin-workspace .customer-table,.ft-admin-workspace .payments-table,.ft-admin-workspace .reports-table{width:100%;border-collapse:collapse}
+.ft-admin-workspace .customer-table th,.ft-admin-workspace .payments-table th,.ft-admin-workspace .reports-table th{background:#f1f5fa!important;color:#506380!important;font-size:12px!important;letter-spacing:.15px;font-weight:750;padding:16px 14px!important;white-space:nowrap}
+.ft-admin-workspace .customer-table td,.ft-admin-workspace .payments-table td,.ft-admin-workspace .reports-table td{padding:16px 14px!important;border-bottom:1px solid #e9eef6;color:#283b55;font-size:13px}
+.ft-admin-workspace .customer-table tbody tr:hover,.ft-admin-workspace .payments-table tbody tr:hover,.ft-admin-workspace .reports-table tbody tr:hover{background:#f8fbff}
+.ft-admin-workspace .customer-toolbar{gap:12px;align-items:end;margin-bottom:20px}
+.ft-admin-workspace input,.ft-admin-workspace textarea,.ft-admin-workspace select{border:1px solid #d7e1ed!important;border-radius:9px!important;min-height:39px}
+.ft-admin-workspace input:focus,.ft-admin-workspace textarea:focus,.ft-admin-workspace select:focus{outline:2px solid #b8d3fc!important;outline-offset:1px}
+.ft-admin-workspace button{border-radius:9px!important;cursor:pointer}
+.ft-admin-workspace .payments-stat-grid{gap:16px}
+.ft-admin-workspace .payments-stat{padding:25px!important;border-top:3px solid #3b82f6!important}
+.ft-admin-workspace .payments-stat strong{font-size:30px!important;letter-spacing:-1px}
+.ft-admin-workspace .reports-stats{gap:15px}
+.ft-admin-workspace .reports-stat-card{padding:23px!important}
+.ft-admin-workspace .reports-stat-value{font-size:28px!important;letter-spacing:-.8px}
+.ft-admin-workspace .reports-chart-grid{gap:18px}
+.ft-admin-workspace .reports-chart{min-height:155px}
+.ft-admin-workspace #admin-repair-list{gap:18px}
+.ft-admin-workspace .repair-modal,.ft-admin-workspace dialog{z-index:200!important}
+.ft-admin-workspace .repair-modal-dialog,.ft-admin-workspace dialog{border-radius:18px!important;box-shadow:0 24px 70px rgba(9,25,48,.22)!important}
+.ft-admin-workspace .repair-modal-header,.ft-admin-workspace .customer-modal-header{border-bottom:1px solid #e7edf5}
+.ft-admin-workspace .repair-modal-tabs{background:#f8fbff}
+.ft-admin-workspace .repair-tab.active{color:#1d60c6}
+.ft-admin-workspace .customer-form-grid{gap:16px}
+.ft-admin-workspace .payments-heading button,.ft-admin-workspace .reports-actions button{white-space:nowrap}
+@media(max-width:1000px){body.ft-admin-workspace{padding-left:205px}.ft-admin-workspace .ft-module-side{width:205px}.ft-admin-workspace .dashboard-container,.ft-admin-workspace .repairs-dashboard,.ft-admin-workspace .payments-dashboard,.ft-admin-workspace .reports-container{width:calc(100% - 38px)!important}}
+@media(max-width:720px){body.ft-admin-workspace{padding-left:0;padding-top:113px}.ft-admin-workspace .ft-module-side{width:100%;height:113px;bottom:auto;padding:13px 12px 10px}.ft-side-label,.ft-side-foot{display:none}.ft-admin-workspace .ft-side-brand{padding:0 7px 9px;font-size:20px}.ft-side-nav{display:flex;overflow-x:auto;gap:4px;scrollbar-width:thin}.ft-side-nav a{white-space:nowrap;padding:9px 10px;font-size:12px}.ft-admin-workspace>.dashboard-header{padding:17px 20px!important}.ft-admin-workspace .dashboard-welcome,.ft-admin-workspace .repairs-page-heading,.ft-admin-workspace .payments-heading,.ft-admin-workspace .reports-heading{padding:21px!important}.ft-admin-workspace .customer-panel,.ft-admin-workspace .repairs-workspace,.ft-admin-workspace .payments-panel,.ft-admin-workspace .reports-panel{padding:16px!important}}
