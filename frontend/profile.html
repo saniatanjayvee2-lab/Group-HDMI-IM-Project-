@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile | FixTrack</title>
+  <link rel="stylesheet" href="profile.css">
+  <script src="profile.js" defer></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <div>
+      <div class="brand">FixTrack</div>
+      <div class="subtitle">Computer Repair Management System</div>
+    </div>
+    <a href="dashboard.html" class="back-button">
+      Back to Dashboard
+    </a>
+  </header>
+
+  <main class="container">
+    <h1>My Profile</h1>
+    <p class="intro">
+      Manage your personal information, phone numbers and addresses.
+    </p>
+
+    <div id="message" role="status" aria-live="polite"></div>
+
+    <form id="profile-form">
+
+      <section class="panel">
+        <h2>Personal Information</h2>
+
+        <div class="grid three">
+          <label>
+            First Name
+            <input id="first_name" maxlength="100" required>
+          </label>
+
+          <label>
+            Middle Name
+            <input id="middle_name" maxlength="100">
+          </label>
+
+          <label>
+            Last Name
+            <input id="last_name" maxlength="100" required>
+          </label>
+        </div>
+
+        <div class="grid two">
+          <label>
+            Email Address
+            <input id="email" type="email" maxlength="255" required>
+          </label>
+
+          <label>
+            Account Role
+            <input id="role" readonly>
+          </label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <h2>Phone Numbers</h2>
+          <button type="button" id="add-phone" class="secondary">
+            + Add Phone
+          </button>
+        </div>
+
+        <div id="phones-list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <h2>Addresses</h2>
+          <button type="button" id="add-address" class="secondary">
+            + Add Address
+          </button>
+        </div>
+
+        <div id="addresses-list"></div>
+      </section>
+
+      <div class="actions">
+        <button type="submit" id="save-button" class="primary">
+          Save Changes
+        </button>
+
+        <a href="dashboard.html" class="cancel">Cancel</a>
+      </div>
+
+    </form>
+  </main>
+
+</body>
+</html>
