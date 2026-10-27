@@ -490,13 +490,6 @@ function viewPaymentDetails(payment) {
             )
         );
 
-        content.appendChild(
-            createDetailRow(
-                "Mode",
-                "Test Mode"
-            )
-        );
-
         if (payment.checkout_session_id) {
             content.appendChild(
                 createDetailRow(
@@ -744,54 +737,6 @@ async function voidPayment(payment) {
 }
 
 // =====================================
-// AUDIT HISTORY
-// MANUAL PAYMENTS ONLY
-// =====================================
-
-async function viewAuditHistory(payment) {
-    if (isPayMongoPayment(payment)) {
-        viewPaymentDetails(payment);
-        return;
-    }
-
-    try {
-        const result = await apiRequest(
-            `${PAYMENTS_API}/transaction/${payment.payment_id}/audit`
-        );
-
-        const logs = result.audit_logs || [];
-
-        if (!logs.length) {
-            alert(
-                "No corrections or void actions recorded for this payment."
-            );
-            return;
-        }
-
-        const history = logs.map(log => (
-            `Action: ${log.action}\n` +
-            `Date: ${formatDate(log.created_at)}\n` +
-            `Admin ID: ${log.admin_user_id}\n` +
-            `Old amount: ${formatMoney(log.old_amount)}\n` +
-            `New amount: ${formatMoney(log.new_amount)}\n` +
-            `Old method: ${log.old_method || "N/A"}\n` +
-            `New method: ${log.new_method || "N/A"}\n` +
-            `Old status: ${log.old_status || "N/A"}\n` +
-            `New status: ${log.new_status || "N/A"}\n` +
-            `Reason: ${log.reason}`
-        )).join("\n\n--------------------\n\n");
-
-        alert(
-            `Payment #${payment.payment_id} Audit History\n\n${history}`
-        );
-
-    } catch (error) {
-        console.error("Audit history error:", error);
-        alert(error.message);
-    }
-}
-
-// =====================================
 // RENDER TRANSACTIONS
 // =====================================
 
@@ -873,7 +818,7 @@ function renderTransactions(query = "") {
         );
 
         // =====================================
-        // ACTIONS
+        // PAYMENT ACTIONS
         // =====================================
 
         const actionsCell = document.createElement("td");
@@ -885,7 +830,7 @@ function renderTransactions(query = "") {
         actions.style.flexWrap = "wrap";
         actions.style.gap = "6px";
 
-        // Every transaction can be inspected.
+        // VIEW DETAILS FOR EVERY TRANSACTION
         const detailsButton = createActionButton(
             "View Details",
             "payment-details-btn",
@@ -905,8 +850,8 @@ function renderTransactions(query = "") {
 
         actions.appendChild(detailsButton);
 
-        // Only completed manual payments
-        // can be edited or voided.
+        // EDIT AND VOID FOR COMPLETED
+        // MANUAL PAYMENTS ONLY
         if (canModifyPayment(payment)) {
             actions.appendChild(
                 createActionButton(
@@ -925,17 +870,7 @@ function renderTransactions(query = "") {
             );
         }
 
-        // Audit remains available for
-        // manual payments only.
-        if (!isPayMongoPayment(payment)) {
-            actions.appendChild(
-                createActionButton(
-                    "Audit",
-                    "payment-audit-btn",
-                    () => viewAuditHistory(payment)
-                )
-            );
-        }
+        // AUDIT BUTTON REMOVED COMPLETELY
 
         actionsCell.appendChild(actions);
         row.appendChild(actionsCell);
@@ -1057,7 +992,7 @@ async function loadPayments() {
             }
         });
 
-        // Remove duplicate transactions.
+        // REMOVE DUPLICATE TRANSACTIONS
         const uniqueTransactions = new Map();
 
         nextTransactions.forEach(payment => {
