@@ -3447,3 +3447,442 @@ form button:hover {
 .admin-payments-page .payments-table {
     min-width: 850px;
 }
+
+/* ==========================================
+   FIXTRACK - ADMIN CUSTOMER MANAGEMENT
+   ========================================== */
+
+body.customer-management {
+    background: #f4f6fb;
+    color: #172033;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* HEADER */
+
+.customer-management .dashboard-header {
+    background: #121827;
+    color: #ffffff;
+    padding: 20px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.customer-management .dashboard-header h1 {
+    color: #6575ff;
+    margin: 0;
+}
+
+.customer-management .dashboard-header p {
+    color: #d1d5db;
+    margin: 4px 0 0;
+}
+
+.customer-management .customer-button {
+    display: inline-block;
+    background: #4f46e5;
+    color: #ffffff;
+    padding: 11px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.customer-management .customer-button:hover {
+    background: #4338ca;
+}
+
+/* MAIN CONTENT */
+
+.customer-management .dashboard-container {
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 36px 24px;
+}
+
+.customer-management .dashboard-welcome {
+    margin-bottom: 25px;
+}
+
+.customer-management .dashboard-welcome h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: #111827;
+}
+
+.customer-management .dashboard-welcome p {
+    color: #64748b;
+    margin: 0;
+}
+
+/* CUSTOMER PANEL */
+
+.customer-management .customer-panel {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.04);
+}
+
+/* SEARCH TOOLBAR */
+
+.customer-management .customer-toolbar {
+    display: flex;
+    align-items: end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.customer-management .customer-toolbar > div {
+    flex: 1 1 280px;
+}
+
+.customer-management .customer-toolbar label {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.customer-management .customer-toolbar input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #ffffff;
+    color: #111827;
+    box-sizing: border-box;
+}
+
+.customer-management .customer-toolbar button {
+    width: auto;
+    min-width: 100px;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #4f46e5;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.customer-management #customer-refresh {
+    background: #e9edf5;
+    color: #334155;
+}
+
+.customer-management .customer-toolbar button:hover {
+    filter: brightness(0.94);
+}
+
+/* STATUS MESSAGE */
+
+.customer-management #customer-message {
+    color: #64748b;
+    font-size: 14px;
+    margin: 12px 0 18px;
+}
+
+.customer-management .customer-error {
+    color: #dc2626 !important;
+}
+
+/* TABLE */
+
+.customer-management .customer-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.customer-management .customer-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: #ffffff;
+}
+
+.customer-management .customer-table th {
+    background: #f1f5f9;
+    color: #334155;
+    text-align: left;
+    font-weight: 700;
+    padding: 16px;
+    white-space: nowrap;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.customer-management .customer-table td {
+    padding: 16px;
+    border-bottom: 1px solid #edf0f5;
+    color: #334155;
+    vertical-align: middle;
+}
+
+.customer-management .customer-table tbody tr:hover {
+    background: #f8faff;
+}
+
+.customer-management .customer-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.customer-management .customer-table td:last-child {
+    white-space: nowrap;
+}
+
+.customer-management .customer-table td button {
+    display: inline-block;
+    width: auto;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 3px;
+    background: #4f46e5;
+    color: white;
+}
+
+.customer-management .customer-table td button:last-child {
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+.customer-management .customer-table td button:hover {
+    filter: brightness(0.92);
+}
+
+/* HIDE ACCESSIBILITY-ONLY CAPTION */
+
+.customer-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* CUSTOMER DETAILS MODAL */
+
+.customer-management #customer-dialog {
+    width: min(680px, calc(100% - 32px));
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 26px;
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    color: #172033;
+    box-sizing: border-box;
+}
+
+.customer-management #customer-dialog::backdrop {
+    background: rgba(15, 23, 42, 0.65);
+}
+
+.customer-management .customer-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.customer-management .customer-modal-header h2 {
+    margin: 0;
+    font-size: 23px;
+}
+
+.customer-management #customer-close {
+    background: #f1f5f9;
+    color: #334155;
+    border: none;
+    border-radius: 7px;
+    padding: 9px 14px;
+    cursor: pointer;
+}
+
+/* DETAILS */
+
+.customer-management .customer-info {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.customer-management .customer-info dt {
+    font-weight: 700;
+    color: #475569;
+}
+
+.customer-management .customer-info dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.customer-management #customer-details h3,
+.customer-management #customer-edit-form h3 {
+    margin: 24px 0 12px;
+    color: #1e293b;
+    font-size: 17px;
+}
+
+.customer-management #customer-details ul {
+    padding-left: 20px;
+    line-height: 1.8;
+}
+
+/* EDIT CUSTOMER FORM */
+
+.customer-management #customer-edit-form[hidden] {
+    display: none;
+}
+
+.customer-management .customer-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.customer-management #customer-edit-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 12px;
+}
+
+.customer-management #customer-edit-form input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    font-size: 14px;
+    color: #111827;
+    background: white;
+}
+
+.customer-management #customer-edit-form input:focus,
+.customer-management .customer-toolbar input:focus {
+    outline: 2px solid #818cf8;
+    outline-offset: 1px;
+}
+
+/* PHONE AND ADDRESS GROUPS */
+
+.customer-management .customer-contact-group {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 14px;
+    background: #f8fafc;
+}
+
+.customer-management .customer-contact-group legend {
+    font-weight: 700;
+    color: #334155;
+    padding: 0 6px;
+}
+
+.customer-management #customer-edit-form button {
+    width: auto;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 7px;
+    background: #4f46e5;
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.customer-management #customer-edit-form .customer-remove-button {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.customer-management #customer-edit-form .customer-remove-button:hover {
+    background: #fecaca;
+}
+
+.customer-management .customer-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.customer-management #customer-cancel {
+    background: #e2e8f0 !important;
+    color: #334155 !important;
+}
+
+.customer-management #customer-edit-form button:disabled,
+.customer-management #customer-close:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 700px) {
+    .customer-management .dashboard-header {
+        padding: 18px 5%;
+    }
+
+    .customer-management .dashboard-container {
+        padding: 24px 14px;
+    }
+
+    .customer-management .customer-panel {
+        padding: 16px;
+    }
+
+    .customer-management .customer-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .customer-management .customer-toolbar > div,
+    .customer-management .customer-toolbar button {
+        width: 100%;
+        flex: auto;
+    }
+
+    .customer-management .customer-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .customer-management .customer-info {
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
+
+    .customer-management .customer-info dd {
+        margin-bottom: 10px;
+    }
+
+    .customer-management #customer-dialog {
+        padding: 18px;
+    }
+}
