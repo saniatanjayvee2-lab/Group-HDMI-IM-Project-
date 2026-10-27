@@ -469,8 +469,12 @@ router.put("/:id", async (req, res, next) => {
         // =====================================
 
         if (data.phones !== undefined) {
+            const keptPhoneIds = [];
+
             for (const phone of data.phones) {
                 if (phone.phone_id != null) {
+                    keptPhoneIds.push(phone.phone_id);
+
                     const updated = await client.query(
                         `UPDATE user_phones
                          SET
@@ -497,24 +501,25 @@ router.put("/:id", async (req, res, next) => {
                     }
 
                 } else {
-                    await client.query(
+                    const inserted = await client.query(
                         `INSERT INTO user_phones
                             (user_id, phone_number, type)
-                         VALUES ($1, $2, $3)`,
+                         VALUES ($1, $2, $3)
+                         RETURNING phone_id`,
                         [
                             req.params.id,
                             phone.phone_number,
                             phone.type
                         ]
                     );
+
+                    keptPhoneIds.push(
+                        inserted.rows[0].phone_id
+                    );
                 }
             }
 
-            // NEW: DELETE REMOVED PHONE NUMBERS
-            const keptPhoneIds = data.phones
-                .filter(phone => phone.phone_id != null)
-                .map(phone => phone.phone_id);
-
+            // DELETE REMOVED PHONE NUMBERS
             await client.query(
                 `DELETE FROM user_phones
                  WHERE user_id = $1
@@ -528,7 +533,13 @@ router.put("/:id", async (req, res, next) => {
         // =====================================
 
         if (data.addresses !== undefined) {
+            const keptAddressIds = [];
+
             for (const address of data.addresses) {
+                if (address.address_id != null) {
+                    keptAddressIds.push(address.address_id);
+                }
+
                 const values = [
                     address.street_address,
                     address.city,
@@ -564,7 +575,7 @@ router.put("/:id", async (req, res, next) => {
                     }
 
                 } else if (values.some(Boolean)) {
-                    await client.query(
+                    const inserted = await client.query(
                         `INSERT INTO user_addresses
                             (
                                 street_address,
@@ -573,22 +584,21 @@ router.put("/:id", async (req, res, next) => {
                                 postal_code,
                                 user_id
                             )
-                         VALUES ($1, $2, $3, $4, $5)`,
+                         VALUES ($1, $2, $3, $4, $5)
+                         RETURNING address_id`,
                         [
                             ...values,
                             req.params.id
                         ]
                     );
+
+                    keptAddressIds.push(
+                        inserted.rows[0].address_id
+                    );
                 }
             }
 
-            // NEW: DELETE REMOVED ADDRESSES
-            const keptAddressIds = data.addresses
-                .filter(
-                    address => address.address_id != null
-                )
-                .map(address => address.address_id);
-
+            // DELETE REMOVED ADDRESSES
             await client.query(
                 `DELETE FROM user_addresses
                  WHERE user_id = $1
