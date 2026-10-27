@@ -4238,3 +4238,223 @@ button {
     font-size: 12px;
   }
 }
+
+/* ==========================================
+   FIXTRACK - CUSTOMER MANAGEMENT UPDATE
+   Customer Details, Devices, Repairs, Address
+   ========================================== */
+
+/* CUSTOMER DETAILS DIALOG */
+
+body.customer-management #customer-dialog {
+    width: min(760px, calc(100vw - 32px)) !important;
+    max-width: 760px !important;
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+    padding: 24px !important;
+    background: #ffffff !important;
+    border: none !important;
+    border-radius: 14px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25) !important;
+}
+
+body.customer-management #customer-dialog::backdrop {
+    background: rgba(15, 23, 42, 0.65) !important;
+}
+
+body.customer-management #customer-dialog:not([open]) {
+    display: none !important;
+}
+
+/* CUSTOMER PROFILE CARD */
+
+.customer-management .customer-profile-card {
+    padding: 20px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+/* CUSTOMER INFORMATION ROWS */
+
+.customer-management .customer-detail-row {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px solid #e2e8f0;
+    line-height: 1.5;
+}
+
+.customer-management .customer-detail-row:last-child {
+    border-bottom: none;
+}
+
+.customer-management .customer-detail-label {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.customer-management .customer-detail-value {
+    color: #172033;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+/* SECTION TITLES */
+
+.customer-management .customer-section-title {
+    margin: 24px 0 14px;
+    color: #172033;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* DEVICE AND REPAIR CARDS */
+
+.customer-management .customer-record-card {
+    padding: 18px;
+    margin-bottom: 14px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+}
+
+.customer-management .customer-record-title {
+    margin: 0 0 12px;
+    color: #172033;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.customer-management .customer-record-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.customer-management .customer-record-header
+.customer-record-title {
+    margin: 0;
+}
+
+/* REPAIR STATUS BADGES */
+
+.customer-management .customer-status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.customer-management .customer-status-completed {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.customer-management .customer-status-cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.customer-management .customer-status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* ADDRESS AND PHONE INPUT GROUPS */
+
+.customer-management
+#customer-address-fields
+.customer-contact-group,
+
+.customer-management
+#customer-phone-fields
+.customer-contact-group {
+    display: block;
+    padding: 16px;
+    margin: 12px 0;
+    border: 1px solid #dbe3ec;
+    border-radius: 10px;
+    background: #f8fafc;
+}
+
+.customer-management .customer-contact-group legend {
+    padding: 0 8px;
+    font-weight: 700;
+    color: #172033;
+}
+
+.customer-management .customer-contact-group label {
+    display: block;
+    margin-bottom: 12px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.customer-management .customer-contact-group input {
+    display: block;
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #172033;
+    box-sizing: border-box;
+}
+
+.customer-management .customer-contact-group input:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 1px;
+}
+
+/* REMOVE BUTTON */
+
+.customer-management .customer-remove-button {
+    padding: 9px 14px;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    background: #fee2e2;
+    color: #991b1b;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.customer-management .customer-remove-button:hover {
+    background: #fecaca;
+}
+
+/* RESPONSIVE DESIGN */
+
+@media (max-width: 600px) {
+
+    body.customer-management #customer-dialog {
+        width: calc(100vw - 24px) !important;
+        max-height: 90vh !important;
+        padding: 16px !important;
+    }
+
+    .customer-management .customer-detail-row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+
+    .customer-management .customer-profile-card,
+    .customer-management .customer-record-card {
+        padding: 14px;
+    }
+
+    .customer-management .customer-section-title {
+        font-size: 16px;
+    }
+}
