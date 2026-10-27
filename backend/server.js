@@ -26,7 +26,22 @@ const app = express();
 // =====================================
 
 app.use(cors());
-app.use(express.json());
+
+// Preserve the raw request body for
+// PayMongo webhook signature verification.
+app.use(
+    express.json({
+        verify: (req, res, buffer) => {
+            if (
+                req.originalUrl.startsWith(
+                    "/api/payments/webhook"
+                )
+            ) {
+                req.rawBody = Buffer.from(buffer);
+            }
+        }
+    })
+);
 
 // =====================================
 // API ROUTES
@@ -64,6 +79,7 @@ async function testDatabaseConnection() {
             "Database time:",
             result.rows[0].now
         );
+
     } catch (error) {
         console.error("Database connection failed:");
         console.error(error.message);
