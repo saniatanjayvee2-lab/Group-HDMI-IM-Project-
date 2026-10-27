@@ -4,220 +4,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FixTrack | Technician Dashboard</title>
-    <link rel="stylesheet" href="style.css?v=7">
+    <title>FixTrack | Technician Workspace</title>
+    <link rel="stylesheet" href="style.css?v=10">
 
     <style>
-        .tech-container {
-            max-width: 1100px;
+        .tw-page {
+            max-width: 1160px;
             margin: 0 auto;
         }
 
-        .tech-summary {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 16px;
-            margin: 24px 0;
+        .tw-heading {
+            margin-bottom: 26px;
         }
 
-        .tech-stat {
-            background: white;
-            border-radius: 12px;
-            padding: 22px;
-            box-shadow: 0 4px 16px rgba(15, 23, 42, .05);
+        .tw-heading h2 {
+            margin-bottom: 7px;
         }
 
-        .tech-stat span {
-            display: block;
+        .tw-heading p {
             color: #64748b;
-            font-size: 14px;
         }
 
-        .tech-stat strong {
+        .tw-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 26px;
+        }
+
+        .tw-stat {
+            background: #fff;
+            padding: 22px;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0,0,0,.03);
+        }
+
+        .tw-stat span {
             display: block;
-            font-size: 30px;
-            margin-top: 8px;
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+
+        .tw-stat strong {
+            font-size: 32px;
             color: #0f172a;
         }
 
-        .tech-panel {
-            background: white;
-            border-radius: 14px;
-            padding: 24px;
-            margin-top: 20px;
-            box-shadow: 0 4px 16px rgba(15, 23, 42, .05);
+        .tw-panel {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 24px;
         }
 
-        .tech-panel-header {
+        .tw-panel-top {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
+            gap: 16px;
             flex-wrap: wrap;
             margin-bottom: 20px;
         }
 
-        .tech-panel-header h3 {
+        .tw-panel-top h3 {
             margin: 0;
         }
 
-        .tech-tabs {
+        .tw-tabs {
             display: flex;
             gap: 8px;
-            flex-wrap: wrap;
         }
 
-        .tech-tab {
+        .tw-tab {
+            padding: 10px 17px;
+            border: 0;
+            border-radius: 9px;
             background: #f1f5f9;
             color: #334155;
-            border: 0;
-            border-radius: 8px;
-            padding: 10px 16px;
-            cursor: pointer;
             font-weight: 600;
+            cursor: pointer;
         }
 
-        .tech-tab.active {
+        .tw-tab.active {
             background: #2563eb;
-            color: white;
+            color: #fff;
         }
 
-        .tech-repair-card {
+        .tw-card {
             border: 1px solid #e2e8f0;
             border-radius: 12px;
-            padding: 18px;
+            padding: 19px;
             margin-bottom: 14px;
         }
 
-        .tech-repair-top {
+        .tw-card-top {
             display: flex;
-            justify-content: space-between;
             align-items: flex-start;
+            justify-content: space-between;
             gap: 12px;
             flex-wrap: wrap;
         }
 
-        .tech-repair-top h4 {
+        .tw-card h4 {
             margin: 0 0 8px;
             font-size: 17px;
+            color: #0f172a;
         }
 
-        .tech-repair-card p {
+        .tw-card p {
             margin: 6px 0;
-            color: #475569;
             font-size: 14px;
+            color: #475569;
+            overflow-wrap: anywhere;
         }
 
-        .tech-status {
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 20px;
+        .tw-badge {
+            padding: 6px 11px;
+            border-radius: 30px;
             font-size: 12px;
             font-weight: 700;
             background: #dbeafe;
             color: #1d4ed8;
         }
 
-        .tech-status.completed,
-        .tech-status.released {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .tech-status.pending {
+        .tw-badge.pending {
             background: #fef3c7;
             color: #92400e;
         }
 
-        .tech-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 16px;
+        .tw-badge.completed,
+        .tw-badge.released {
+            background: #dcfce7;
+            color: #166534;
         }
 
-        .tech-btn {
+        .tw-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+            margin-top: 17px;
+        }
+
+        .tw-btn {
             border: 0;
-            border-radius: 8px;
-            padding: 10px 14px;
+            padding: 10px 15px;
+            border-radius: 9px;
             background: #2563eb;
             color: white;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
         }
 
-        .tech-btn.secondary {
+        .tw-btn.light {
             background: #eff6ff;
             color: #1d4ed8;
         }
 
-        .tech-btn:disabled {
-            opacity: .6;
+        .tw-btn:disabled {
+            opacity: .5;
             cursor: not-allowed;
         }
 
-        .tech-details {
-            display: none;
+        .tw-expand {
+            margin-top: 17px;
             border-top: 1px solid #e2e8f0;
-            margin-top: 16px;
-            padding-top: 16px;
+            padding-top: 15px;
         }
 
-        .tech-details.open {
+        .tw-expand[hidden] {
+            display: none;
+        }
+
+        .tw-expand label {
             display: block;
-        }
-
-        .tech-status-editor {
-            margin-top: 14px;
-            padding: 14px;
-            border-radius: 10px;
-            background: #f8fafc;
-        }
-
-        .tech-status-editor select {
-            width: 100%;
-            padding: 11px;
-            margin: 10px 0;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-        }
-
-        .tech-form label {
-            display: block;
-            margin: 16px 0 7px;
+            margin-bottom: 8px;
             font-weight: 600;
         }
 
-        .tech-form select,
-        .tech-form textarea {
+        .tw-expand select {
+            display: block;
             width: 100%;
-            padding: 12px;
+            padding: 11px;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .tw-form label {
+            display: block;
+            margin: 16px 0 8px;
+            font-weight: 600;
+        }
+
+        .tw-form select,
+        .tw-form textarea {
+            display: block;
+            width: 100%;
             box-sizing: border-box;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
             font: inherit;
         }
 
-        .tech-form textarea {
-            resize: vertical;
+        .tw-form button {
+            margin-top: 17px;
         }
 
-        .tech-form button {
-            margin-top: 18px;
-        }
-
-        .tech-message {
+        .tw-message {
             margin: 12px 0;
             font-size: 14px;
         }
 
-        @media (max-width: 650px) {
-            .tech-summary {
+        @media(max-width: 700px) {
+            .tw-stats {
                 grid-template-columns: 1fr;
             }
 
-            .tech-panel {
+            .tw-panel {
                 padding: 16px;
+            }
+
+            .tw-tabs {
+                width: 100%;
+            }
+
+            .tw-tab {
+                flex: 1;
             }
         }
     </style>
@@ -228,7 +245,7 @@
     <header class="dashboard-header">
         <div>
             <h1>FixTrack</h1>
-            <p>Technician Dashboard</p>
+            <p>Technician Workspace</p>
         </div>
 
         <button type="button" id="logoutBtn">
@@ -236,57 +253,55 @@
         </button>
     </header>
 
-    <main class="dashboard-container tech-container">
+    <main class="dashboard-container tw-page">
 
-        <section class="dashboard-welcome">
+        <section class="dashboard-welcome tw-heading">
             <h2 id="welcomeUser">Welcome, Technician!</h2>
-            <p>Manage your assigned repairs and track progress.</p>
+            <p>Manage repairs, update progress, and record diagnoses.</p>
         </section>
 
-        <!-- SUMMARY -->
-        <section class="tech-summary">
-            <div class="tech-stat">
+        <section class="tw-stats">
+            <div class="tw-stat">
                 <span>Total Assigned</span>
                 <strong id="totalAssigned">—</strong>
             </div>
 
-            <div class="tech-stat">
+            <div class="tw-stat">
                 <span>In Progress</span>
                 <strong id="totalInProgress">—</strong>
             </div>
 
-            <div class="tech-stat">
+            <div class="tw-stat">
                 <span>Completed</span>
                 <strong id="totalCompleted">—</strong>
             </div>
         </section>
 
-        <!-- REPAIR MANAGEMENT -->
-        <section class="tech-panel" id="assignedRepairsSection">
+        <section class="tw-panel" id="assignedRepairsSection">
 
-            <div class="tech-panel-header">
+            <div class="tw-panel-top">
                 <h3 id="repairSectionTitle">My Repairs</h3>
 
-                <div class="tech-tabs">
+                <div class="tw-tabs">
                     <button
                         type="button"
-                        class="tech-tab active"
                         id="viewRepairsBtn"
+                        class="tw-tab active"
                     >
-                        My Repairs
+                        Active Repairs
                     </button>
 
                     <button
                         type="button"
-                        class="tech-tab"
                         id="viewHistoryBtn"
+                        class="tw-tab"
                     >
-                        Repair History
+                        History
                     </button>
                 </div>
             </div>
 
-            <p id="repairMessage" class="tech-message" role="status"></p>
+            <p id="repairMessage" class="tw-message" role="status"></p>
 
             <div id="assignedRepairsList">
                 Loading repairs...
@@ -294,52 +309,40 @@
 
         </section>
 
-        <!-- DIAGNOSIS -->
         <section
-            class="tech-panel"
+            class="tw-panel"
             id="diagnosisSection"
             style="display:none;"
         >
 
-            <div class="tech-panel-header">
-                <h3>Manage Diagnosis</h3>
+            <div class="tw-panel-top">
+                <h3>Record Diagnosis</h3>
 
                 <button
                     type="button"
-                    class="tech-btn secondary"
                     id="backToRepairsBtn"
+                    class="tw-btn light"
                 >
                     Back to Repairs
                 </button>
             </div>
 
-            <p>Record your findings for an assigned repair.</p>
+            <form id="diagnosisForm" class="tw-form">
 
-            <form id="diagnosisForm" class="tech-form">
-
-                <label for="diagnosisRepair">
-                    Select Assigned Repair
-                </label>
-
+                <label for="diagnosisRepair">Assigned Repair</label>
                 <select id="diagnosisRepair" required>
                     <option value="">Select a repair</option>
                 </select>
 
-                <label for="diagnosisDetails">
-                    Diagnosis Details
-                </label>
-
+                <label for="diagnosisDetails">Diagnosis Details</label>
                 <textarea
                     id="diagnosisDetails"
                     rows="4"
-                    placeholder="Describe the device problem..."
+                    placeholder="Describe the problem found..."
                     required
                 ></textarea>
 
-                <label for="recommendedAction">
-                    Recommended Action
-                </label>
-
+                <label for="recommendedAction">Recommended Action</label>
                 <textarea
                     id="recommendedAction"
                     rows="3"
@@ -349,21 +352,20 @@
                 <button
                     type="submit"
                     id="saveDiagnosisBtn"
-                    class="tech-btn"
+                    class="tw-btn"
                 >
                     Save Diagnosis
                 </button>
 
                 <p
                     id="diagnosisMessage"
-                    class="tech-message"
+                    class="tw-message"
                     role="status"
-                    aria-live="polite"
                 ></p>
 
             </form>
 
-            <h3 style="margin-top:30px;">My Saved Diagnoses</h3>
+            <h3 style="margin-top:30px;">Saved Diagnoses</h3>
 
             <div id="diagnosisList">
                 Loading diagnoses...
@@ -373,7 +375,7 @@
 
     </main>
 
-    <script src="technician-dashboard.js?v=7"></script>
+    <script src="technician-dashboard.js?v=10"></script>
 
 </body>
 </html>
