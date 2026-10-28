@@ -438,7 +438,7 @@ router.put(
 
                 if (technicianResult.rows.length === 0) {
                     return res.status(404).json({
-                        message: "Technician not found."
+                        message: "Technician not found or inactive. Select an active technician."
                     });
                 }
             }
