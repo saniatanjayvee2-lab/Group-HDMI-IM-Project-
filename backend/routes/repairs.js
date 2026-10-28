@@ -432,13 +432,15 @@ router.put(
                 const technicianResult = await pool.query(
                     `SELECT technician_id
                      FROM technicians
-                     WHERE technician_id = $1`,
+                     WHERE technician_id = 
+
+                       AND LOWER(TRIM(status)) = 'active'`,
                     [technicianId]
                 );
 
                 if (technicianResult.rows.length === 0) {
                     return res.status(404).json({
-                        message: "Technician not found."
+                        message: "Technician not found or inactive. Select an active technician."
                     });
                 }
             }

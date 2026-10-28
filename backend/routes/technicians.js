@@ -91,6 +91,7 @@ router.get(
                  INNER JOIN users u
                     ON t.user_id = u.user_id
                  WHERE u.role = 'technician'
+                   AND LOWER(TRIM(t.status)) = 'active'
                  ORDER BY u.created_at DESC`
             );
 

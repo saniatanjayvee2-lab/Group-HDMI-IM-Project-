@@ -114,11 +114,15 @@ async function loadTechnicians() {
     try {
         const data = await apiRequest(TECHNICIANS_API);
 
-        technicians = Array.isArray(data)
+        const allTechnicians = Array.isArray(data)
             ? data
             : Array.isArray(data.technicians)
                 ? data.technicians
                 : [];
+
+        technicians = allTechnicians.filter(technician =>
+            String(technician.status || "").trim().toLowerCase() === "active"
+        );
 
     } catch (error) {
         console.error("Load technicians error:", error);
