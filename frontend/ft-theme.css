@@ -1,0 +1,63 @@
+/* FixTrack inner-page theme: shared motion + polish for admin / technician / customer pages */
+:root{--ft-a:#2563eb;--ft-b:#0ea5e9;--ft-grad:linear-gradient(135deg,#2563eb,#0ea5e9);--ft-ring:0 0 0 4px rgba(37,99,235,.16);--ft-lift:0 16px 34px rgba(15,23,42,.12);--ft-ease:cubic-bezier(.2,.8,.2,1)}
+html{scroll-behavior:smooth}
+body{background:radial-gradient(900px 420px at 100% -5%,rgba(14,165,233,.10),transparent 60%),radial-gradient(800px 400px at -5% 10%,rgba(37,99,235,.08),transparent 55%),#f4f7fc;background-attachment:fixed}
+
+/* top progress bar when navigating */
+.ft-progress{position:fixed;left:0;top:0;height:3px;width:0;z-index:9999;background:var(--ft-grad);box-shadow:0 0 12px rgba(14,165,233,.7);transition:width .6s var(--ft-ease),opacity .3s}
+body.ft-leaving{opacity:0;transform:translateY(-6px);transition:opacity .22s,transform .22s}
+
+/* header: animated sheen + accent line */
+.dashboard-header{position:relative;overflow:hidden;background:linear-gradient(110deg,#0b1730,#12264a 55%,#0b1730);background-size:200% 100%;animation:ftSheen 14s ease-in-out infinite}
+.dashboard-header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--ft-grad);opacity:.9}
+@keyframes ftSheen{50%{background-position:100% 0}}
+.dashboard-header button,.dashboard-header a{transition:transform .18s,box-shadow .2s,background .2s}
+.dashboard-header button:hover,.dashboard-header a:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(0,0,0,.28)}
+
+/* sidebars: staggered links, sliding active marker */
+.ft-sidebar,.ft-module-side{background:linear-gradient(180deg,#0b1730,#0f2145)}
+.ft-nav a,.ft-side-nav a{position:relative;border-radius:10px;transition:background .2s,transform .2s,padding .2s;opacity:0;animation:ftSlide .5s var(--ft-ease) forwards;animation-delay:calc(var(--ni,0)*60ms + 150ms)}
+.ft-nav a:hover,.ft-side-nav a:hover{transform:translateX(5px);background:rgba(96,165,250,.14)}
+.ft-nav a[aria-current=page],.ft-side-nav a[aria-current=page]{background:rgba(37,99,235,.28)}
+.ft-nav a[aria-current=page]::before,.ft-side-nav a[aria-current=page]::before{content:"";position:absolute;left:-2px;top:20%;bottom:20%;width:4px;border-radius:4px;background:var(--ft-grad);animation:ftGrow .5s .3s var(--ft-ease) both}
+@keyframes ftSlide{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+@keyframes ftGrow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+/* panels & cards: reveal on scroll, soft glass, hover lift */
+.ft-reveal{opacity:0;transform:translateY(22px) scale(.99);transition:opacity .6s var(--ft-ease),transform .6s var(--ft-ease),box-shadow .25s;transition-delay:calc(var(--ri,0)*70ms)}
+.ft-reveal.ft-in{opacity:1;transform:none}
+.customer-panel,.payments-panel,.reports-panel,.reports-stat-card,.payments-stat,.tw-panel,.tw-stat,.device-form-card,.device-list-card,.customer-profile-panel,.history-panel,.admin-repair-card,.registered-device,.payment-section,.repairs-workspace{border-radius:18px;border:1px solid #dfe8f5;box-shadow:0 8px 26px rgba(25,48,78,.06)}
+.reports-stat-card,.payments-stat,.tw-stat,.registered-device,.admin-repair-card,.history-item{position:relative;overflow:hidden}
+.reports-stat-card::before,.payments-stat::before,.tw-stat::before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:var(--ft-grad);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ft-ease)}
+.reports-stat-card:hover,.payments-stat:hover,.tw-stat:hover,.registered-device:hover,.admin-repair-card:hover{transform:translateY(-4px);box-shadow:var(--ft-lift)}
+.reports-stat-card:hover::before,.payments-stat:hover::before,.tw-stat:hover::before{transform:scaleX(1)}
+
+/* tables: header, hover, rows slide in */
+table thead th{background:linear-gradient(180deg,#f1f6fe,#e9f1fc);color:#1e3a5f;font-weight:700;letter-spacing:.02em}
+table tbody tr{transition:background .18s,transform .18s}
+table tbody tr:hover{background:#eef5ff;transform:scale(1.003)}
+.ft-row{opacity:0;animation:ftRow .45s var(--ft-ease) forwards;animation-delay:calc(var(--ri,0)*45ms)}
+@keyframes ftRow{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
+
+/* buttons / inputs / tabs */
+button:not(:disabled){cursor:pointer}
+button:not(:disabled):active{transform:scale(.97)}
+.customer-button,.reports-btn,.tw-btn,.save-edit-btn,.profile-form-actions button[type=submit],.device-form-card button[type=submit]{background:var(--ft-grad);color:#fff;border:0;box-shadow:0 6px 14px rgba(37,99,235,.28);transition:transform .18s,box-shadow .2s,filter .2s}
+.customer-button:hover,.reports-btn:hover,.tw-btn:hover,.save-edit-btn:hover,.profile-form-actions button[type=submit]:hover,.device-form-card button[type=submit]:hover{transform:translateY(-2px);box-shadow:0 12px 22px rgba(37,99,235,.36);filter:brightness(1.05)}
+input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:10px;transition:border-color .2s,box-shadow .2s,background .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--ft-a)!important;box-shadow:var(--ft-ring)!important;outline:none;background:#fff}
+.repair-tab,.tw-tab{transition:background .2s,color .2s,transform .18s,box-shadow .2s}
+.repair-tab:hover,.tw-tab:hover{transform:translateY(-1px)}
+.repair-tab-panel,.tw-panel{animation:ftFade .35s var(--ft-ease)}
+@keyframes ftFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* modals pop in */
+.modal-overlay,.repair-modal,[class*="-modal"]:not([class*="header"]):not([class*="footer"]):not([class*="body"]):not([class*="close"]):not([class*="tabs"]):not([class*="dialog"]){animation:ftFade .25s ease}
+.repair-modal-dialog,.modal-overlay>div,.customer-modal>div{animation:ftPop .35s var(--ft-ease)}
+@keyframes ftPop{from{opacity:0;transform:translateY(16px) scale(.95)}to{opacity:1;transform:none}}
+
+/* messages slide in; loading text pulses */
+[id$="-message"]:not(:empty),.tw-message:not(:empty){animation:ftFade .3s var(--ft-ease)}
+.ft-loading{animation:ftPulse 1.2s ease-in-out infinite}
+@keyframes ftPulse{50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}.ft-reveal,.ft-nav a,.ft-side-nav a,.ft-row{opacity:1!important;transform:none!important}}
