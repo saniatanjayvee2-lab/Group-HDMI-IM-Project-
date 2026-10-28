@@ -947,7 +947,7 @@ async function renderPayments(
 
     const heading = createElement(
         "h3",
-        "Payments & Payment Tracking"
+        "Payment Overview"
     );
 
     section.appendChild(heading);
@@ -1030,7 +1030,7 @@ async function renderPayments(
             section.appendChild(
                 createElement(
                     "h4",
-                    "Online Payment via PayMongo"
+                    "Pay Remaining Balance"
                 )
             );
 
@@ -1126,7 +1126,7 @@ async function renderPayments(
             section.appendChild(
                 createElement(
                     "p",
-                    "There is no outstanding balance."
+                    "Fully paid. No further payment is needed."
                 )
             );
         }
