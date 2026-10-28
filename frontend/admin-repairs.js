@@ -926,6 +926,53 @@ async function renderBilling(
     }
 }
 
+// Confirmation dialog uses the native dialog element, styled to match FixTrack.
+function confirmTestCheckout(amount) {
+    return new Promise(resolve => {
+        const dialog = document.createElement("dialog");
+        dialog.className = "ft-checkout-confirm";
+        dialog.setAttribute("aria-labelledby", "ft-checkout-title");
+        const title = document.createElement("h2");
+        title.id = "ft-checkout-title";
+        title.textContent = "Confirm test checkout";
+        const note = document.createElement("p");
+        note.textContent = "You are about to create a PayMongo TEST checkout. No real money will be charged.";
+        const amountBox = document.createElement("div");
+        amountBox.className = "ft-checkout-amount";
+        const label = document.createElement("span");
+        label.textContent = "Amount to pay";
+        const value = document.createElement("strong");
+        value.textContent = formatMoney(amount);
+        amountBox.append(label, value);
+        const actions = document.createElement("div");
+        actions.className = "ft-checkout-actions";
+        const cancel = document.createElement("button");
+        cancel.type = "button"; cancel.textContent = "Cancel";
+        const proceed = document.createElement("button");
+        proceed.type = "button"; proceed.textContent = "Continue to PayMongo";
+        proceed.className = "ft-checkout-continue";
+        actions.append(cancel, proceed);
+        dialog.append(title, note, amountBox, actions);
+        document.body.append(dialog);
+        let settled = false;
+        function finish(result) {
+            if (settled) return;
+            settled = true;
+            dialog.close();
+            dialog.remove();
+            resolve(result);
+        }
+        cancel.addEventListener("click", () => finish(false));
+        proceed.addEventListener("click", () => finish(true));
+        dialog.addEventListener("cancel", event => { event.preventDefault(); finish(false); });
+        dialog.addEventListener("click", event => {
+            if (event.target === dialog) finish(false);
+        });
+        dialog.showModal();
+        cancel.focus();
+    });
+}
+
 // =====================================
 // RENDER PAYMENTS
 // PAYMENT SUMMARY + PAYMONGO TEST MODE
@@ -1061,9 +1108,7 @@ async function renderPayments(
             paymongoButton.addEventListener(
                 "click",
                 async () => {
-                    const confirmed = confirm(
-                        `Create a PayMongo TEST checkout for ${formatMoney(remainingBalance)}? No real payment will be charged.`
-                    );
+                    const confirmed = await confirmTestCheckout(remainingBalance);
 
                     if (!confirmed) return;
 
