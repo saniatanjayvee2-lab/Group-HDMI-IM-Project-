@@ -1,0 +1,40 @@
+/* FixTrack animated login */
+body.login-page{min-height:100vh;overflow-x:hidden;background:#0b1220;position:relative}
+.bg-fx{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+  background:radial-gradient(1200px 600px at 10% -10%,#16315f 0,transparent 60%),#0b1220}
+.bg-fx::before{content:"";position:absolute;inset:-50%;
+  background-image:linear-gradient(rgba(96,165,250,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(96,165,250,.07) 1px,transparent 1px);
+  background-size:48px 48px;transform:perspective(600px) rotateX(55deg) translateY(0);animation:gridMove 14s linear infinite}
+.bg-fx i{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;animation:float 12s ease-in-out infinite}
+.bg-fx i:nth-child(1){width:360px;height:360px;background:#2563eb;left:-80px;top:10%}
+.bg-fx i:nth-child(2){width:300px;height:300px;background:#06b6d4;right:-60px;top:45%;animation-delay:-4s}
+.bg-fx i:nth-child(3){width:260px;height:260px;background:#7c3aed;left:40%;bottom:-90px;animation-delay:-8s}
+@keyframes gridMove{to{transform:perspective(600px) rotateX(55deg) translateY(48px)}}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,-40px)}}
+body.login-page .auth-container{position:relative;z-index:1;animation:cardIn .8s cubic-bezier(.2,.8,.2,1) both}
+body.login-page .brand-section{animation:cardIn .9s .1s both}
+body.login-page .brand-section h1{background:linear-gradient(90deg,#fff,#93c5fd);-webkit-background-clip:text;background-clip:text;color:transparent}
+body.login-page .auth-box{animation:cardIn .7s .2s both;backdrop-filter:blur(14px)}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}
+.role-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;margin:14px 0 6px;border-radius:12px;background:rgba(100,116,139,.15);position:relative}
+.role-tabs button{position:relative;z-index:1;border:0;background:transparent;padding:10px 6px;border-radius:9px;font-weight:600;cursor:pointer;color:inherit;transition:color .25s}
+.role-tabs button[aria-selected=true]{color:#fff}
+.role-tabs .pill{position:absolute;z-index:0;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/3);border-radius:9px;background:linear-gradient(135deg,#2563eb,#0ea5e9);box-shadow:0 6px 16px rgba(37,99,235,.4);transition:transform .35s cubic-bezier(.3,1.2,.4,1)}
+.role-hint{font-size:.85rem;opacity:.75;min-height:1.2em;margin:4px 0 8px;transition:opacity .2s}
+.pw-wrap{position:relative}.pw-wrap input{width:100%;padding-right:64px;box-sizing:border-box}
+.pw-wrap .pw-toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:auto;margin:0;padding:4px 8px;font-size:.78rem;background:transparent;color:#2563eb;border:0;cursor:pointer}
+#login-form button[type=submit]{position:relative;overflow:hidden;transition:transform .15s,box-shadow .2s}
+#login-form button[type=submit]:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(37,99,235,.35)}
+#login-form button[type=submit].loading{pointer-events:none;opacity:.9}
+#login-form button[type=submit].loading::after{content:"";display:inline-block;width:14px;height:14px;margin-left:10px;vertical-align:-2px;border:2px solid rgba(255,255,255,.5);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.auth-box.shake{animation:shake .45s}
+@keyframes shake{20%{transform:translateX(-10px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+#login-message{color:#dc2626;min-height:1.2em}
+.login-success{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(11,18,32,.92);backdrop-filter:blur(8px);opacity:0;animation:fadeIn .35s forwards;color:#fff;text-align:center}
+.login-success .ring{width:84px;height:84px;margin:0 auto 18px;border-radius:50%;border:4px solid #22c55e;display:grid;place-items:center;font-size:40px;color:#22c55e;animation:pop .5s .1s both}
+.login-success h2{margin:0 0 6px;font-size:1.7rem}.login-success p{margin:0 0 18px;opacity:.8}
+.login-success .bar{width:240px;height:5px;margin:0 auto;border-radius:9px;background:rgba(255,255,255,.15);overflow:hidden}
+.login-success .bar b{display:block;height:100%;width:0;background:linear-gradient(90deg,#2563eb,#22c55e);animation:fill 1.5s .2s forwards}
+@keyframes fadeIn{to{opacity:1}}@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}@keyframes fill{to{width:100%}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}

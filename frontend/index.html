@@ -8,9 +8,11 @@
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="fixtrack-modern.css?v=1">
+    <link rel="stylesheet" href="login.css?v=1">
 </head>
 
-<body>
+<body class="login-page">
+    <div class="bg-fx" aria-hidden="true"><i></i><i></i><i></i></div>
 
     <main class="auth-container">
 
@@ -48,6 +50,13 @@
                 </p>
 
 
+                <div class="role-tabs" role="tablist" aria-label="Sign in as">
+                    <span class="pill" id="role-pill"></span>
+                    <button type="button" role="tab" data-role="customer" aria-selected="true">Customer</button>
+                    <button type="button" role="tab" data-role="technician" aria-selected="false">Technician</button>
+                    <button type="button" role="tab" data-role="admin" aria-selected="false">Admin</button>
+                </div>
+                <p class="role-hint" id="role-hint"></p>
                 <form id="login-form">
 
                     <label for="login-email">
@@ -66,12 +75,12 @@
                         Password
                     </label>
 
-                    <input
+                    <div class="pw-wrap"><input
                         type="password"
                         id="login-password"
                         placeholder="Enter your password"
                         required
-                    >
+                    ><button type="button" class="pw-toggle" id="pw-toggle">Show</button></div>
 
 
                     <button type="submit">

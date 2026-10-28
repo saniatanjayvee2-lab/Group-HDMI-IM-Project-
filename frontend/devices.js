@@ -8,8 +8,11 @@ const userData = localStorage.getItem("fixtrack_user");
 // CHECK CUSTOMER LOGIN
 // =========================
 
-if (!token || !userData) {
-    window.location.href = "index.html";
+let deviceUser = null;
+try { deviceUser = JSON.parse(userData); } catch (e) {}
+
+if (!token || !deviceUser || deviceUser.role !== "customer") {
+    window.location.replace("index.html");
 }
 
 // =========================

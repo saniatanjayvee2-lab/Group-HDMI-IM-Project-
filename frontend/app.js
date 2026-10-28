@@ -431,34 +431,7 @@ loginForm.addEventListener(
             // ROLE-BASED REDIRECT
             // =========================
 
-            if (data.user.role === "admin") {
-                window.location.href =
-                    "admin-dashboard.html";
-
-            } else if (
-                data.user.role === "technician"
-            ) {
-                window.location.href =
-                    "technician-dashboard.html";
-
-            } else if (
-                data.user.role === "customer"
-            ) {
-                window.location.href =
-                    "dashboard.html";
-
-            } else {
-                localStorage.removeItem(
-                    "fixtrack_token"
-                );
-
-                localStorage.removeItem(
-                    "fixtrack_user"
-                );
-
-                loginMessage.textContent =
-                    "Your account has an invalid role.";
-            }
+            finishLogin(data);
 
         } catch (error) {
             console.error(
@@ -477,3 +450,81 @@ loginForm.addEventListener(
 // =========================
 
 checkSetupStatus();
+
+
+// =========================
+// ANIMATED LOGIN (role tabs, loading, success transition)
+// =========================
+
+const ROLE_INFO = {
+    customer:   { page: "dashboard.html",             label: "Customer Portal",       hint: "Track your devices and repair requests." },
+    technician: { page: "technician-dashboard.html",  label: "Technician Workspace",  hint: "View assigned repairs and update their status." },
+    admin:      { page: "admin-dashboard.html",       label: "Administrator Console", hint: "Manage the shop, team, inventory and payments." }
+};
+let selectedRole = "customer";
+
+function selectRole(role) {
+    selectedRole = role;
+    const tabs = [...document.querySelectorAll(".role-tabs [data-role]")];
+    tabs.forEach((t) => t.setAttribute("aria-selected", String(t.dataset.role === role)));
+    const pill = document.getElementById("role-pill");
+    if (pill) pill.style.transform = `translateX(${tabs.findIndex((t) => t.dataset.role === role) * 100}%)`;
+    const hint = document.getElementById("role-hint");
+    if (hint) hint.textContent = ROLE_INFO[role].hint;
+}
+document.querySelectorAll(".role-tabs [data-role]").forEach((t) =>
+    t.addEventListener("click", () => selectRole(t.dataset.role)));
+selectRole("customer");
+
+const pwToggle = document.getElementById("pw-toggle");
+if (pwToggle) pwToggle.addEventListener("click", () => {
+    const f = document.getElementById("login-password");
+    const show = f.type === "password";
+    f.type = show ? "text" : "password";
+    pwToggle.textContent = show ? "Hide" : "Show";
+});
+
+const loginSubmit = loginForm.querySelector('button[type="submit"]');
+loginForm.addEventListener("submit", () => {
+    loginSubmit.classList.add("loading");
+    loginMessage.textContent = "";
+}, true);
+
+// Any error text written by the login handler stops the spinner and shakes the card
+new MutationObserver(() => {
+    if (loginMessage.textContent) {
+        loginSubmit.classList.remove("loading");
+        loginBox.classList.remove("shake");
+        void loginBox.offsetWidth;
+        loginBox.classList.add("shake");
+    }
+}).observe(loginMessage, { childList: true, characterData: true, subtree: true });
+
+function finishLogin(data) {
+    const role = data.user && data.user.role;
+    const info = ROLE_INFO[role];
+
+    if (!info) {
+        localStorage.removeItem("fixtrack_token");
+        localStorage.removeItem("fixtrack_user");
+        loginMessage.textContent = "Your account has an invalid role.";
+        return;
+    }
+
+    // Signed in on the wrong tab: don't silently open another portal
+    if (role !== selectedRole) {
+        localStorage.removeItem("fixtrack_token");
+        localStorage.removeItem("fixtrack_user");
+        loginMessage.textContent =
+            `This is a ${role} account. Choose the ${role.charAt(0).toUpperCase() + role.slice(1)} tab to sign in.`;
+        return;
+    }
+
+    const overlay = document.createElement("div");
+    overlay.className = "login-success";
+    overlay.innerHTML = '<div><div class="ring">&#10003;</div><h2></h2><p></p><div class="bar"><b></b></div></div>';
+    overlay.querySelector("h2").textContent = `Welcome back, ${data.user.first_name || "there"}!`;
+    overlay.querySelector("p").textContent = `Opening ${info.label}...`;
+    document.body.append(overlay);
+    setTimeout(() => { window.location.href = info.page; }, 1800);
+}

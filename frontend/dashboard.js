@@ -10,8 +10,12 @@ if (!token || !userData) {
     window.location.href = "index.html";
 
 } else {
-
-    const user = JSON.parse(userData);
+    let user = null;
+    try { user = JSON.parse(userData); } catch (e) {}
+    if (!user || user.role !== "customer") {
+        window.location.replace("index.html");
+        throw new Error("Not a customer session");
+    }
 
     // Display customer's name
     document.getElementById("welcomeUser").textContent =
