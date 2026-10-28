@@ -135,8 +135,9 @@
         }
 
         function movePaymentSection() {
+            // Replace the previous summary whenever billing is recalculated.
             const payment = panels.billing.querySelector(".payment-section");
-            if (payment) panels.payments.append(payment);
+            if (payment) panels.payments.replaceChildren(payment);
         }
 
         async function loadBillingIfNeeded(card) {
