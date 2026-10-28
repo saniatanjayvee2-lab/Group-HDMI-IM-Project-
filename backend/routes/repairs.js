@@ -432,7 +432,9 @@ router.put(
                 const technicianResult = await pool.query(
                     `SELECT technician_id
                      FROM technicians
-                     WHERE technician_id = $1`,
+                     WHERE technician_id = 
+
+                       AND LOWER(TRIM(status)) = 'active'`,
                     [technicianId]
                 );
 
