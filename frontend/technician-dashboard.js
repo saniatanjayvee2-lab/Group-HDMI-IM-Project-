@@ -78,7 +78,7 @@ function detail(parent, label, value) {
 }
 
 function showDiagnosis(show) {
-    el("diagnosisSection").style.display = show ? "block" : "none";
+    el("diagnosisSection").style.display = show ? "grid" : "none";
     el("assignedRepairsSection").style.display = show ? "none" : "block";
 }
 
@@ -110,6 +110,15 @@ async function initializeDashboard() {
     });
 
     el("diagnosisForm").addEventListener("submit", saveDiagnosis);
+    el("editDiagnosisForm").addEventListener("submit", saveEditedDiagnosis);
+    el("closeEditDiag").addEventListener("click", closeEditPanel);
+    el("cancelEditDiag").addEventListener("click", closeEditPanel);
+    el("editDiagnosisOverlay").addEventListener("click", event => {
+        if (event.target === event.currentTarget) closeEditPanel();
+    });
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeEditPanel();
+    });
 
     await displayRepairs("repairs");
 }
@@ -396,60 +405,9 @@ async function openDiagnosis(repairId) {
     });
 }
 
-let editingDiagnosisId = null;
-
-function setDiagnosisEditMode(diagnosis) {
-    const select = el("diagnosisRepair");
-    const button = el("saveDiagnosisBtn");
-    let cancel = el("cancelDiagnosisEdit");
-
-    if (!diagnosis) {
-        editingDiagnosisId = null;
-        select.disabled = false;
-        button.textContent = "Save Diagnosis";
-        el("diagnosisDetails").value = "";
-        el("recommendedAction").value = "";
-        if (cancel) cancel.remove();
-        return;
-    }
-
-    editingDiagnosisId = diagnosis.diagnosis_id;
-    showDiagnosis(true);
-
-    if (![...select.options].some(o => o.value === String(diagnosis.repair_id))) {
-        const option = document.createElement("option");
-        option.value = diagnosis.repair_id;
-        option.textContent =
-            `#${diagnosis.repair_id} - ${diagnosis.brand || "Unknown"} ${diagnosis.model || "Device"}`;
-        select.appendChild(option);
-    }
-
-    select.value = String(diagnosis.repair_id);
-    select.disabled = true;
-    el("diagnosisDetails").value = diagnosis.diagnosis_details || "";
-    el("recommendedAction").value = diagnosis.recommended_action || "";
-    button.textContent = "Update Diagnosis";
-    message("diagnosisMessage", "Editing diagnosis. Save your changes or cancel.");
-
-    if (!cancel) {
-        cancel = make("button", "tw-btn", "Cancel");
-        cancel.type = "button";
-        cancel.id = "cancelDiagnosisEdit";
-        cancel.style.marginLeft = "8px";
-        cancel.addEventListener("click", () => {
-            setDiagnosisEditMode(null);
-            message("diagnosisMessage", "");
-        });
-        button.insertAdjacentElement("afterend", cancel);
-    }
-
-    el("diagnosisSection").scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
 async function saveDiagnosis(event) {
     event.preventDefault();
 
-    const isEdit = editingDiagnosisId !== null;
     const repairId = Number(el("diagnosisRepair").value);
     const details = el("diagnosisDetails").value.trim();
     const action = el("recommendedAction").value.trim();
@@ -469,11 +427,9 @@ async function saveDiagnosis(event) {
 
     try {
         const response = await fetch(
-            isEdit
-                ? `${TECHNICIAN_API}/diagnoses/${editingDiagnosisId}`
-                : `${TECHNICIAN_API}/diagnoses`,
+            `${TECHNICIAN_API}/diagnoses`,
             {
-                method: isEdit ? "PUT" : "POST",
+                method: "POST",
                 headers: headers(),
                 body: JSON.stringify({
                     repair_id: repairId,
@@ -491,12 +447,10 @@ async function saveDiagnosis(event) {
             );
         }
 
-        setDiagnosisEditMode(null);
+        el("diagnosisDetails").value = "";
+        el("recommendedAction").value = "";
 
-        message(
-            "diagnosisMessage",
-            isEdit ? "Diagnosis updated successfully." : "Diagnosis saved successfully."
-        );
+        message("diagnosisMessage", "Diagnosis saved successfully.");
 
         await loadDiagnoses();
 
@@ -505,7 +459,75 @@ async function saveDiagnosis(event) {
 
     } finally {
         button.disabled = false;
-        button.textContent = editingDiagnosisId !== null ? "Update Diagnosis" : "Save Diagnosis";
+        button.textContent = "Save Diagnosis";
+    }
+}
+
+let editingDiagnosisId = null;
+
+function openEditPanel(diagnosis) {
+    editingDiagnosisId = diagnosis.diagnosis_id;
+
+    el("editDiagRepair").textContent =
+        `Repair #${diagnosis.repair_id} - ` +
+        `${diagnosis.brand || "Unknown"} ${diagnosis.model || "Device"}`;
+    el("editDiagDetails").value = diagnosis.diagnosis_details || "";
+    el("editDiagAction").value = diagnosis.recommended_action || "";
+    message("editDiagMessage", "");
+
+    el("editDiagnosisOverlay").classList.add("open");
+    el("editDiagDetails").focus();
+}
+
+function closeEditPanel() {
+    editingDiagnosisId = null;
+    el("editDiagnosisOverlay").classList.remove("open");
+}
+
+async function saveEditedDiagnosis(event) {
+    event.preventDefault();
+
+    const details = el("editDiagDetails").value.trim();
+    const action = el("editDiagAction").value.trim();
+    const button = el("saveEditDiag");
+
+    if (!editingDiagnosisId || !details) {
+        message("editDiagMessage", "Diagnosis details are required.", true);
+        return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Saving...";
+
+    try {
+        const response = await fetch(
+            `${TECHNICIAN_API}/diagnoses/${editingDiagnosisId}`,
+            {
+                method: "PUT",
+                headers: headers(),
+                body: JSON.stringify({
+                    diagnosis_details: details,
+                    recommended_action: action
+                })
+            }
+        );
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(data.message || "Unable to update diagnosis.");
+        }
+
+        closeEditPanel();
+        message("diagnosisMessage", "Diagnosis updated successfully.");
+        await loadDiagnoses();
+
+    } catch (error) {
+        message("editDiagMessage", error.message, true);
+
+    } finally {
+        button.disabled = false;
+        button.textContent = "Save Changes";
     }
 }
 
@@ -565,7 +587,7 @@ async function loadDiagnoses() {
             if (diagnosis.status !== "Released") {
                 const editBtn = make("button", "tw-btn", "Edit Diagnosis");
                 editBtn.type = "button";
-                editBtn.addEventListener("click", () => setDiagnosisEditMode(diagnosis));
+                editBtn.addEventListener("click", () => openEditPanel(diagnosis));
                 card.appendChild(editBtn);
             }
 

@@ -241,6 +241,7 @@
     <link rel="stylesheet" href="fixtrack-modern.css?v=1">
 <link rel="stylesheet" href="dashboard-anim.css?v=1">
 <link rel="stylesheet" href="ft-theme.css?v=1">
+<link rel="stylesheet" href="technician-diagnosis.css?v=1">
 </head>
 
 <body>
@@ -312,69 +313,98 @@
 
         </section>
 
-        <section
-            class="tw-panel"
-            id="diagnosisSection"
-            style="display:none;"
-        >
+        <section class="tw-diag-layout" id="diagnosisSection" style="display:none;">
 
-            <div class="tw-panel-top">
-                <h3>Record Diagnosis</h3>
+            <div class="tw-panel tw-diag-form">
 
-                <button
-                    type="button"
-                    id="backToRepairsBtn"
-                    class="tw-btn light"
-                >
-                    Back to Repairs
-                </button>
+                <div class="tw-panel-top">
+                    <h3>Record Diagnosis</h3>
+
+                    <button type="button" id="backToRepairsBtn" class="tw-btn light">
+                        Back to Repairs
+                    </button>
+                </div>
+
+                <form id="diagnosisForm" class="tw-form">
+
+                    <label for="diagnosisRepair">Assigned Repair</label>
+                    <select id="diagnosisRepair" required>
+                        <option value="">Select a repair</option>
+                    </select>
+
+                    <label for="diagnosisDetails">Diagnosis Details</label>
+                    <textarea
+                        id="diagnosisDetails"
+                        rows="4"
+                        placeholder="Describe the problem found..."
+                        required
+                    ></textarea>
+
+                    <label for="recommendedAction">Recommended Action</label>
+                    <textarea
+                        id="recommendedAction"
+                        rows="3"
+                        placeholder="Describe the recommended repair..."
+                    ></textarea>
+
+                    <button type="submit" id="saveDiagnosisBtn" class="tw-btn">
+                        Save Diagnosis
+                    </button>
+
+                    <p id="diagnosisMessage" class="tw-message" role="status"></p>
+
+                </form>
             </div>
 
-            <form id="diagnosisForm" class="tw-form">
+            <div class="tw-panel tw-diag-saved">
+                <div class="tw-panel-top">
+                    <h3>Saved Diagnoses</h3>
+                </div>
 
-                <label for="diagnosisRepair">Assigned Repair</label>
-                <select id="diagnosisRepair" required>
-                    <option value="">Select a repair</option>
-                </select>
-
-                <label for="diagnosisDetails">Diagnosis Details</label>
-                <textarea
-                    id="diagnosisDetails"
-                    rows="4"
-                    placeholder="Describe the problem found..."
-                    required
-                ></textarea>
-
-                <label for="recommendedAction">Recommended Action</label>
-                <textarea
-                    id="recommendedAction"
-                    rows="3"
-                    placeholder="Describe the recommended repair..."
-                ></textarea>
-
-                <button
-                    type="submit"
-                    id="saveDiagnosisBtn"
-                    class="tw-btn"
-                >
-                    Save Diagnosis
-                </button>
-
-                <p
-                    id="diagnosisMessage"
-                    class="tw-message"
-                    role="status"
-                ></p>
-
-            </form>
-
-            <h3 style="margin-top:30px;">Saved Diagnoses</h3>
-
-            <div id="diagnosisList">
-                Loading diagnoses...
+                <div id="diagnosisList">
+                    Loading diagnoses...
+                </div>
             </div>
 
         </section>
+
+        <!-- EDIT DIAGNOSIS: its own panel -->
+        <div class="tw-edit-overlay" id="editDiagnosisOverlay">
+            <div class="tw-edit-panel" role="dialog" aria-modal="true" aria-labelledby="editDiagTitle">
+
+                <div class="tw-panel-top">
+                    <h3 id="editDiagTitle">Edit Diagnosis</h3>
+
+                    <button type="button" id="closeEditDiag" class="tw-btn light">
+                        Close
+                    </button>
+                </div>
+
+                <p class="tw-edit-repair" id="editDiagRepair"></p>
+
+                <form id="editDiagnosisForm" class="tw-form">
+
+                    <label for="editDiagDetails">Diagnosis Details</label>
+                    <textarea id="editDiagDetails" rows="5" required></textarea>
+
+                    <label for="editDiagAction">Recommended Action</label>
+                    <textarea id="editDiagAction" rows="4"></textarea>
+
+                    <div class="tw-edit-actions">
+                        <button type="submit" id="saveEditDiag" class="tw-btn">
+                            Save Changes
+                        </button>
+
+                        <button type="button" id="cancelEditDiag" class="tw-btn light">
+                            Cancel
+                        </button>
+                    </div>
+
+                    <p id="editDiagMessage" class="tw-message" role="status"></p>
+
+                </form>
+            </div>
+        </div>
 
     </main>
 
