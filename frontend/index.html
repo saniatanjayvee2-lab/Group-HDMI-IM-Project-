@@ -81,6 +81,7 @@
                         placeholder="Enter your password"
                         required
                     ><button type="button" class="pw-toggle" id="pw-toggle">Show</button></div>
+                    <p class="forgot-row" id="forgot-row"><button type="button" class="link-btn" id="show-forgot">Forgot password?</button></p>
 
 
                     <button type="submit">
@@ -327,6 +328,33 @@
             </div>
 
 
+        
+            <!-- FORGOT PASSWORD (customer + admin) -->
+            <div id="forgot-box" class="auth-box hidden">
+                <h2>Reset your password</h2>
+                <p>Enter your account email and we will send you a reset link.</p>
+                <form id="forgot-form">
+                    <label for="forgot-email">Email</label>
+                    <input type="email" id="forgot-email" placeholder="Enter your email" required>
+                    <button type="submit" id="forgot-submit">Send reset link</button>
+                </form>
+                <p id="forgot-message" class="auth-note"></p>
+                <p><button type="button" class="link-btn" id="forgot-back">Back to login</button></p>
+            </div>
+
+            <!-- RESET PASSWORD (opened from the email link) -->
+            <div id="reset-box" class="auth-box hidden">
+                <h2>Choose a new password</h2>
+                <p>Use at least 8 characters.</p>
+                <form id="reset-form">
+                    <label for="reset-password">New password</label>
+                    <input type="password" id="reset-password" minlength="8" required>
+                    <label for="reset-confirm">Confirm password</label>
+                    <input type="password" id="reset-confirm" minlength="8" required>
+                    <button type="submit" id="reset-submit">Update password</button>
+                </form>
+                <p id="reset-message" class="auth-note"></p>
+            </div>
         </section>
 
     </main>

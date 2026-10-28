@@ -21,8 +21,8 @@ body.login-page .auth-box{animation:cardIn .7s .2s both;backdrop-filter:blur(14p
 .role-tabs button[aria-selected=true]{color:#fff}
 .role-tabs .pill{position:absolute;z-index:0;top:4px;bottom:4px;left:4px;width:calc((100% - 8px)/3);border-radius:9px;background:linear-gradient(135deg,#2563eb,#0ea5e9);box-shadow:0 6px 16px rgba(37,99,235,.4);transition:transform .35s cubic-bezier(.3,1.2,.4,1)}
 .role-hint{font-size:.85rem;opacity:.75;min-height:1.2em;margin:4px 0 8px;transition:opacity .2s}
-.pw-wrap{position:relative}.pw-wrap input{width:100%;padding-right:64px;box-sizing:border-box}
-.pw-wrap .pw-toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:auto;margin:0;padding:4px 8px;font-size:.78rem;background:transparent;color:#2563eb;border:0;cursor:pointer}
+.pw-wrap{position:relative;margin:6px 0 4px}.pw-wrap input{display:block;width:100%;margin:0!important;padding-right:64px;box-sizing:border-box}
+.pw-wrap .pw-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:auto;height:auto;margin:0;padding:4px 8px;line-height:1;font-size:.8rem;font-weight:700;background:transparent;color:#2563eb;border:0;box-shadow:none;cursor:pointer}
 #login-form button[type=submit]{position:relative;overflow:hidden;transition:transform .15s,box-shadow .2s}
 #login-form button[type=submit]:hover{transform:translateY(-1px);box-shadow:0 10px 22px rgba(37,99,235,.35)}
 #login-form button[type=submit].loading{pointer-events:none;opacity:.9}
@@ -38,3 +38,9 @@ body.login-page .auth-box{animation:cardIn .7s .2s both;backdrop-filter:blur(14p
 .login-success .bar b{display:block;height:100%;width:0;background:linear-gradient(90deg,#2563eb,#22c55e);animation:fill 1.5s .2s forwards}
 @keyframes fadeIn{to{opacity:1}}@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}@keyframes fill{to{width:100%}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+.forgot-row{margin:0 0 12px;text-align:right;min-height:1.4em}
+.link-btn{width:auto!important;background:transparent!important;border:0!important;box-shadow:none!important;padding:2px 0!important;color:#2563eb!important;font-weight:700;cursor:pointer}
+.link-btn:hover{text-decoration:underline;transform:none!important}
+.auth-note{min-height:1.2em;font-size:.92rem}
+.auth-note.ok{color:#15803d}.auth-note.err{color:#dc2626}

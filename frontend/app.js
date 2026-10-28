@@ -458,7 +458,7 @@ checkSetupStatus();
 
 const ROLE_INFO = {
     customer:   { page: "dashboard.html",             label: "Customer Portal",       hint: "Track your devices and repair requests." },
-    technician: { page: "technician-dashboard.html",  label: "Technician Workspace",  hint: "View assigned repairs and update their status." },
+    technician: { page: "technician-dashboard.html",  label: "Technician Workspace",  hint: "Forgot your password? Ask your admin to reset it for you." },
     admin:      { page: "admin-dashboard.html",       label: "Administrator Console", hint: "Manage the shop, team, inventory and payments." }
 };
 let selectedRole = "customer";
@@ -469,6 +469,8 @@ function selectRole(role) {
     tabs.forEach((t) => t.setAttribute("aria-selected", String(t.dataset.role === role)));
     const pill = document.getElementById("role-pill");
     if (pill) pill.style.transform = `translateX(${tabs.findIndex((t) => t.dataset.role === role) * 100}%)`;
+    const forgotRow = document.getElementById("forgot-row");
+    if (forgotRow) forgotRow.style.visibility = role === "technician" ? "hidden" : "visible";
     const hint = document.getElementById("role-hint");
     if (hint) hint.textContent = ROLE_INFO[role].hint;
 }
@@ -527,4 +529,96 @@ function finishLogin(data) {
     overlay.querySelector("p").textContent = `Opening ${info.label}...`;
     document.body.append(overlay);
     setTimeout(() => { window.location.href = info.page; }, 1800);
+}
+
+
+// =========================
+// FORGOT / RESET PASSWORD (customer + admin)
+// =========================
+
+const forgotBox = document.getElementById("forgot-box");
+const resetBox = document.getElementById("reset-box");
+
+function showOnly(box) {
+    [loginBox, registerBox, adminSetupBox, forgotBox, resetBox]
+        .forEach((b) => b && b.classList.toggle("hidden", b !== box));
+}
+
+function setNote(id, text, ok) {
+    const n = document.getElementById(id);
+    n.textContent = text;
+    n.classList.toggle("ok", Boolean(ok));
+    n.classList.toggle("err", !ok && Boolean(text));
+}
+
+document.getElementById("show-forgot").addEventListener("click", () => {
+    setNote("forgot-message", "");
+    const typed = document.getElementById("login-email").value.trim();
+    if (typed) document.getElementById("forgot-email").value = typed;
+    showOnly(forgotBox);
+});
+
+document.getElementById("forgot-back").addEventListener("click", () => showOnly(loginBox));
+
+document.getElementById("forgot-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const button = document.getElementById("forgot-submit");
+    button.disabled = true;
+    setNote("forgot-message", "");
+
+    try {
+        const response = await fetch(`${API_URL}/forgot-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: document.getElementById("forgot-email").value.trim() })
+        });
+        const data = await response.json().catch(() => ({}));
+        setNote("forgot-message", data.message || "Request sent.", response.ok);
+    } catch (error) {
+        setNote("forgot-message", "Unable to connect to the FixTrack server.", false);
+    } finally {
+        button.disabled = false;
+    }
+});
+
+const resetToken = new URLSearchParams(window.location.search).get("reset");
+
+if (resetToken) {
+    showOnly(resetBox);
+
+    document.getElementById("reset-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const password = document.getElementById("reset-password").value;
+        const button = document.getElementById("reset-submit");
+
+        if (password !== document.getElementById("reset-confirm").value) {
+            setNote("reset-message", "Passwords do not match.", false);
+            return;
+        }
+
+        button.disabled = true;
+        setNote("reset-message", "");
+
+        try {
+            const response = await fetch(`${API_URL}/reset-password`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token: resetToken, password })
+            });
+            const data = await response.json().catch(() => ({}));
+            setNote("reset-message", data.message || "Done.", response.ok);
+
+            if (response.ok) {
+                history.replaceState(null, "", window.location.pathname);
+                setTimeout(() => {
+                    showOnly(loginBox);
+                    loginMessage.textContent = "";
+                }, 1800);
+            }
+        } catch (error) {
+            setNote("reset-message", "Unable to connect to the FixTrack server.", false);
+        } finally {
+            button.disabled = false;
+        }
+    });
 }

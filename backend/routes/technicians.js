@@ -694,6 +694,84 @@ router.post(
 );
 
 // ==================================
+// EDIT DIAGNOSIS - TECHNICIAN
+// ==================================
+
+router.put(
+    "/diagnoses/:diagnosisId",
+    authenticateToken,
+    requireTechnician,
+    async (req, res) => {
+        try {
+            const diagnosisId = Number(req.params.diagnosisId);
+            const { diagnosis_details, recommended_action } = req.body || {};
+
+            if (
+                !Number.isSafeInteger(diagnosisId) ||
+                diagnosisId <= 0 ||
+                typeof diagnosis_details !== "string" ||
+                !diagnosis_details.trim()
+            ) {
+                return res.status(400).json({
+                    message: "Diagnosis details are required."
+                });
+            }
+
+            if (
+                recommended_action !== undefined &&
+                recommended_action !== null &&
+                typeof recommended_action !== "string"
+            ) {
+                return res.status(400).json({
+                    message: "Invalid recommended action."
+                });
+            }
+
+            const result = await pool.query(
+                `UPDATE diagnoses dg
+                 SET diagnosis_details = $1,
+                     recommended_action = $2
+                 FROM technicians t, repair_requests r
+                 WHERE dg.diagnosis_id = $3
+                   AND dg.technician_id = t.technician_id
+                   AND t.user_id = $4
+                   AND r.repair_id = dg.repair_id
+                   AND r.technician_id = t.technician_id
+                   AND r.status <> 'Released'
+                 RETURNING dg.*`,
+                [
+                    diagnosis_details.trim(),
+                    typeof recommended_action === "string"
+                        ? recommended_action.trim() || null
+                        : null,
+                    diagnosisId,
+                    req.user.user_id
+                ]
+            );
+
+            if (result.rows.length === 0) {
+                return res.status(404).json({
+                    message:
+                        "Diagnosis not found, not yours, or the repair was already released."
+                });
+            }
+
+            res.json({
+                message: "Diagnosis updated successfully.",
+                diagnosis: result.rows[0]
+            });
+
+        } catch (error) {
+            console.error("Edit diagnosis error:", error);
+
+            res.status(500).json({
+                message: "Unable to update diagnosis."
+            });
+        }
+    }
+);
+
+// ==================================
 // EXPORT ROUTER
 // ==================================
 
