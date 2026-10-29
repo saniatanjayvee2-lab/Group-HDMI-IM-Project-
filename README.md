@@ -10,12 +10,12 @@ FixTrack helps a computer repair shop manage repair requests from intake through
 
 ## Run locally
 
-1. Install backend dependencies:
-   `cd backend && npm install`
-2. Copy `backend/.env.example` to `backend/.env` and add your database and authentication settings.
-3. Create the database using `backend/database/schema.sql`.
-4. Start the API from the `backend` directory with `npx nodemon server.js`. The API listens on port 3000 by default.
-5. Serve `frontend/index.html` with a local static web server such as VS Code Live Server. The frontend currently uses the deployed API at `https://fixtrack-backend.vercel.app/api`.
+1. From the repository root, copy `backend/.env.example` to `backend/.env` and add your database and authentication settings.
+2. Create the database using `backend/database/schema.sql`.
+3. Change to the backend directory: `cd backend`.
+4. Install dependencies: `npm install`.
+5. Start the API: `npx nodemon server.js`. It listens on port 3000 by default.
+6. Serve `frontend/index.html` with a local static web server such as VS Code Live Server. The frontend currently uses the deployed API at `https://fixtrack-backend.vercel.app/api`.
 
 ## Project structure
 
