@@ -460,8 +460,14 @@ router.post("/forgot-password", async (req, res) => {
                         [user.user_id, hashToken(token)]
                     );
 
-                    const base = (process.env.FRONTEND_URL || "").replace(/\/+$/, "");
-                    await sendResetEmail(email, `${base}/index.html?reset=${token}`);
+                    const base = (
+                        process.env.FRONTEND_URL ||
+                        "https://fixtrack-management.vercel.app"
+                    ).replace(/\/+$/, "");
+                    await sendResetEmail(
+                        email,
+                        `${base}/index.html?reset=${encodeURIComponent(token)}`
+                    );
                 }
             }
         }
