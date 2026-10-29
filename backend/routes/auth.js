@@ -202,6 +202,8 @@ router.post("/login", async (req, res) => {
 // =========================
 
 router.post("/setup-admin", async (req, res) => {
+    let client;
+
     try {
         const {
             first_name,
@@ -209,42 +211,55 @@ router.post("/setup-admin", async (req, res) => {
             last_name,
             email,
             password
-        } = req.body;
+        } = req.body || {};
 
-        // Check required fields
         if (
-            !first_name ||
-            !last_name ||
-            !email ||
+            typeof first_name !== "string" ||
+            !first_name.trim() ||
+            first_name.trim().length > 100 ||
+            typeof last_name !== "string" ||
+            !last_name.trim() ||
+            last_name.trim().length > 100 ||
+            typeof email !== "string" ||
+            email.trim().length > 255 ||
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
+            typeof password !== "string" ||
             !password
         ) {
             return res.status(400).json({
                 message:
-                    "First name, last name, email, and password are required."
+                    "First name, last name, valid email, and password are required."
             });
         }
 
-        // Check if an admin already exists
-        const existingAdmin = await pool.query(
+        const normalizedEmail = email.trim().toLowerCase();
+
+        client = await pool.connect();
+        await client.query("BEGIN");
+
+        // Serialize first-admin setup so concurrent requests cannot
+        // both pass the no-admin check.
+        await client.query(
+            "SELECT pg_advisory_xact_lock($1)",
+            [827421]
+        );
+
+        const existingAdmin = await client.query(
             `SELECT user_id
              FROM users
-             WHERE role = $1
-             LIMIT 1`,
-            ["admin"]
+             WHERE role = 'admin'
+             LIMIT 1`
         );
 
         if (existingAdmin.rows.length > 0) {
+            await client.query("ROLLBACK");
             return res.status(403).json({
                 message:
                     "Administrator setup has already been completed."
             });
         }
 
-        const normalizedEmail =
-            email.trim().toLowerCase();
-
-        // Check if email already belongs to another account
-        const existingUser = await pool.query(
+        const existingUser = await client.query(
             `SELECT user_id
              FROM users
              WHERE LOWER(email) = $1`,
@@ -252,21 +267,16 @@ router.post("/setup-admin", async (req, res) => {
         );
 
         if (existingUser.rows.length > 0) {
+            await client.query("ROLLBACK");
             return res.status(409).json({
                 message:
                     "An account with this email already exists."
             });
         }
 
-        // Hash admin password
-        const passwordHash =
-            await bcrypt.hash(
-                password,
-                10
-            );
+        const passwordHash = await bcrypt.hash(password, 10);
 
-        // Create first administrator
-        const result = await pool.query(
+        const result = await client.query(
             `INSERT INTO users
             (
                 first_name,
@@ -276,7 +286,7 @@ router.post("/setup-admin", async (req, res) => {
                 password_hash,
                 role
             )
-            VALUES ($1, $2, $3, $4, $5, $6)
+            VALUES ($1, $2, $3, $4, $5, 'admin')
             RETURNING
                 user_id,
                 first_name,
@@ -287,38 +297,42 @@ router.post("/setup-admin", async (req, res) => {
                 created_at`,
             [
                 first_name.trim(),
-
-                middle_name
-                    ? middle_name.trim()
+                typeof middle_name === "string"
+                    ? middle_name.trim() || null
                     : null,
-
                 last_name.trim(),
-
                 normalizedEmail,
-
-                passwordHash,
-
-                "admin"
+                passwordHash
             ]
         );
+
+        await client.query("COMMIT");
 
         res.status(201).json({
             message:
                 "Administrator account created successfully.",
-
             user: result.rows[0]
         });
 
     } catch (error) {
-        console.error(
-            "Admin setup error:",
-            error
-        );
+        if (client) {
+            await client.query("ROLLBACK").catch(() => {});
+        }
 
+        if (error.code === "23505") {
+            return res.status(409).json({
+                message:
+                    "An account with this email already exists."
+            });
+        }
+
+        console.error("Admin setup error:", error);
         res.status(500).json({
-            message:
-                "Unable to create administrator account."
+            message: "Unable to create administrator account."
         });
+
+    } finally {
+        if (client) client.release();
     }
 });
 
