@@ -20,18 +20,30 @@ router.post("/register", async (req, res) => {
             last_name,
             email,
             password
-        } = req.body;
+        } = req.body || {};
 
-        // Check required fields
-        if (!first_name || !last_name || !email || !password) {
+        if (
+            typeof first_name !== "string" ||
+            !first_name.trim() ||
+            first_name.trim().length > 100 ||
+            (middle_name != null && typeof middle_name !== "string") ||
+            (typeof middle_name === "string" && middle_name.trim().length > 100) ||
+            typeof last_name !== "string" ||
+            !last_name.trim() ||
+            last_name.trim().length > 100 ||
+            typeof email !== "string" ||
+            email.trim().length > 255 ||
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
+            typeof password !== "string" ||
+            !password
+        ) {
             return res.status(400).json({
-                message: "Please fill in all required fields."
+                message:
+                    "Enter valid first and last names, email, and password."
             });
         }
 
         const normalizedEmail = email.trim().toLowerCase();
-
-        // Check if email already exists
         const existingUser = await pool.query(
             `SELECT user_id
              FROM users
@@ -45,25 +57,18 @@ router.post("/register", async (req, res) => {
             });
         }
 
-        // Hash password
-        const passwordHash = await bcrypt.hash(
-            password,
-            10
-        );
-
-        // Create customer
+        const passwordHash = await bcrypt.hash(password, 10);
         const result = await pool.query(
-            `INSERT INTO users
-            (
+            `INSERT INTO users (
                 first_name,
                 middle_name,
                 last_name,
                 email,
                 password_hash,
                 role
-            )
-            VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING
+             )
+             VALUES ($1, $2, $3, $4, $5, 'customer')
+             RETURNING
                 user_id,
                 first_name,
                 middle_name,
@@ -73,35 +78,33 @@ router.post("/register", async (req, res) => {
                 created_at`,
             [
                 first_name.trim(),
-                middle_name
-                    ? middle_name.trim()
+                typeof middle_name === "string"
+                    ? middle_name.trim() || null
                     : null,
                 last_name.trim(),
                 normalizedEmail,
-                passwordHash,
-                "customer"
+                passwordHash
             ]
         );
 
-        res.status(201).json({
-            message:
-                "Customer account created successfully.",
+        return res.status(201).json({
+            message: "Customer account created successfully.",
             user: result.rows[0]
         });
 
     } catch (error) {
-        console.error(
-            "Registration error:",
-            error
-        );
+        if (error.code === "23505") {
+            return res.status(409).json({
+                message: "Email is already registered."
+            });
+        }
 
-        res.status(500).json({
-            message:
-                "Server error while creating account."
+        console.error("Registration error:", error);
+        return res.status(500).json({
+            message: "Server error while creating account."
         });
     }
 });
-
 
 // =========================
 // LOGIN
