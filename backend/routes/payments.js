@@ -79,7 +79,7 @@ function money(cents) {
 function validReason(value) {
     return typeof value === "string" &&
         value.trim().length >= 5 &&
-        value.trim().length <= 1000;
+        value.trim().length <= 500;
 }
 
 function validManualMethod(value) {
@@ -331,13 +331,13 @@ router.post("/webhook", async (req, res) => {
         });
     }
 
-    const sourceType =
+    const sourceType = String(
         paymentAttributes.source?.type ||
         paymentAttributes.payment_method_details?.type ||
-        "Online";
+        "Online"
+    ).slice(0, 50);
 
-    const method =
-        `PayMongo ${String(sourceType).slice(0, 80)}`;
+    const method = `PayMongo ${sourceType}`.slice(0, 50);
 
     const client = await pool.connect();
 
