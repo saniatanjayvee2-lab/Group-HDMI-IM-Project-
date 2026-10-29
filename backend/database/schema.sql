@@ -166,6 +166,46 @@ CREATE TABLE paymongo_transactions (
         REFERENCES payments(payment_id)
 );
 
+-- PAYMONGO CHECKOUT SESSIONS
+CREATE TABLE IF NOT EXISTS paymongo_checkout_sessions (
+    checkout_session_id VARCHAR(255) PRIMARY KEY,
+    repair_id INT NOT NULL,
+    amount_cents BIGINT NOT NULL CHECK (amount_cents > 0),
+    reference_number VARCHAR(255) NOT NULL UNIQUE,
+    status VARCHAR(50) NOT NULL DEFAULT 'Pending',
+    payment_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    completed_at TIMESTAMP,
+
+    FOREIGN KEY (repair_id)
+        REFERENCES repair_requests(repair_id),
+
+    FOREIGN KEY (payment_id)
+        REFERENCES payments(payment_id)
+);
+
+-- PAYMENT CORRECTION AUDIT LOG
+CREATE TABLE IF NOT EXISTS payment_audit_logs (
+    audit_id SERIAL PRIMARY KEY,
+    payment_id INT NOT NULL,
+    admin_user_id INT NOT NULL,
+    action VARCHAR(20) NOT NULL CHECK (action IN ('EDIT', 'VOID')),
+    old_amount DECIMAL(10,2) NOT NULL,
+    new_amount DECIMAL(10,2) NOT NULL,
+    old_method VARCHAR(50),
+    new_method VARCHAR(50),
+    old_status VARCHAR(50),
+    new_status VARCHAR(50),
+    reason TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (payment_id)
+        REFERENCES payments(payment_id),
+
+    FOREIGN KEY (admin_user_id)
+        REFERENCES users(user_id)
+);
+
 -- REPAIR STATUS HISTORY
 CREATE TABLE repair_status_history (
     history_id SERIAL PRIMARY KEY,
