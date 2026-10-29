@@ -201,30 +201,14 @@ async function loadDevices() {
             deviceList.appendChild(deviceCard);
 
             // EDIT BUTTON
-            const editButton =
-                deviceCard.querySelector(
-                    ".edit-device-btn"
-                );
-
-            editButton.addEventListener(
-                "click",
-                () => {
-                    openEditModal(device);
-                }
-            );
+            editButton.addEventListener("click", () => {
+                openEditModal(device);
+            });
 
             // REMOVE BUTTON
-            const removeButton =
-                deviceCard.querySelector(
-                    ".remove-device-btn"
-                );
-
-            removeButton.addEventListener(
-                "click",
-                () => {
-                    removeDevice(device.device_id);
-                }
-            );
+            removeButton.addEventListener("click", () => {
+                removeDevice(device.device_id);
+            });
         });
 
     } catch (error) {
