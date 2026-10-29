@@ -1,49 +1,11 @@
 
 const express = require("express");
-const jwt = require("jsonwebtoken");
 const pool = require("../config/db");
+const { authenticateToken, requireRole } = require("../middleware/auth");
 
 const router = express.Router();
 
-// =====================================
-// AUTHENTICATION
-// =====================================
-
-function authenticateToken(req, res, next) {
-    const authHeader = req.headers.authorization;
-    const token = authHeader?.split(" ")[1];
-
-    if (!token) {
-        return res.status(401).json({
-            message: "Please log in first."
-        });
-    }
-
-    jwt.verify(token, process.env.JWT_SECRET, (error, user) => {
-        if (error) {
-            return res.status(403).json({
-                message: "Invalid or expired login."
-            });
-        }
-
-        req.user = user;
-        next();
-    });
-}
-
-// =====================================
-// ADMIN ACCESS
-// =====================================
-
-function requireAdmin(req, res, next) {
-    if (req.user.role !== "admin") {
-        return res.status(403).json({
-            message: "Administrator access only."
-        });
-    }
-
-    next();
-}
+const requireAdmin = requireRole("admin", "Administrator access only.");
 
 // =====================================
 // VALIDATION HELPERS
