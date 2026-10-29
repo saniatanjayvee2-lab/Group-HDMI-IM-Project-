@@ -105,6 +105,17 @@ deviceForm.addEventListener("submit", async (event) => {
     }
 });
 
+function createDetailLine(label, value) {
+    const paragraph = document.createElement("p");
+    const strong = document.createElement("strong");
+    strong.textContent = `${label}:`;
+    paragraph.append(
+        strong,
+        document.createTextNode(` ${value}`)
+    );
+    return paragraph;
+}
+
 // =========================
 // LOAD DEVICES
 // =========================
@@ -146,43 +157,46 @@ async function loadDevices() {
                 "registered-device"
             );
 
-            deviceCard.innerHTML = `
-                <div class="registered-device-header">
-                    <h4>
-                        ${device.brand} ${device.model}
-                    </h4>
+            const header = document.createElement("div");
+            header.className = "registered-device-header";
 
-                    <span>
-                        ${device.device_type}
-                    </span>
-                </div>
+            const heading = document.createElement("h4");
+            heading.textContent =
+                `${device.brand || ""} ${device.model || ""}`.trim();
 
-                <div class="device-details">
-                    <p>
-                        <strong>Serial Number:</strong>
-                        ${device.serial_number || "Not provided"}
-                    </p>
+            const type = document.createElement("span");
+            type.textContent = device.device_type || "";
 
-                    <p>
-                        <strong>Accessories:</strong>
-                        ${device.accessories_included || "None"}
-                    </p>
-                </div>
+            header.append(heading, type);
 
-                <div class="device-actions">
-                    <button
-                        type="button"
-                        class="edit-device-btn">
-                        Edit
-                    </button>
+            const details = document.createElement("div");
+            details.className = "device-details";
+            details.append(
+                createDetailLine(
+                    "Serial Number",
+                    device.serial_number || "Not provided"
+                ),
+                createDetailLine(
+                    "Accessories",
+                    device.accessories_included || "None"
+                )
+            );
 
-                    <button
-                        type="button"
-                        class="remove-device-btn">
-                        Remove
-                    </button>
-                </div>
-            `;
+            const actions = document.createElement("div");
+            actions.className = "device-actions";
+
+            const editButton = document.createElement("button");
+            editButton.type = "button";
+            editButton.className = "edit-device-btn";
+            editButton.textContent = "Edit";
+
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.className = "remove-device-btn";
+            removeButton.textContent = "Remove";
+
+            actions.append(editButton, removeButton);
+            deviceCard.append(header, details, actions);
 
             deviceList.appendChild(deviceCard);
 
