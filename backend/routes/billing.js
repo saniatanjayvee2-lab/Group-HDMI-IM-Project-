@@ -399,6 +399,7 @@ router.post(
                 !validId(repairId) ||
                 typeof description !== "string" ||
                 !description.trim() ||
+                description.trim().length > 255 ||
                 !validMoney(labor_cost)
             ) {
                 return res.status(400).json({
