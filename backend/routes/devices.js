@@ -1,56 +1,18 @@
 const express = require("express");
-const jwt = require("jsonwebtoken");
 const pool = require("../config/db");
+const { authenticateToken, requireRole } = require("../middleware/auth");
 
 const router = express.Router();
-
-
-// =========================
-// CHECK JWT TOKEN
-// =========================
-
-function authenticateToken(req, res, next) {
-
-    const authHeader = req.headers["authorization"];
-
-    if (!authHeader) {
-        return res.status(401).json({
-            message: "Access denied. Please log in."
-        });
-    }
-
-    const token = authHeader.split(" ")[1];
-
-    if (!token) {
-        return res.status(401).json({
-            message: "Access denied. Invalid token."
-        });
-    }
-
-    jwt.verify(
-        token,
-        process.env.JWT_SECRET,
-        (error, user) => {
-
-            if (error) {
-                return res.status(403).json({
-                    message: "Invalid or expired login."
-                });
-            }
-
-            req.user = user;
-
-            next();
-        }
-    );
-}
+const requireCustomer = requireRole("customer", "Customer access only.");
 
 
 // =========================
 // GET CUSTOMER DEVICES
 // =========================
 
-router.get("/", authenticateToken, async (req, res) => {
+router.get("/", authenticateToken,
+    requireCustomer,
+    async (req, res) => {
 
     try {
 
@@ -79,7 +41,9 @@ router.get("/", authenticateToken, async (req, res) => {
 // ADD DEVICE
 // =========================
 
-router.post("/", authenticateToken, async (req, res) => {
+router.post("/", authenticateToken,
+    requireCustomer,
+    async (req, res) => {
 
     try {
 
@@ -154,6 +118,7 @@ router.post("/", authenticateToken, async (req, res) => {
 router.put(
     "/:deviceId",
     authenticateToken,
+    requireCustomer,
     async (req, res) => {
 
         try {
@@ -250,6 +215,7 @@ router.put(
 router.delete(
     "/:deviceId",
     authenticateToken,
+    requireCustomer,
     async (req, res) => {
 
         try {
