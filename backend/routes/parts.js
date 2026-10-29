@@ -19,7 +19,11 @@ function validatePart(data) {
     const price = Number(data.unit_price);
     const quantity = Number(data.stock_quantity);
 
-    if (typeof name !== "string" || !name.trim()) {
+    if (
+        typeof name !== "string" ||
+        !name.trim() ||
+        name.trim().length > 255
+    ) {
         return {
             error: "Part name is required."
         };
@@ -27,7 +31,8 @@ function validatePart(data) {
 
     if (
         description != null &&
-        typeof description !== "string"
+        typeof description !== "string" ||
+        description.trim().length > 255
     ) {
         return {
             error: "Description must be text."
