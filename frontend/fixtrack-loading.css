@@ -1,0 +1,9 @@
+/* Functional request spinner, not a decorative animation. */
+#ft-loading-overlay{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(246,249,254,.92);opacity:0;visibility:hidden;pointer-events:none}
+#ft-loading-overlay.ft-loading-show{opacity:1;visibility:visible;pointer-events:auto}
+#ft-loading-overlay .ft-loading-card{min-width:230px;max-width:340px;background:#fff;border:1px solid #e0e7f3;border-radius:17px;box-shadow:0 20px 60px rgba(22,45,87,.16);padding:31px;display:flex;flex-direction:column;align-items:center;gap:13px;text-align:center}
+#ft-loading-overlay .ft-loading-spinner{width:43px;height:43px;border:4px solid #dbe5ff;border-top-color:#355cf0;border-radius:50%;animation:ft-loading-rotate .8s linear infinite!important}
+#ft-loading-overlay .ft-loading-card strong{font:800 15px system-ui,-apple-system,"Segoe UI",sans-serif;color:#1b3054}
+#ft-loading-overlay .ft-loading-card p{font:400 12px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;color:#6e809d;margin:0}
+@keyframes ft-loading-rotate{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){#ft-loading-overlay .ft-loading-spinner{animation-duration:1.8s!important}}
