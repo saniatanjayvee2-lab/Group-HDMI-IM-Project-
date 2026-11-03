@@ -1,0 +1,20 @@
+/* FixTrack static mode: intentionally no blinking, reveal, ripple, float, slide, or pulsing UI. */
+html,body{scroll-behavior:auto!important}
+body,body *,body *::before,body *::after{
+  animation:none!important;
+  animation-delay:0s!important;
+  transition:none!important;
+  transition-delay:0s!important;
+}
+body.ft-pro .ft-reveal,body.ft-pro .ft-row,body.ft-pro .ft-nav a,body.ft-pro .ft-side-nav a,
+body.ft-pro .dashboard-card,body.ft-pro .ft-rise,body.ft-pro .ft-loading,
+body.ft-pro .ft-module-side a{
+  opacity:1!important;
+  transform:none!important;
+}
+body.ft-pro .ft-progress,body.ft-pro .ft-ripple{display:none!important}
+body.ft-pro.ft-leaving{opacity:1!important;transform:none!important}
+body.ft-pro :is(.dashboard-card,.ft-action-card,.registered-device,.tw-card,.payments-stat,.reports-stat-card):hover{transform:none!important}
+body.ft-pro :is(button,a):active{transform:none!important}
+body.ft-pro :is(.ft-role-chip i,.ft-online>span){box-shadow:none!important}
+body.ft-pro [hidden]{display:none!important}

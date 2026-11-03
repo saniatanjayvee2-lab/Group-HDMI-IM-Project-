@@ -139,6 +139,7 @@ function createPaymentPanel(repair) {
     pay.type = "button";
     pay.textContent = "Pay Now (Test Mode)";
     pay.disabled = true;
+    pay.hidden = true; // Only show checkout when a verified balance is due.
     pay.style.marginTop = "10px";
     const message = document.createElement("p");
     message.setAttribute("role", "status");
@@ -156,6 +157,7 @@ function createPaymentPanel(repair) {
 
     async function showBill() {
         pay.disabled = true;
+        pay.hidden = true;
         try {
             const response = await fetch(`${PAYMENTS_API}/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -181,6 +183,7 @@ function createPaymentPanel(repair) {
                 return;
             }
             message.textContent = "PayMongo Test Mode only. No real money is charged.";
+            pay.hidden = false;
             pay.disabled = false;
         } catch (error) {
             details.textContent = error.message || "Unable to load billing.";
@@ -201,6 +204,7 @@ function createPaymentPanel(repair) {
             window.location.assign(url.href);
         } catch (error) {
             message.textContent = error.message || "Unable to start checkout.";
+            pay.hidden = false;
             pay.disabled = false;
         }
     });
