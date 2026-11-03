@@ -599,9 +599,16 @@ document.getElementById("forgot-form").addEventListener("submit", async (event) 
     }
 });
 
-const resetToken = new URLSearchParams(window.location.search).get("reset");
+// Some email clients include escaped line breaks or trailing text when
+// linking plain-text messages. Keep only a correctly shaped 64-hex token.
+// The API still verifies that it exists, is unused, and has not expired.
+const resetTokenParam = new URLSearchParams(window.location.search).get("reset");
+const resetTokenMatch = typeof resetTokenParam === "string"
+    ? /^([a-f0-9]{64})(?![a-f0-9])/i.exec(resetTokenParam.trim())
+    : null;
+const resetToken = resetTokenMatch ? resetTokenMatch[1].toLowerCase() : null;
 
-if (resetToken) {
+if (resetTokenParam !== null) {
     showOnly(resetBox);
 
     document.getElementById("reset-form").addEventListener("submit", async (event) => {
@@ -616,6 +623,11 @@ if (resetToken) {
 
         if (!strongPassword(password)) {
             setNote("reset-message", passwordGuidance, false);
+            return;
+        }
+
+        if (!resetToken) {
+            setNote("reset-message", "The reset link is malformed. Request a new link from Forgot password.", false);
             return;
         }
 

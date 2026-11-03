@@ -599,13 +599,24 @@ async function sendResetEmail(to, link) {
         auth: { user: SMTP_USER, pass: SMTP_HOST === "smtp.gmail.com"
             ? SMTP_PASS.replaceAll(" ", "") : SMTP_PASS }
     });
+    const safeLink = new URL(link);
+    if (safeLink.protocol !== "https:") {
+        throw new Error("Reset link must use HTTPS.");
+    }
+    const emailText = [
+        "A password reset was requested for your FixTrack account.",
+        "",
+        "Open the link below within 30 minutes:",
+        safeLink.toString(),
+        "",
+        "If you did not request a password reset, ignore this message."
+    ].join("\n");
+
     await transport.sendMail({
         from: MAIL_FROM || SMTP_USER,
         to,
         subject: "Reset your FixTrack password",
-        text: "A password reset was requested for your FixTrack account.\\n\\n" +
-            "Open this link within 30 minutes:\\n" + link +
-            "\\n\\nIf you did not request this change, ignore this email."
+        text: emailText
     });
 }
 
