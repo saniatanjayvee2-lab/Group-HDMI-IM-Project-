@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FixTrack | Manage Administrators</title>
+<link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+<link rel="stylesheet" href="style.css?v=7">
+<link rel="stylesheet" href="fixtrack-modern.css?v=1">
+<link rel="stylesheet" href="fixtrack-bootstrap.css?v=20261103">
+<link rel="stylesheet" href="fixtrack-pro.css?v=4">
+<link rel="stylesheet" href="fixtrack-functional.css?v=20261103-2">
+<link rel="stylesheet" href="fixtrack-suite.css?v=20261103-5">
+<link rel="stylesheet" href="fixtrack-static.css?v=20261103-1">
+<link rel="stylesheet" href="fixtrack-loading.css?v=3">
+<link rel="stylesheet" href="admin-accounts.css?v=1">
+<script src="fixtrack-loading.js?v=2"></script>
+</head>
+<body class="ft-bootstrap ft-pro ft-suite-page ft-admin-accounts">
+<div class="ft-suite-shell">
+<aside class="ft-suite-sidebar" aria-label="admin navigation">
+<a class="ft-suite-brand" href="admin-dashboard.html"><span class="ft-suite-brand-icon"><i data-lucide="monitor-cog"></i></span><span>Fix<span>Track</span><small>REPAIR MANAGEMENT</small></span></a>
+<div class="ft-suite-menu-label">WORKSPACE</div>
+<nav class="ft-suite-nav">
+<a href="admin-dashboard.html"><i data-lucide="layout-dashboard"></i><span>Overview</span></a>
+<a href="admin-repairs.html"><i data-lucide="clipboard-list"></i><span>Repairs</span></a>
+<a href="admin-customers.html"><i data-lucide="users"></i><span>Customers</span></a>
+<a href="technicians.html"><i data-lucide="user-cog"></i><span>Technicians</span></a>
+<a href="admin-accounts.html" aria-current="page"><i data-lucide="shield-check"></i><span>Administrators</span></a>
+<a href="admin-parts.html"><i data-lucide="boxes"></i><span>Parts and Inventory</span></a>
+<a href="admin-payments.html"><i data-lucide="credit-card"></i><span>Payments</span></a>
+<a href="admin-reports.html"><i data-lucide="bar-chart-3"></i><span>Reports</span></a>
+</nav>
+<div class="ft-suite-sidebar-bottom"><i data-lucide="shield-check"></i><div><strong>Secure workspace</strong><small>FixTrack Service Platform</small></div></div>
+</aside>
+<div class="ft-suite-main">
+<header class="dashboard-header"><div><h1>FixTrack</h1><p>Administrator Panel</p></div><button type="button" onclick="location.href='admin-dashboard.html'">Back to Dashboard</button></header>
+<main class="dashboard-container ft-accounts-main">
+<div class="ft-suite-mast"><div class="ft-suite-mast-icon"><i data-lucide="shield-check"></i></div><div class="ft-suite-mast-copy"><div class="ft-suite-breadcrumb">ADMINISTRATION / ACCOUNT MANAGEMENT</div><h1>Manage Administrators</h1><p>Create additional administrator accounts and review existing administrators.</p></div><div class="ft-suite-mast-date" id="ftSuiteDate"></div></div>
+<div class="row g-4">
+<div class="col-12 col-xl-5">
+<section class="card ft-accounts-card h-100">
+<div class="card-body">
+<div class="ft-accounts-header"><div><span class="ft-accounts-eyebrow">ACCOUNT CREATION</span><h2>Create Administrator</h2><p>New administrators will have access to the admin workspace.</p></div></div>
+<form id="create-admin-form" autocomplete="off">
+<div class="row g-3">
+<div class="col-sm-6"><label class="form-label" for="new-admin-first">First Name</label><input class="form-control" id="new-admin-first" maxlength="100" required></div>
+<div class="col-sm-6"><label class="form-label" for="new-admin-last">Last Name</label><input class="form-control" id="new-admin-last" maxlength="100" required></div>
+<div class="col-12"><label class="form-label" for="new-admin-middle">Middle Name (optional)</label><input class="form-control" id="new-admin-middle" maxlength="100"></div>
+<div class="col-12"><label class="form-label" for="new-admin-email">Email Address</label><input class="form-control" type="email" id="new-admin-email" maxlength="255" autocomplete="off" required></div>
+<div class="col-12"><label class="form-label" for="new-admin-password">New Admin Password</label><input class="form-control" type="password" id="new-admin-password" autocomplete="new-password" minlength="8" maxlength="72" required><p class="ft-password-note">At least 8 characters with uppercase, lowercase, a number, and a special character.</p></div>
+<div class="col-12"><label class="form-label" for="new-admin-confirm">Confirm New Password</label><input class="form-control" type="password" id="new-admin-confirm" autocomplete="new-password" minlength="8" maxlength="72" required></div>
+<div class="col-12"><div class="ft-admin-security"><strong>Security confirmation</strong><p>Confirm your own administrator password to create this account.</p><label class="form-label" for="current-admin-password">Your Current Password</label><input class="form-control" id="current-admin-password" type="password" autocomplete="current-password" required></div></div>
+</div>
+<p id="create-admin-message" class="ft-admin-message mt-3" role="status" aria-live="polite"></p>
+<button id="create-admin-button" class="btn btn-primary w-100 mt-2" type="submit"><span id="create-admin-spinner" class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>Create Administrator</button>
+</form>
+</div>
+</section>
+</div>
+<div class="col-12 col-xl-7">
+<section class="card ft-accounts-card h-100">
+<div class="card-body">
+<div class="ft-accounts-header"><div><span class="ft-accounts-eyebrow">TEAM ACCESS</span><h2>Current Administrators</h2><p>All accounts with administrator access to FixTrack.</p></div><span class="badge ft-admin-count" id="admin-total">Loading</span></div>
+<div id="admin-list" class="ft-admin-list" aria-live="polite"><p>Loading administrator accounts...</p></div>
+</div>
+</section>
+</div>
+</div>
+</main></div></div>
+<script src="admin-accounts.js?v=1" defer></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+<script defer src="fixtrack-suite.js?v=20261103-5"></script>
+</body></html>

@@ -1,0 +1,26 @@
+.ft-admin-accounts .ft-accounts-main{width:min(1300px,calc(100% - 55px));max-width:1300px}
+.ft-admin-accounts .ft-accounts-card{border:1px solid #e2e9f3!important;border-radius:16px!important;box-shadow:0 7px 28px rgba(15,35,70,.055)!important;background:#fff}
+.ft-admin-accounts .ft-accounts-card .card-body{padding:27px}
+.ft-admin-accounts .ft-accounts-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:25px;padding-bottom:20px;border-bottom:1px solid #e9eef5}
+.ft-admin-accounts .ft-accounts-eyebrow{color:#355cf0;font-size:10px;letter-spacing:1.3px;font-weight:800}
+.ft-admin-accounts .ft-accounts-header h2{font-size:21px;color:#182c4b;font-weight:800;margin:7px 0}
+.ft-admin-accounts .ft-accounts-header p{font-size:13px;color:#70829e;margin:0}
+.ft-admin-accounts .form-label{font-size:12px;font-weight:750;color:#394e6a;margin-bottom:7px}
+.ft-admin-accounts .form-control{width:100%;border-radius:9px!important;border:1px solid #d7e1ee!important;background:#fff!important;min-height:44px!important;padding:10px 12px!important;font-size:13px!important}
+.ft-admin-accounts .form-control:focus{border-color:#4a6cff!important;box-shadow:0 0 0 3px #dbe5ff!important}
+.ft-admin-accounts .ft-password-note{font-size:11.5px;color:#6d7e99;margin:8px 0 0;line-height:1.5}
+.ft-admin-accounts .ft-admin-security{background:#f5f8ff;border:1px solid #dae5ff;border-radius:12px;padding:18px}
+.ft-admin-accounts .ft-admin-security strong{color:#244581;font-size:13px}.ft-admin-accounts .ft-admin-security p{font-size:12px;color:#677d9c;margin:7px 0 15px}
+.ft-admin-accounts #create-admin-button{background:#355cf0;border-color:#355cf0;border-radius:10px;min-height:45px;font-size:13px;font-weight:800;display:flex;gap:10px;align-items:center;justify-content:center}
+.ft-admin-accounts .ft-admin-message{font-size:12px;min-height:18px}
+.ft-admin-accounts .ft-admin-count{background:#ebf1ff;color:#3556bf;font-size:11px;padding:9px 12px;border-radius:20px;white-space:nowrap}
+.ft-admin-accounts .ft-admin-list{display:flex;flex-direction:column;gap:11px}
+.ft-admin-accounts .ft-admin-user{display:flex;align-items:center;gap:14px;padding:16px;border:1px solid #e3eaf4;border-radius:12px;background:#fff;min-width:0}
+.ft-admin-accounts .ft-admin-avatar{height:42px;width:42px;border-radius:12px;background:#ecf1ff;color:#355cf0;font-weight:850;font-size:17px;display:grid;place-items:center;flex-shrink:0}
+.ft-admin-accounts .ft-admin-user-details{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}
+.ft-admin-accounts .ft-admin-user-details strong{color:#1c3151;font-size:14px}
+.ft-admin-accounts .ft-admin-user-details span{color:#627591;font-size:12px;overflow-wrap:anywhere}
+.ft-admin-accounts .ft-admin-user-details small{color:#94a0b4;font-size:11px}
+.ft-admin-accounts .ft-admin-role{color:#3155bf;background:#edf2ff;border-radius:18px;padding:8px 10px;white-space:nowrap;font-size:10px;font-weight:750}
+@media(max-width:740px){.ft-admin-accounts .ft-accounts-main{width:calc(100% - 26px)}.ft-admin-accounts .ft-accounts-card .card-body{padding:18px}}
+@media(max-width:470px){.ft-admin-accounts .ft-admin-user{flex-wrap:wrap}.ft-admin-accounts .ft-admin-role{margin-left:56px}}

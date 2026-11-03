@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const pool = require("../config/db");
 const { validPassword, PASSWORD_GUIDANCE } = require("../utils/password-policy");
+const { authenticateToken, requireRole } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -345,6 +346,88 @@ router.post("/setup-admin", async (req, res) => {
 
     } finally {
         if (client) client.release();
+    }
+});
+
+// ======================================
+// MANAGE ADMINISTRATORS
+// Existing admins may create other admins only after verifying
+// their current password. First-time setup remains unchanged.
+// ======================================
+
+router.get("/admins", authenticateToken, requireRole("admin"), async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT user_id, first_name, middle_name, last_name, email, role, created_at
+             FROM users
+             WHERE role = 'admin'
+             ORDER BY created_at DESC, user_id DESC`
+        );
+        return res.json({ admins: result.rows });
+    } catch (error) {
+        console.error("List administrators error:", error);
+        return res.status(500).json({ message: "Unable to load administrators." });
+    }
+});
+
+router.post("/admins", authenticateToken, requireRole("admin"), async (req, res) => {
+    try {
+        const { first_name, middle_name, last_name, email, password, current_password } = req.body || {};
+
+        if (
+            typeof first_name !== "string" || !first_name.trim() || first_name.trim().length > 100 ||
+            (middle_name != null && (typeof middle_name !== "string" || middle_name.trim().length > 100)) ||
+            typeof last_name !== "string" || !last_name.trim() || last_name.trim().length > 100 ||
+            typeof email !== "string" || email.trim().length > 255 ||
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+        ) {
+            return res.status(400).json({ message: "Enter valid administrator name and email information." });
+        }
+        if (!validPassword(password)) {
+            return res.status(400).json({ message: PASSWORD_GUIDANCE });
+        }
+        if (typeof current_password !== "string" || !current_password) {
+            return res.status(400).json({ message: "Enter your current administrator password to confirm." });
+        }
+
+        // Re-check admin role from the database, not only the token's role.
+        const requester = await pool.query(
+            "SELECT password_hash FROM users WHERE user_id = $1 AND role = 'admin'",
+            [req.user.user_id]
+        );
+        if (!requester.rows.length) {
+            return res.status(403).json({ message: "Administrator access denied." });
+        }
+        const confirmed = await bcrypt.compare(current_password, requester.rows[0].password_hash);
+        if (!confirmed) {
+            return res.status(403).json({ message: "Your administrator password is incorrect." });
+        }
+
+        const emailValue = email.trim().toLowerCase();
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const result = await pool.query(
+            `INSERT INTO users (first_name, middle_name, last_name, email, password_hash, role)
+             VALUES ($1, $2, $3, $4, $5, 'admin')
+             RETURNING user_id, first_name, middle_name, last_name, email, role, created_at`,
+            [
+                first_name.trim(),
+                typeof middle_name === "string" ? middle_name.trim() || null : null,
+                last_name.trim(),
+                emailValue,
+                hashedPassword
+            ]
+        );
+
+        return res.status(201).json({
+            message: "New administrator account created successfully.",
+            admin: result.rows[0]
+        });
+    } catch (error) {
+        if (error.code === "23505") {
+            return res.status(409).json({ message: "This email address is already registered." });
+        }
+        console.error("Create additional administrator error:", error);
+        return res.status(500).json({ message: "Unable to create administrator account." });
     }
 });
 
