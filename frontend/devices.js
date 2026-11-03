@@ -391,17 +391,17 @@ async function removeDevice(deviceId) {
             }
         );
 
-        const data = await response.json();
+        const data = await response.json().catch(() => ({}));
 
         if (!response.ok) {
-            alert(data.message);
+            const message = data.message || `Unable to remove device (HTTP ${response.status}).`;
+            deviceMessage.textContent = message;
+            alert(message);
             return;
         }
 
-        deviceMessage.textContent =
-            "Device removed successfully!";
-
-        loadDevices();
+        await loadDevices();
+        deviceMessage.textContent = data.message || "Device removed successfully!";
 
     } catch (error) {
         console.error("Remove device error:", error);
