@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const pool = require("../config/db");
+const { validPassword, PASSWORD_GUIDANCE } = require("../utils/password-policy");
 
 const router = express.Router();
 
@@ -41,6 +42,10 @@ router.post("/register", async (req, res) => {
                 message:
                     "Enter valid first and last names, email, and password."
             });
+        }
+
+        if (!validPassword(password)) {
+            return res.status(400).json({ message: PASSWORD_GUIDANCE });
         }
 
         const normalizedEmail = email.trim().toLowerCase();
@@ -233,6 +238,10 @@ router.post("/setup-admin", async (req, res) => {
                 message:
                     "First name, last name, valid email, and password are required."
             });
+        }
+
+        if (!validPassword(password)) {
+            return res.status(400).json({ message: PASSWORD_GUIDANCE });
         }
 
         const normalizedEmail = email.trim().toLowerCase();
@@ -487,10 +496,8 @@ router.post("/reset-password", async (req, res) => {
             return res.status(400).json({ message: "This reset link is invalid." });
         }
 
-        if (typeof password !== "string" || password.length < 8) {
-            return res.status(400).json({
-                message: "Password must be at least 8 characters."
-            });
+        if (!validPassword(password)) {
+            return res.status(400).json({ message: PASSWORD_GUIDANCE });
         }
 
         await ensureResetTable();

@@ -2,6 +2,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const pool = require("../config/db");
+const { validPassword, PASSWORD_GUIDANCE } = require("../utils/password-policy");
 const { authenticateToken, requireRole } = require("../middleware/auth");
 
 const router = express.Router();
@@ -83,11 +84,11 @@ router.post(
                 typeof email !== "string" ||
                 !email.trim() ||
                 typeof password !== "string" ||
-                password.length < 8
+                !validPassword(password)
             ) {
                 return res.status(400).json({
                     message:
-                        "First name, last name, email, and a password of at least 8 characters are required."
+                        "First name, last name, email and a valid password are required. " + PASSWORD_GUIDANCE
                 });
             }
 
@@ -198,6 +199,44 @@ router.post(
         }
     }
 );
+
+// Admin-only recovery for active technician accounts.
+router.post("/:id/reset-password", authenticateToken, requireAdmin, async (req, res) => {
+    const technicianId = Number(req.params.id);
+    const password = req.body?.password;
+    if (!Number.isSafeInteger(technicianId) || technicianId <= 0 || technicianId > 2147483647) {
+        return res.status(400).json({ message: "Invalid technician ID." });
+    }
+    if (!validPassword(password)) {
+        return res.status(400).json({ message: PASSWORD_GUIDANCE });
+    }
+    try {
+        const existing = await pool.query(
+            `SELECT t.user_id, u.password_hash
+             FROM technicians t JOIN users u ON u.user_id = t.user_id
+             WHERE t.technician_id = $1 AND u.role = 'technician'
+               AND LOWER(TRIM(t.status)) = 'active'`,
+            [technicianId]
+        );
+        if (!existing.rows.length) {
+            return res.status(404).json({ message: "Active technician not found." });
+        }
+        const target = existing.rows[0];
+        if (await bcrypt.compare(password, target.password_hash)) {
+            return res.status(400).json({ message: "Use a new password different from the current one." });
+        }
+        const hash = await bcrypt.hash(password, 10);
+        const updated = await pool.query(
+            `UPDATE users SET password_hash = $1 WHERE user_id = $2 AND role = 'technician' RETURNING user_id`,
+            [hash, target.user_id]
+        );
+        if (!updated.rows.length) return res.status(404).json({ message: "Technician account not found." });
+        return res.json({ message: "Technician password reset. Give the new password directly to the technician." });
+    } catch (error) {
+        console.error("Technician password reset error:", error);
+        return res.status(500).json({ message: "Unable to reset technician password." });
+    }
+});
 
 // ==================================
 // EDIT TECHNICIAN - ADMIN
