@@ -1081,11 +1081,11 @@ router.post(
                 "https://fixtrack-management.vercel.app"
             ).replace(/\/+$/, "");
 
-            const successUrl =
-                `${frontendUrl}/admin-repairs.html`;
-
-            const cancelUrl =
-                `${frontendUrl}/admin-repairs.html`;
+            const returnPage = req.user.role === "customer"
+                ? "/repairs.html"
+                : "/admin-repairs.html";
+            const successUrl = `${frontendUrl}${returnPage}`;
+            const cancelUrl = `${frontendUrl}${returnPage}`;
 
             const referenceNumber =
                 `FIXTRACK-${repairId}-${Date.now()}-${crypto.randomBytes(4).toString("hex")}`;
