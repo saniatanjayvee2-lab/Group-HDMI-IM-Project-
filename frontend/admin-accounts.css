@@ -30,3 +30,71 @@
 
 .ft-admin-accounts .ft-my-password-card #change-admin-password-button{display:inline-flex;align-items:center;gap:9px;background:#355cf0;border-color:#355cf0;font-weight:800;border-radius:9px;padding:11px 18px}
 .ft-admin-accounts .ft-my-password-card .ft-admin-message{font-size:12px}
+
+/* Administrator workspace layout: natural card heights and usable width. */
+body.ft-admin-accounts .ft-suite-shell{
+    grid-template-columns:252px minmax(0,1fr)!important;
+    width:100%!important;
+    max-width:none!important;
+}
+body.ft-admin-accounts .ft-suite-main{width:100%!important;min-width:0!important;max-width:none!important}
+body.ft-admin-accounts .ft-suite-main>main.ft-accounts-main{
+    width:calc(100% - 64px)!important;
+    max-width:1380px!important;
+    margin:32px auto 64px!important;
+    padding:0!important;
+    box-sizing:border-box!important;
+}
+body.ft-admin-accounts .ft-admin-accounts-grid{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    align-items:flex-start!important;
+    margin-top:0!important;
+    min-width:0!important;
+}
+body.ft-admin-accounts .ft-admin-accounts-grid>.ft-admin-create-column,
+body.ft-admin-accounts .ft-admin-accounts-grid>.ft-admin-details-column{
+    min-width:0!important;
+    align-self:flex-start!important;
+}
+body.ft-admin-accounts .ft-accounts-card{
+    height:auto!important;
+    min-height:0!important;
+    margin-bottom:0!important;
+}
+body.ft-admin-accounts .ft-admin-details-column>.ft-accounts-card + .ft-accounts-card{margin-top:20px!important}
+body.ft-admin-accounts .ft-accounts-card .card-body{padding:28px!important}
+body.ft-admin-accounts .ft-accounts-header{
+    gap:16px!important;
+    align-items:flex-start!important;
+    margin-bottom:22px!important;
+}
+body.ft-admin-accounts .ft-accounts-header>div{min-width:0}
+body.ft-admin-accounts .ft-accounts-header h2{font-size:20px!important;line-height:1.25!important}
+body.ft-admin-accounts .ft-accounts-header p{line-height:1.55!important}
+body.ft-admin-accounts .ft-admin-list{max-height:430px;overflow-y:auto;padding-right:3px}
+body.ft-admin-accounts .ft-admin-user{gap:13px!important;min-height:80px!important}
+body.ft-admin-accounts .ft-admin-user-details{overflow:hidden}
+body.ft-admin-accounts .ft-admin-user-details span{overflow-wrap:anywhere}
+body.ft-admin-accounts .ft-admin-user>.ft-admin-remove{margin-left:auto}
+body.ft-admin-accounts .ft-admin-security{margin-top:3px}
+body.ft-admin-accounts #change-admin-password-button{min-height:44px!important}
+@media(max-width:1199.98px){
+ body.ft-admin-accounts .ft-suite-main>main.ft-accounts-main{width:calc(100% - 44px)!important}
+ body.ft-admin-accounts .ft-admin-accounts-grid>.ft-admin-create-column,
+ body.ft-admin-accounts .ft-admin-accounts-grid>.ft-admin-details-column{
+    flex:0 0 100%!important;max-width:100%!important
+ }
+}
+@media(max-width:800px){
+ body.ft-admin-accounts .ft-suite-shell{grid-template-columns:minmax(0,1fr)!important}
+ body.ft-admin-accounts .ft-suite-sidebar{display:none!important}
+ body.ft-admin-accounts .ft-suite-main>main.ft-accounts-main{width:calc(100% - 28px)!important;margin:20px auto 45px!important}
+ body.ft-admin-accounts .ft-accounts-card .card-body{padding:20px!important}
+ body.ft-admin-accounts .ft-accounts-header{flex-wrap:wrap!important}
+}
+@media(max-width:480px){
+ body.ft-admin-accounts .ft-admin-user{flex-wrap:wrap}
+ body.ft-admin-accounts .ft-admin-user>.ft-admin-remove{width:100%;margin-left:0}
+ body.ft-admin-accounts .ft-accounts-header h2{font-size:18px!important}
+}
