@@ -244,11 +244,11 @@
     <link rel="stylesheet" href="fixtrack-bootstrap.css?v=20261103">
 <link rel="stylesheet" href="fixtrack-pro.css?v=4"><link rel="stylesheet" href="fixtrack-functional.css?v=20261103-2">
 <link rel="stylesheet" href="fixtrack-suite.css?v=20261103-5"><link rel="stylesheet" href="fixtrack-static.css?v=20261103-1">
-<link rel="stylesheet" href="fixtrack-loading.css?v=3">
+<link rel="stylesheet" href="fixtrack-loading.css?v=3"><link rel="stylesheet" href="technician-bootstrap.css?v=1">
 <script src="fixtrack-loading.js?v=2"></script>
 </head>
 
-<body class="ft-bootstrap ft-pro ft-suite-page">
+<body class="ft-bootstrap ft-pro ft-suite-page ft-tech-modern">
 
     <div class="ft-suite-shell"><aside class="ft-suite-sidebar" aria-label="technician navigation"><a class="ft-suite-brand" href="technician-dashboard.html"><span class="ft-suite-brand-icon"><i data-lucide="monitor-cog"></i></span><span>Fix<span>Track</span><small>REPAIR MANAGEMENT</small></span></a><div class="ft-suite-menu-label">WORKSPACE</div><nav class="ft-suite-nav"><a href="technician-dashboard.html" aria-current="page"><i data-lucide="layout-dashboard"></i><span>My Workspace</span></a></nav><div class="ft-suite-sidebar-bottom"><i data-lucide="shield-check"></i><div><strong>Secure workspace</strong><small>FixTrack Service Platform</small></div></div></aside><div class="ft-suite-main"><header class="dashboard-header">
         <div>
@@ -269,33 +269,33 @@
             <p>Manage repairs, update progress, and record diagnoses.</p>
         </section>
 
-        <section class="tw-stats">
-            <div class="tw-stat">
+        <section class="tw-stats" aria-label="Repair activity">
+            <div class="tw-stat card border-0 shadow-sm">
                 <span>Total Assigned</span>
                 <strong id="totalAssigned">—</strong>
             </div>
 
-            <div class="tw-stat">
+            <div class="tw-stat card border-0 shadow-sm">
                 <span>In Progress</span>
                 <strong id="totalInProgress">—</strong>
             </div>
 
-            <div class="tw-stat">
+            <div class="tw-stat card border-0 shadow-sm">
                 <span>Completed</span>
                 <strong id="totalCompleted">—</strong>
             </div>
         </section>
 
-        <section class="tw-panel" id="assignedRepairsSection">
+        <section class="tw-panel card border-0 shadow-sm" id="assignedRepairsSection">
 
             <div class="tw-panel-top">
                 <h3 id="repairSectionTitle">My Repairs</h3>
 
-                <div class="tw-tabs">
+                <div class="tw-tabs btn-group" role="group" aria-label="Repair views">
                     <button
                         type="button"
                         id="viewRepairsBtn"
-                        class="tw-tab active"
+                        class="tw-tab btn btn-primary active"
                     >
                         Active Repairs
                     </button>
@@ -325,7 +325,7 @@
                 <div class="tw-panel-top">
                     <h3>Record Diagnosis</h3>
 
-                    <button type="button" id="backToRepairsBtn" class="tw-btn light">
+                    <button type="button" id="backToRepairsBtn" class="tw-btn light btn btn-outline-primary">
                         Back to Repairs
                     </button>
                 </div>
@@ -333,7 +333,7 @@
                 <form id="diagnosisForm" class="tw-form">
 
                     <label for="diagnosisRepair">Assigned Repair</label>
-                    <select id="diagnosisRepair" required>
+                    <select id="diagnosisRepair" class="form-select" required>
                         <option value="">Select a repair</option>
                     </select>
 
@@ -352,7 +352,7 @@
                         placeholder="Describe the recommended repair..."
                     ></textarea>
 
-                    <button type="submit" id="saveDiagnosisBtn" class="tw-btn">
+                    <button type="submit" id="saveDiagnosisBtn" class="tw-btn btn btn-primary">
                         Save Diagnosis
                     </button>
 
@@ -380,7 +380,7 @@
                 <div class="tw-panel-top">
                     <h3 id="editDiagTitle">Edit Diagnosis</h3>
 
-                    <button type="button" id="closeEditDiag" class="tw-btn light">
+                    <button type="button" id="closeEditDiag" class="tw-btn light btn btn-outline-primary">
                         Close
                     </button>
                 </div>
@@ -390,17 +390,17 @@
                 <form id="editDiagnosisForm" class="tw-form">
 
                     <label for="editDiagDetails">Diagnosis Details</label>
-                    <textarea id="editDiagDetails" rows="5" required></textarea>
+                    <textarea id="editDiagDetails" class="form-control" rows="5" required></textarea>
 
                     <label for="editDiagAction">Recommended Action</label>
-                    <textarea id="editDiagAction" rows="4"></textarea>
+                    <textarea id="editDiagAction" class="form-control" rows="4"></textarea>
 
                     <div class="tw-edit-actions">
-                        <button type="submit" id="saveEditDiag" class="tw-btn">
+                        <button type="submit" id="saveEditDiag" class="tw-btn btn btn-primary">
                             Save Changes
                         </button>
 
-                        <button type="button" id="cancelEditDiag" class="tw-btn light">
+                        <button type="button" id="cancelEditDiag" class="tw-btn light btn btn-outline-primary">
                             Cancel
                         </button>
                     </div>
@@ -413,7 +413,7 @@
 
     </main></div></div>
 
-    <script src="technician-dashboard.js?v=10"></script>
+    <script src="technician-dashboard.js?v=tech-bootstrap-1"></script>
 
 <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script><script defer src="fixtrack-suite.js?v=20261103-5"></script></body>
 </html>

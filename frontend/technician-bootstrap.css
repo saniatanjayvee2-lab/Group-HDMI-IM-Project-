@@ -1,0 +1,29 @@
+/* Bootstrap technician workspace: scoped layout, no changes to application logic */
+.ft-tech-modern .ft-suite-main>main{width:min(1280px,calc(100% - 64px))!important;max-width:1280px!important}
+.ft-tech-modern .tw-heading{background:#fff!important;border:1px solid #e3eaf4!important;border-radius:16px!important;padding:25px 28px!important;margin-bottom:23px}
+.ft-tech-modern .tw-heading h2{font-size:23px;font-weight:800;color:#1b2e4b;margin:0 0 7px}.ft-tech-modern .tw-heading p{font-size:13px;color:#74839b;margin:0}
+.ft-tech-modern .tw-stats{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:16px!important;margin-bottom:25px!important}
+.ft-tech-modern .tw-stat.card{padding:23px!important;border-radius:16px!important;border:1px solid #e2e9f3!important;box-shadow:0 5px 20px #2034500b!important;margin:0!important;background:#fff!important}
+.ft-tech-modern .tw-stat:nth-child(1){border-top:3px solid #3e65e5!important}.ft-tech-modern .tw-stat:nth-child(2){border-top:3px solid #e1a23a!important}.ft-tech-modern .tw-stat:nth-child(3){border-top:3px solid #1ca782!important}
+.ft-tech-modern .tw-stat span{font-size:12px;font-weight:750;color:#697d98;margin-bottom:9px}.ft-tech-modern .tw-stat strong{font-size:34px;color:#172d4c;font-weight:800;line-height:1.2}
+.ft-tech-modern .tw-panel{background:white!important;border:1px solid #e1e8f2!important;border-radius:16px!important;box-shadow:0 6px 25px #142c4b0b!important;padding:26px!important}
+.ft-tech-modern .tw-panel-top{padding-bottom:18px;border-bottom:1px solid #eaf0f6;margin-bottom:20px;align-items:center}.ft-tech-modern .tw-panel-top h3{font-size:19px;font-weight:800;color:#1a3050}
+.ft-tech-modern .tw-tabs.btn-group{display:inline-flex!important;gap:8px;box-shadow:none!important}
+.ft-tech-modern .tw-tabs .tw-tab.btn{border-radius:9px!important;min-height:42px;padding:10px 17px!important;font-size:12px;font-weight:800;border:1px solid #dde7f4!important;background:#f3f6fc!important;color:#546a89!important}
+.ft-tech-modern .tw-tabs .tw-tab.btn.active{background:#355cf0!important;border-color:#355cf0!important;color:#fff!important}
+.ft-tech-modern #assignedRepairsList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px;align-items:stretch}
+.ft-tech-modern #assignedRepairsList .tw-card.card{min-width:0!important;margin:0!important;padding:22px!important;border:1px solid #e1e8f2!important;border-radius:14px!important;box-shadow:0 4px 18px #182f520b!important;background:white!important}
+.ft-tech-modern .tw-card-top h4{font-size:17px;color:#18304e;font-weight:800;margin:0 0 13px}.ft-tech-modern .tw-card-top p{font-size:12.5px;color:#64758f;margin:7px 0}
+.ft-tech-modern .tw-badge{font-size:11px;font-weight:800;border-radius:18px;padding:7px 11px;white-space:nowrap}
+.ft-tech-modern .tw-actions{border-top:1px solid #eaf0f6;padding-top:16px;margin-top:16px;gap:8px!important}
+.ft-tech-modern .tw-actions .tw-btn.btn,.ft-tech-modern .tw-form .tw-btn.btn{min-height:41px!important;font-size:12px!important;font-weight:800!important;border-radius:9px!important;padding:10px 15px!important;margin:0!important}
+.ft-tech-modern .tw-btn.btn-primary{background:#355cf0!important;color:white!important;border:1px solid #355cf0!important}
+.ft-tech-modern .tw-btn.btn-outline-primary{background:#eff4ff!important;color:#3559c1!important;border:1px solid #dbe6ff!important}
+.ft-tech-modern .tw-expand{background:#f8faff;border:1px solid #e5ebf4;border-radius:11px;padding:17px;margin-top:17px}.ft-tech-modern .tw-expand[hidden]{display:none!important}
+.ft-tech-modern .tw-expand p{font-size:12.5px;margin:7px 0}.ft-tech-modern .tw-form label{font-size:12px;font-weight:750;color:#344965}
+.ft-tech-modern .tw-form :is(input,select,textarea),.ft-tech-modern .tw-expand select{width:100%;min-height:43px;padding:11px 13px;background:#fff!important;border:1px solid #d8e2f0!important;border-radius:9px!important;color:#223955!important}
+.ft-tech-modern .tw-form textarea{min-height:110px}.ft-tech-modern .tw-form .tw-btn{margin-top:17px!important}
+.ft-tech-modern .tw-edit-panel{background:white!important;border-radius:18px!important;border:1px solid #e1e8f2!important;box-shadow:0 24px 60px #09214645!important}
+@media(max-width:960px){.ft-tech-modern #assignedRepairsList{grid-template-columns:1fr}}
+@media(max-width:710px){.ft-tech-modern .ft-suite-main>main{width:calc(100% - 28px)!important}.ft-tech-modern .tw-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}.ft-tech-modern .tw-panel{padding:17px!important}.ft-tech-modern .tw-panel-top{flex-direction:column;align-items:stretch}.ft-tech-modern .tw-tabs.btn-group{width:100%}.ft-tech-modern .tw-tabs .tw-tab.btn{flex:1}}
+@media(max-width:450px){.ft-tech-modern .tw-stats{grid-template-columns:1fr!important}}

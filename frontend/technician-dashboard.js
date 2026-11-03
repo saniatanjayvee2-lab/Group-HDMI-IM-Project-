@@ -195,7 +195,7 @@ async function displayRepairs(view = "repairs") {
 }
 
 function createRepairCard(repair, view) {
-    const card = make("div", "tw-card");
+    const card = make("article", "tw-card card border-0 shadow-sm");
     const top = make("div", "tw-card-top");
     const info = make("div");
 
@@ -223,9 +223,9 @@ function createRepairCard(repair, view) {
     top.append(info, badge);
     card.appendChild(top);
 
-    const actions = make("div", "tw-actions");
+    const actions = make("div", "tw-actions d-flex flex-wrap gap-2");
 
-    const detailsBtn = make("button", "tw-btn light", "Details");
+    const detailsBtn = make("button", "tw-btn light btn btn-outline-primary", "Details");
     detailsBtn.type = "button";
 
     const detailsBox = make("div", "tw-expand");
@@ -256,14 +256,14 @@ function createRepairCard(repair, view) {
     if (view === "repairs") {
         const statusBtn = make(
             "button",
-            "tw-btn light",
+            "tw-btn light btn btn-outline-primary",
             "Update Status"
         );
         statusBtn.type = "button";
 
         const diagnosisBtn = make(
             "button",
-            "tw-btn",
+            "tw-btn btn btn-primary",
             "Diagnosis"
         );
         diagnosisBtn.type = "button";
@@ -313,7 +313,7 @@ function addStatusEditor(container, repair) {
 
     select.value = repair.status;
 
-    const saveBtn = make("button", "tw-btn", "Save Status");
+    const saveBtn = make("button", "tw-btn btn btn-primary", "Save Status");
     saveBtn.type = "button";
 
     const feedback = make("p");
@@ -585,7 +585,7 @@ async function loadDiagnoses() {
             );
 
             if (diagnosis.status !== "Released") {
-                const editBtn = make("button", "tw-btn", "Edit Diagnosis");
+                const editBtn = make("button", "tw-btn btn btn-primary", "Edit Diagnosis");
                 editBtn.type = "button";
                 editBtn.addEventListener("click", () => openEditPanel(diagnosis));
                 card.appendChild(editBtn);
