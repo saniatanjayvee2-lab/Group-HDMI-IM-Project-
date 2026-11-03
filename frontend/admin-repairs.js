@@ -463,7 +463,7 @@ async function renderBilling(
         container.replaceChildren();
 
         container.appendChild(
-            createElement("h3", `Repair Billing — #${repairId}`)
+            createElement("h3", `Repair Billing for Request ${repairId}`)
         );
 
         const notice = createElement(
@@ -492,9 +492,16 @@ async function renderBilling(
         // REPLACEMENT PARTS
         // =====================================
 
-        container.appendChild(
-            createElement("h4", "Replacement Parts")
-        );
+        const chargeGrid = document.createElement("div");
+        chargeGrid.className = "repair-billing-grid";
+        const partsPanel = document.createElement("section");
+        partsPanel.className = "repair-charge-panel";
+        partsPanel.appendChild(createElement("h4", "Replacement Parts"));
+        const laborPanel = document.createElement("section");
+        laborPanel.className = "repair-charge-panel";
+        laborPanel.appendChild(createElement("h4", "Labor Charges"));
+        chargeGrid.append(partsPanel, laborPanel);
+        container.appendChild(chargeGrid);
 
         const partsList = document.createElement("div");
 
@@ -571,7 +578,7 @@ async function renderBilling(
             });
         }
 
-        container.appendChild(partsList);
+        partsPanel.appendChild(partsList);
 
         // =====================================
         // ADD REPLACEMENT PART
@@ -686,20 +693,14 @@ async function renderBilling(
                 }
             });
 
-            container.appendChild(partForm);
+            partsPanel.appendChild(partForm);
         }
 
         // =====================================
         // LABOR CHARGES
         // =====================================
 
-        container.appendChild(
-            createElement(
-                "h4",
-                "Labor Charges",
-                "billing-labor-heading"
-            )
-        );
+        
 
         const laborList = document.createElement("div");
 
@@ -776,7 +777,7 @@ async function renderBilling(
             });
         }
 
-        container.appendChild(laborList);
+        laborPanel.appendChild(laborList);
 
         // =====================================
         // ADD LABOR CHARGE
@@ -874,7 +875,7 @@ async function renderBilling(
                 }
             });
 
-            container.appendChild(laborForm);
+            laborPanel.appendChild(laborForm);
         }
 
         // =====================================
@@ -887,21 +888,17 @@ async function renderBilling(
             "billing-totals"
         );
 
+        const costRow = (label, amount, extra = "") => {
+            const row = createElement("div", "", "repair-cost-row " + extra);
+            row.append(createElement("span", label), createElement("strong", formatMoney(amount)));
+            return row;
+        };
         totals.append(
-            createElement(
-                "p",
-                `Parts Subtotal: ${formatMoney(bill.parts_total)}`
-            ),
-            createElement(
-                "p",
-                `Labor Subtotal: ${formatMoney(bill.labor_total)}`
-            ),
-            createElement(
-                "h3",
-                `Total Repair Cost: ${formatMoney(bill.total_amount)}`
-            )
+            createElement("h4", "Cost Summary"),
+            costRow("Replacement Parts", bill.parts_total),
+            costRow("Labor Charges", bill.labor_total),
+            costRow("Total Repair Cost", bill.total_amount, "repair-cost-grand")
         );
-
         container.appendChild(totals);
 
         // =====================================

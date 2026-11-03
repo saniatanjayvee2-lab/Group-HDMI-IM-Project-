@@ -12,10 +12,10 @@
 <link rel="stylesheet" href="paymongo-confirm.css?v=1">
 <link rel="stylesheet" href="fixtrack-bootstrap.css?v=20261103">
 <link rel="stylesheet" href="fixtrack-pro.css?v=4"><link rel="stylesheet" href="fixtrack-functional.css?v=20261103-2">
-<link rel="stylesheet" href="fixtrack-suite.css?v=20261103-5"><link rel="stylesheet" href="fixtrack-static.css?v=20261103-1">
+<link rel="stylesheet" href="fixtrack-suite.css?v=20261103-5"><link rel="stylesheet" href="fixtrack-static.css?v=20261103-1"><link rel="stylesheet" href="admin-repairs-redesign.css?v=5">
 </head>
 
-<body class="admin-repairs-page ft-bootstrap ft-pro ft-suite-page">
+<body class="admin-repairs-page ft-bootstrap ft-pro ft-suite-page ft-repairs-modern">
 
     <div class="ft-suite-shell"><aside class="ft-suite-sidebar" aria-label="admin navigation"><a class="ft-suite-brand" href="admin-dashboard.html"><span class="ft-suite-brand-icon"><i data-lucide="monitor-cog"></i></span><span>Fix<span>Track</span><small>REPAIR MANAGEMENT</small></span></a><div class="ft-suite-menu-label">WORKSPACE</div><nav class="ft-suite-nav"><a href="admin-dashboard.html" ><i data-lucide="layout-dashboard"></i><span>Overview</span></a><a href="admin-repairs.html" aria-current="page"><i data-lucide="clipboard-list"></i><span>Repairs</span></a><a href="admin-customers.html" ><i data-lucide="users"></i><span>Customers</span></a><a href="technicians.html" ><i data-lucide="user-cog"></i><span>Technicians</span></a><a href="admin-parts.html" ><i data-lucide="boxes"></i><span>Parts & Inventory</span></a><a href="admin-payments.html" ><i data-lucide="credit-card"></i><span>Payments</span></a><a href="admin-reports.html" ><i data-lucide="bar-chart-3"></i><span>Reports</span></a></nav><div class="ft-suite-sidebar-bottom"><i data-lucide="shield-check"></i><div><strong>Secure workspace</strong><small>FixTrack Service Platform</small></div></div></aside><div class="ft-suite-main"><header class="dashboard-header">
         <div>
@@ -34,12 +34,8 @@
             <p>View and manage customer repairs in one organized place.</p>
         </section>
 
-        <section class="repairs-workspace">
-            <div class="repairs-section-header">
-                <h3>All Repair Requests</h3>
-                <p>Select Manage Repair to open the repair management window.</p>
-            </div>
-            <div id="admin-repair-list">
+        <section class="repair-ops-overview"><div><span>All Repairs</span><strong id="ops-all">0</strong></div><div><span>Pending</span><strong id="ops-pending">0</strong></div><div><span>In Progress</span><strong id="ops-progress">0</strong></div><div><span>Completed and Released</span><strong id="ops-done">0</strong></div></section><section class="repairs-workspace">
+            <div class="repairs-section-header"><div><h3>Manage Repair Requests</h3><p>Review requests, technicians and billing.</p></div><strong id="ops-visible">0 requests</strong></div><div class="repair-ops-tools"><label>Search Repairs<input id="ops-search" type="search" placeholder="Device, customer or repair ID"></label><label>Filter Status<select id="ops-filter"><option value="all">All statuses</option><option value="pending">Pending</option><option value="in progress">In Progress</option><option value="completed">Completed</option><option value="released">Released</option></select></label><button id="ops-clear" type="button">Clear</button></div><p id="ops-empty" hidden>No matching repairs.</p><div id="admin-repair-list">
                 <p>Loading repair requests...</p>
             </div>
         </section>
@@ -61,7 +57,7 @@
                 <button id="repair-modal-x"
                         class="repair-modal-close"
                         type="button"
-                        aria-label="Close">×</button>
+                        aria-label="Close">Close</button>
             </div>
 
             <div class="repair-modal-tabs" role="tablist">
@@ -535,5 +531,5 @@
     </script>
 
 
-<script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script><script defer src="fixtrack-suite.js?v=20261103-5"></script></body>
+<script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script><script defer src="fixtrack-suite.js?v=20261103-5"></script><script defer src="admin-repairs-redesign.js?v=5"></script></body>
 </html>
