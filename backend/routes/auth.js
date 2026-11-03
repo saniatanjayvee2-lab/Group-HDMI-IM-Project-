@@ -434,6 +434,43 @@ router.post("/admins", authenticateToken, requireRole("admin"), async (req, res)
     }
 });
 
+// The signed-in administrator may update only their own password.
+router.post("/admins/change-password", authenticateToken, requireRole("admin"), async (req, res) => {
+    const { current_password, new_password } = req.body || {};
+    if (typeof current_password !== "string" || !current_password) {
+        return res.status(400).json({ message: "Current password is required." });
+    }
+    if (!validPassword(new_password)) {
+        return res.status(400).json({ message: PASSWORD_GUIDANCE });
+    }
+    try {
+        const found = await pool.query(
+            "SELECT password_hash FROM users WHERE user_id = $1 AND role = 'admin'",
+            [req.user.user_id]
+        );
+        if (!found.rows.length) return res.status(403).json({ message: "Administrator account not found." });
+        const hash = found.rows[0].password_hash;
+        if (!(await bcrypt.compare(current_password, hash))) {
+            return res.status(403).json({ message: "Current password is incorrect." });
+        }
+        if (await bcrypt.compare(new_password, hash)) {
+            return res.status(400).json({ message: "Your new password must be different from the current password." });
+        }
+        const nextHash = await bcrypt.hash(new_password, 10);
+        const result = await pool.query(
+            "UPDATE users SET password_hash = $1 WHERE user_id = $2 AND role = 'admin' AND password_hash = $3 RETURNING user_id",
+            [nextHash, req.user.user_id, hash]
+        );
+        if (!result.rows.length) return res.status(409).json({
+            message: "Your password changed in another session. Please sign in again."
+        });
+        return res.json({ message: "Password updated successfully. Sign in with your new password." });
+    } catch (error) {
+        console.error("Admin change password error:", error);
+        return res.status(500).json({ message: "Unable to update password." });
+    }
+});
+
 // Revokes an administrator's access without deleting related history.
 router.post("/admins/:id/remove", authenticateToken, requireRole("admin"), async (req, res) => {
     const targetId = Number(req.params.id);
@@ -567,7 +604,7 @@ async function sendResetEmail(to, link) {
 }
 
 const GENERIC_FORGOT_MESSAGE =
-    "If that email belongs to a customer or admin account, a reset link has been sent.";
+    "If the email belongs to a customer or administrator and email delivery is configured, you will receive a reset link shortly.";
 
 router.post("/forgot-password", async (req, res) => {
     try {

@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="fixtrack-suite.css?v=20261103-5">
 <link rel="stylesheet" href="fixtrack-static.css?v=20261103-1">
 <link rel="stylesheet" href="fixtrack-loading.css?v=3">
-<link rel="stylesheet" href="admin-accounts.css?v=1">
+<link rel="stylesheet" href="admin-accounts.css?v=self-password-2">
 <script src="fixtrack-loading.js?v=2"></script>
 <link rel="stylesheet" href="fixtrack-security-ui.css?v=1">
 <script src="fixtrack-security-ui.js?v=1" defer></script>
@@ -67,10 +67,22 @@
 <div id="admin-list" class="ft-admin-list" aria-live="polite"><p>Loading administrator accounts...</p></div>
 </div>
 </section>
+<section class="card ft-accounts-card ft-my-password-card mt-4">
+<div class="card-body">
+<div class="ft-accounts-header"><div><span class="ft-accounts-eyebrow">ACCOUNT SECURITY</span><h2>Change My Password</h2><p>Update the password for your own administrator account.</p></div></div>
+<form id="change-admin-password-form" autocomplete="off">
+<div class="mb-3"><label for="change-admin-current" class="form-label">Current Password</label><input id="change-admin-current" class="form-control" type="password" autocomplete="current-password" required></div>
+<div class="mb-3"><label for="change-admin-new" class="form-label">New Password</label><input id="change-admin-new" class="form-control" type="password" autocomplete="new-password" minlength="8" maxlength="72" required><p class="ft-password-note">At least 8 characters, uppercase and lowercase letters, a number, and a special character.</p></div>
+<div class="mb-3"><label for="change-admin-confirm" class="form-label">Confirm New Password</label><input id="change-admin-confirm" class="form-control" type="password" autocomplete="new-password" minlength="8" maxlength="72" required></div>
+<p id="change-admin-password-message" class="ft-admin-message" role="status" aria-live="polite"></p>
+<button id="change-admin-password-button" class="btn btn-primary" type="submit"><span id="change-admin-password-spinner" class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span> Update My Password</button>
+</form>
+</div>
+</section>
 </div>
 </div>
 </main></div></div>
-<script src="admin-accounts.js?v=remove-2" defer></script>
+<script src="admin-accounts.js?v=self-password-2" defer></script>
 <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 <script defer src="fixtrack-suite.js?v=20261103-5"></script>
 </body></html>

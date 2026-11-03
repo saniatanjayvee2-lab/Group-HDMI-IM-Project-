@@ -130,5 +130,48 @@ form.addEventListener("submit",async event=>{
     }catch(error){setMessage(error.message,true);}
     finally{button.disabled=false;spinner.classList.add("d-none");}
 });
+const changeForm = document.getElementById("change-admin-password-form");
+const changeButton = document.getElementById("change-admin-password-button");
+const changeSpinner = document.getElementById("change-admin-password-spinner");
+const changeMessage = document.getElementById("change-admin-password-message");
+changeForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    changeMessage.textContent = "";
+    changeMessage.className = "ft-admin-message";
+    const current_password = field("change-admin-current");
+    const new_password = field("change-admin-new");
+    const confirm_password = field("change-admin-confirm");
+    let failure = "";
+    if (!current_password) failure = "Enter your current password.";
+    else if (!validPassword(new_password)) failure = guidance;
+    else if (new_password !== confirm_password) failure = "New passwords do not match.";
+    else if (new_password === current_password) failure = "Use a password different from your current one.";
+    if (failure) {
+        changeMessage.textContent = failure;
+        changeMessage.classList.add("text-danger");
+        return;
+    }
+    changeButton.disabled = true;
+    changeSpinner.classList.remove("d-none");
+    try {
+        const result = await request(API + "/change-password", {
+            method: "POST", body: JSON.stringify({ current_password, new_password })
+        });
+        changeForm.reset();
+        changeMessage.textContent = result.message || "Password updated. Sign in again.";
+        changeMessage.classList.add("text-success");
+        // Finish by clearing the previous session, so a new login is required.
+        localStorage.removeItem("fixtrack_token");
+        localStorage.removeItem("fixtrack_user");
+        changeButton.textContent = "Password Changed";
+        setTimeout(() => window.location.replace("index.html"), 1300);
+    } catch (error) {
+        changeMessage.textContent = error.message;
+        changeMessage.classList.add("text-danger");
+    } finally {
+        changeButton.disabled = false;
+        changeSpinner.classList.add("d-none");
+    }
+});
 load();
 })();

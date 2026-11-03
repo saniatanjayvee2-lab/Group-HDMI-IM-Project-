@@ -27,3 +27,6 @@
 
 .ft-admin-accounts .ft-admin-remove{border-radius:9px;font-size:11px;font-weight:750;padding:9px 12px;white-space:nowrap}
 @media(max-width:590px){.ft-admin-accounts .ft-admin-remove{width:100%;margin-top:8px}}
+
+.ft-admin-accounts .ft-my-password-card #change-admin-password-button{display:inline-flex;align-items:center;gap:9px;background:#355cf0;border-color:#355cf0;font-weight:800;border-radius:9px;padding:11px 18px}
+.ft-admin-accounts .ft-my-password-card .ft-admin-message{font-size:12px}
