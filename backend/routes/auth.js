@@ -578,30 +578,40 @@ function hashToken(token) {
     return crypto.createHash("sha256").update(token).digest("hex");
 }
 
+function emailTransportConfigured() {
+    return Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+}
+
 async function sendResetEmail(to, link) {
     const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, MAIL_FROM } = process.env;
-
-    if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
-        throw new Error("SMTP is not configured (SMTP_HOST, SMTP_USER, SMTP_PASS).");
+    if (!emailTransportConfigured()) {
+        throw new Error("SMTP mail sender not configured.");
     }
-
-    const transporter = nodemailer.createTransport({
+    const port = Number(SMTP_PORT) || 587;
+    const transport = nodemailer.createTransport({
         host: SMTP_HOST,
-        port: Number(SMTP_PORT) || 587,
-        secure: Number(SMTP_PORT) === 465,
-        auth: { user: SMTP_USER, pass: SMTP_PASS }
+        port,
+        secure: port === 465,
+        requireTLS: port !== 465,
+        connectionTimeout: 12000,
+        greetingTimeout: 12000,
+        socketTimeout: 20000,
+        auth: { user: SMTP_USER, pass: SMTP_HOST === "smtp.gmail.com"
+            ? SMTP_PASS.replaceAll(" ", "") : SMTP_PASS }
     });
-
-    await transporter.sendMail({
+    await transport.sendMail({
         from: MAIL_FROM || SMTP_USER,
         to,
-        subject: "FixTrack password reset",
-        text:
-            "We received a request to reset your FixTrack password.\n\n" +
-            `Open this link within 30 minutes:\n${link}\n\n` +
-            "If you did not ask for this, you can ignore this email."
+        subject: "Reset your FixTrack password",
+        text: "A password reset was requested for your FixTrack account.\\n\\n" +
+            "Open this link within 30 minutes:\\n" + link +
+            "\\n\\nIf you did not request this change, ignore this email."
     });
 }
+
+router.get("/email-status", authenticateToken, requireRole("admin"), (req, res) => {
+    res.json({ configured: emailTransportConfigured() });
+});
 
 const GENERIC_FORGOT_MESSAGE =
     "If the email belongs to a customer or administrator and email delivery is configured, you will receive a reset link shortly.";

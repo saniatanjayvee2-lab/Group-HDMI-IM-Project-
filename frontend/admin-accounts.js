@@ -173,5 +173,20 @@ changeForm.addEventListener("submit", async event => {
         changeSpinner.classList.add("d-none");
     }
 });
+async function checkEmailStatus() {
+    const status = document.getElementById("admin-email-status");
+    if (!status) return;
+    try {
+        const result = await request("https://fixtrack-backend.vercel.app/api/auth/email-status");
+        status.className = result.configured ? "small text-success" : "small text-warning";
+        status.textContent = result.configured
+            ? "An email sender is configured. Test with a registered inbox to confirm delivery."
+            : "Email is not configured. Set SMTP credentials on the FixTrack backend Vercel project to enable password reset emails.";
+    } catch (error) {
+        status.className = "small text-danger";
+        status.textContent = "Unable to check mail configuration: " + error.message;
+    }
+}
 load();
+checkEmailStatus();
 })();
