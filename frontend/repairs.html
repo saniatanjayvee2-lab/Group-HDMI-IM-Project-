@@ -12,9 +12,9 @@
 <link rel="stylesheet" href="ft-theme.css?v=1">
     <link rel="stylesheet" href="fixtrack-bootstrap.css?v=20261103">
 <link rel="stylesheet" href="fixtrack-pro.css?v=4"><link rel="stylesheet" href="fixtrack-functional.css?v=20261103-2">
-<link rel="stylesheet" href="fixtrack-suite.css?v=20261103-5"></head>
+<link rel="stylesheet" href="fixtrack-suite.css?v=20261103-5"><link rel="stylesheet" href="customer-repairs.css?v=20261103-1"></head>
 
-<body class="ft-polish ft-bootstrap ft-pro ft-suite-page">
+<body class="ft-polish ft-bootstrap ft-pro ft-suite-page customer-repairs-redesign">
 
     <div class="ft-suite-shell"><aside class="ft-suite-sidebar" aria-label="customer navigation"><a class="ft-suite-brand" href="dashboard.html"><span class="ft-suite-brand-icon"><i data-lucide="monitor-cog"></i></span><span>Fix<span>Track</span><small>REPAIR MANAGEMENT</small></span></a><div class="ft-suite-menu-label">WORKSPACE</div><nav class="ft-suite-nav"><a href="dashboard.html" ><i data-lucide="layout-dashboard"></i><span>Overview</span></a><a href="devices.html" ><i data-lucide="laptop"></i><span>My Devices</span></a><a href="repairs.html" aria-current="page"><i data-lucide="clipboard-list"></i><span>Repair Requests</span></a><a href="history.html" ><i data-lucide="history"></i><span>Repair History</span></a><a href="profile.html" ><i data-lucide="user-circle"></i><span>My Profile</span></a></nav><div class="ft-suite-sidebar-bottom"><i data-lucide="shield-check"></i><div><strong>Secure workspace</strong><small>FixTrack Service Platform</small></div></div></aside><div class="ft-suite-main"><header class="dashboard-header">
         <div>
@@ -38,11 +38,11 @@
             <p>Submit a repair request and track its progress.</p>
         </section>
 
-        <section class="device-section">
+        <section class="device-section customer-repairs-workspace">
 
             <!-- NEW REPAIR REQUEST -->
             <div class="device-form-card">
-                <h3>Request a Repair</h3>
+                <div class="repair-panel-heading"><span class="repair-panel-icon"><i data-lucide="plus-circle"></i></span><div><h3>Request a Repair</h3><p>Select a registered device and describe the issue.</p></div></div>
 
                 <form id="repair-form">
 
@@ -78,7 +78,7 @@
 
             <!-- REPAIR REQUEST LIST -->
             <div class="device-list-card">
-                <h3>My Repair Requests</h3>
+                <div class="repair-list-heading"><div><h3>My Repair Requests</h3><p>View repair progress at a glance. Open details when needed.</p></div><span class="repair-list-count" id="repair-count">Loading</span></div>
 
                 <div id="repair-list">
                     <p>Loading repair requests...</p>

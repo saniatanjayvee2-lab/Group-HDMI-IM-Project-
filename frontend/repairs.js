@@ -212,98 +212,88 @@ function createPaymentPanel(repair) {
 // ==================================
 
 function createRepairCard(repair) {
-    const card = document.createElement("div");
-    card.className = "registered-device";
+    const card = document.createElement("article");
+    card.className = "repair-summary-card";
 
-    card.style.padding = "20px";
-    card.style.marginBottom = "18px";
-    card.style.borderRadius = "10px";
+    const top = document.createElement("div");
+    top.className = "repair-summary-top";
+
+    const deviceIcon = document.createElement("div");
+    deviceIcon.className = "repair-summary-device-icon";
+    deviceIcon.textContent = (repair.brand || "D").slice(0, 1).toUpperCase();
+
+    const main = document.createElement("div");
+    main.className = "repair-summary-main";
 
     const title = document.createElement("h4");
-    title.textContent =
-        `${repair.brand || "Device"} ${repair.model || ""}`;
+    title.textContent = [repair.brand, repair.model].filter(Boolean).join(" ") || "Registered device";
 
-    title.style.marginBottom = "12px";
+    const metadata = document.createElement("p");
+    metadata.className = "repair-summary-meta";
+    const date = repair.date_submitted
+        ? new Date(repair.date_submitted).toLocaleDateString("en-PH", {month: "short", day: "numeric", year: "numeric"})
+        : "Date unavailable";
+    metadata.textContent = "Request #" + (repair.repair_id || "—") + " · " + date;
+    main.append(title, metadata);
 
-    const problem = createText(
-        "Problem",
-        repair.problem_description
-    );
+    const status = document.createElement("span");
+    const statusName = String(repair.status || "Pending");
+    const statusKey = statusName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    status.className = "repair-summary-status status-" + statusKey;
+    status.textContent = statusName;
 
-    const status = createText(
-        "Repair Status",
-        repair.status || "Pending"
-    );
+    top.append(deviceIcon, main, status);
+    card.appendChild(top);
 
-    const submitted = createText(
-        "Submitted",
-        repair.date_submitted
-            ? new Date(repair.date_submitted).toLocaleDateString()
-            : "Date unavailable"
-    );
+    const problem = document.createElement("p");
+    problem.className = "repair-summary-problem";
+    const problemLabel = document.createElement("strong");
+    problemLabel.textContent = "Reported issue: ";
+    problem.append(problemLabel, document.createTextNode(repair.problem_description || "No description provided"));
+    card.appendChild(problem);
 
-    card.append(title, problem, status, submitted);
+    const details = document.createElement("details");
+    details.className = "repair-summary-details";
+    const summary = document.createElement("summary");
+    summary.textContent = "View diagnosis & billing";
+    details.appendChild(summary);
 
-    // ==================================
-    // TECHNICIAN DIAGNOSIS
-    // ==================================
+    const content = document.createElement("div");
+    content.className = "repair-summary-detail-body";
 
-    const diagnosisBox = document.createElement("div");
-
-    diagnosisBox.className = "customer-diagnosis-box";
-
-    diagnosisBox.style.marginTop = "20px";
-    diagnosisBox.style.padding = "18px";
-    diagnosisBox.style.background = "#f8fafc";
-    diagnosisBox.style.border = "1px solid #e2e8f0";
-    diagnosisBox.style.borderRadius = "8px";
-
-    const diagnosisHeading = document.createElement("h4");
+    const diagnosisBox = document.createElement("section");
+    diagnosisBox.className = "customer-diagnosis-box repair-detail-panel";
+    const diagnosisHeading = document.createElement("h5");
     diagnosisHeading.textContent = "Technician's Diagnosis";
-
-    diagnosisHeading.style.marginBottom = "12px";
-    diagnosisHeading.style.color = "#0f172a";
-
     diagnosisBox.appendChild(diagnosisHeading);
 
     if (repair.diagnosis_details) {
-        const diagnosis = createText(
-            "Problem Found",
-            repair.diagnosis_details
+        diagnosisBox.append(
+            createText("Problem Found", repair.diagnosis_details),
+            createText("Recommended Action", repair.recommended_action || "No recommendation provided.")
         );
-
-        const recommendation = createText(
-            "Recommended Action",
-            repair.recommended_action ||
-            "No recommendation provided."
-        );
-
-        diagnosisBox.append(diagnosis, recommendation);
-
         if (repair.date_diagnosed) {
-            diagnosisBox.appendChild(
-                createText(
-                    "Diagnosed",
-                    new Date(
-                        repair.date_diagnosed
-                    ).toLocaleDateString()
-                )
-            );
+            diagnosisBox.append(createText("Diagnosed", new Date(repair.date_diagnosed).toLocaleDateString("en-PH")));
         }
-
     } else {
-        const pending = document.createElement("p");
-
-        pending.textContent =
-            "No diagnosis available yet. The technician has not recorded any findings.";
-
-        pending.style.color = "#64748b";
-
-        diagnosisBox.appendChild(pending);
+        const empty = document.createElement("p");
+        empty.className = "repair-detail-empty";
+        empty.textContent = "The technician has not recorded a diagnosis yet.";
+        diagnosisBox.appendChild(empty);
     }
 
-    card.appendChild(diagnosisBox);
-    card.appendChild(createPaymentPanel(repair));
+    // Keep the existing payment and PayMongo checkout behavior unchanged.
+    // Render the payment section only when its details are opened.
+    let billingLoaded = false;
+    details.addEventListener("toggle", () => {
+        if (!details.open || billingLoaded) return;
+        billingLoaded = true;
+        content.appendChild(createPaymentPanel(repair));
+    });
+
+    content.appendChild(diagnosisBox);
+    details.appendChild(content);
+    card.appendChild(details);
 
     return card;
 }
@@ -331,6 +321,8 @@ async function loadRepairs() {
         }
 
         repairList.innerHTML = "";
+        const count = document.getElementById("repair-count");
+        if (count) count.textContent = repairs.length + (repairs.length === 1 ? " request" : " requests");
 
         if (repairs.length === 0) {
             repairList.textContent = "No repair requests yet.";
@@ -346,6 +338,8 @@ async function loadRepairs() {
     } catch (error) {
         console.error("Load repairs error:", error);
         repairList.textContent = error.message;
+        const count = document.getElementById("repair-count");
+        if (count) count.textContent = "Unavailable";
     }
 }
 

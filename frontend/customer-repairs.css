@@ -1,0 +1,47 @@
+/* Customer repair requests: compact service cards and expandable details */
+.customer-repairs-redesign .ft-suite-main>main{width:min(1180px,calc(100% - 64px))!important}
+.customer-repairs-redesign .customer-repairs-workspace{display:grid!important;grid-template-columns:minmax(300px,.85fr) minmax(0,1.5fr)!important;align-items:start!important;gap:24px!important}
+.customer-repairs-redesign .customer-repairs-workspace>.device-form-card{position:sticky;top:24px}
+.customer-repairs-redesign .customer-repairs-workspace>.device-list-card{min-width:0}
+.customer-repairs-redesign .customer-repairs-workspace>.device-form-card,.customer-repairs-redesign .customer-repairs-workspace>.device-list-card{border-radius:18px!important;padding:28px!important;border:1px solid #e1e8f2!important;background:#fff!important;box-shadow:0 8px 24px rgba(25,44,80,.045)!important}
+.customer-repairs-redesign .repair-panel-heading{display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid #e7edf5;padding-bottom:20px;margin-bottom:24px}
+.customer-repairs-redesign .repair-panel-icon{width:39px;height:39px;display:grid;place-items:center;border-radius:11px;background:#eef2ff;color:#365cf0;flex-shrink:0}
+.customer-repairs-redesign .repair-panel-icon svg{width:20px;height:20px}
+.customer-repairs-redesign .repair-panel-heading h3,.customer-repairs-redesign .repair-list-heading h3{font-size:18px!important;font-weight:800!important;margin:0 0 5px!important;padding:0!important;border:0!important;color:#162846}
+.customer-repairs-redesign .repair-panel-heading p,.customer-repairs-redesign .repair-list-heading p{font-size:12.5px;color:#74839a;line-height:1.5;margin:0}
+.customer-repairs-redesign .repair-list-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid #e7edf5}
+.customer-repairs-redesign .repair-list-count{font-size:11px;font-weight:800;background:#eff3ff;color:#3159cb;border:1px solid #dce5ff;padding:7px 10px;border-radius:20px;white-space:nowrap}
+.customer-repairs-redesign #repair-form{display:flex;flex-direction:column}
+.customer-repairs-redesign #repair-form label{font-size:13px;color:#32425e;font-weight:750;margin:0 0 9px}
+.customer-repairs-redesign #repair-form select,.customer-repairs-redesign #repair-form textarea{width:100%;min-width:0;margin:0 0 23px!important;padding:12px 14px!important;font-size:14px!important;border:1px solid #d8e2f1;border-radius:10px;background:#fff;color:#243350}
+.customer-repairs-redesign #repair-form textarea{min-height:150px;resize:vertical;line-height:1.55}
+.customer-repairs-redesign #repair-form button[type=submit]{width:100%;min-height:47px;background:#355cf2!important;color:white;border-radius:10px;font-size:13px;font-weight:800}
+.customer-repairs-redesign #repair-message{margin:13px 0 0;line-height:1.5;font-size:12.5px}
+.customer-repairs-redesign #repair-list{display:flex;flex-direction:column;gap:14px}
+.customer-repairs-redesign .repair-summary-card{padding:20px 21px;border:1px solid #e1e8f2;border-radius:13px;background:#fff;box-shadow:0 3px 12px rgba(20,42,80,.03);min-width:0}
+.customer-repairs-redesign .repair-summary-top{display:flex;align-items:center;gap:13px}
+.customer-repairs-redesign .repair-summary-device-icon{width:44px;height:44px;flex-shrink:0;display:grid;place-items:center;border-radius:12px;background:#eaf0ff;color:#355af0;font-size:18px;font-weight:800}
+.customer-repairs-redesign .repair-summary-main{flex:1;min-width:0}
+.customer-repairs-redesign .repair-summary-main h4{font-size:15px;line-height:1.4;margin:0 0 4px;color:#182945;font-weight:800;overflow-wrap:anywhere}
+.customer-repairs-redesign .repair-summary-meta{font-size:11.5px;line-height:1.5;color:#8895a9;margin:0}
+.customer-repairs-redesign .repair-summary-status{padding:7px 11px;border-radius:20px;background:#fff4df;color:#a2660a;font-size:11px;font-weight:800;white-space:nowrap;flex-shrink:0}
+.customer-repairs-redesign .repair-summary-status.status-in-progress,.customer-repairs-redesign .repair-summary-status.status-diagnosing{background:#eaf1ff;color:#2957c9}
+.customer-repairs-redesign .repair-summary-status.status-completed,.customer-repairs-redesign .repair-summary-status.status-released{background:#e5f8ee;color:#13764c}
+.customer-repairs-redesign .repair-summary-status.status-cancelled{background:#fce9ed;color:#b32b49}
+.customer-repairs-redesign .repair-summary-problem{font-size:13px;line-height:1.6;color:#5e6d83;margin:17px 0 15px;overflow-wrap:anywhere}
+.customer-repairs-redesign .repair-summary-problem strong{color:#263b5b;font-weight:750}
+.customer-repairs-redesign .repair-summary-details{border-top:1px solid #e8eef5;padding-top:13px}
+.customer-repairs-redesign .repair-summary-details summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:#3158d1;font-weight:800;min-height:24px}
+.customer-repairs-redesign .repair-summary-details summary::-webkit-details-marker{display:none}
+.customer-repairs-redesign .repair-summary-details summary::after{content:'⌄';font-size:20px;line-height:1;transition:transform .16s}
+.customer-repairs-redesign .repair-summary-details[open] summary::after{transform:rotate(180deg)}
+.customer-repairs-redesign .repair-summary-detail-body{display:grid;gap:12px;padding-top:17px}
+.customer-repairs-redesign .repair-detail-panel,.customer-repairs-redesign .customer-payment-panel{padding:17px!important;margin:0!important;background:#f8faff!important;border:1px solid #e5ebf5!important;border-radius:11px!important}
+.customer-repairs-redesign .repair-detail-panel h5,.customer-repairs-redesign .customer-payment-panel h4{font-size:13.5px;font-weight:800;margin:0 0 13px;color:#1c2e4e}
+.customer-repairs-redesign .repair-detail-panel p,.customer-repairs-redesign .customer-payment-panel p{font-size:12px;color:#65748b;line-height:1.55;margin:0 0 8px;overflow-wrap:anywhere}
+.customer-repairs-redesign .repair-detail-panel strong,.customer-repairs-redesign .customer-payment-panel strong{color:#31445f}
+.customer-repairs-redesign .repair-detail-empty{color:#8491a6!important}
+.customer-repairs-redesign .customer-payment-panel button{padding:10px 14px;background:#355cf2;color:#fff;border:0;border-radius:9px;font-size:12px;font-weight:800}
+.customer-repairs-redesign .customer-payment-panel button:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:1080px){.customer-repairs-redesign .customer-repairs-workspace{grid-template-columns:minmax(0,1fr)!important}.customer-repairs-redesign .customer-repairs-workspace>.device-form-card{position:static}.customer-repairs-redesign .customer-repairs-workspace>.device-form-card,.customer-repairs-redesign .customer-repairs-workspace>.device-list-card{width:100%}}
+@media(max-width:600px){.customer-repairs-redesign .ft-suite-main>main{width:calc(100% - 26px)!important}.customer-repairs-redesign .customer-repairs-workspace>.device-form-card,.customer-repairs-redesign .customer-repairs-workspace>.device-list-card{padding:20px!important}.customer-repairs-redesign .repair-summary-card{padding:16px}.customer-repairs-redesign .repair-summary-top{flex-wrap:wrap}.customer-repairs-redesign .repair-summary-status{margin-left:57px}}
