@@ -1,0 +1,21 @@
+/* Shared password reveal control and Bootstrap-styled confirmation dialog */
+.ft-password-wrap{display:block;position:relative;width:100%;min-width:0}
+.ft-password-wrap input{width:100%!important;max-width:100%;padding-right:47px!important;box-sizing:border-box!important}
+.ft-password-wrap .ft-eye-button{position:absolute!important;top:50%!important;right:6px!important;transform:translateY(-50%)!important;width:36px!important;height:36px!important;display:flex!important;align-items:center;justify-content:center;background:transparent!important;border:0!important;border-radius:8px!important;color:#64748b!important;padding:6px!important;cursor:pointer!important;z-index:2}
+.ft-password-wrap .ft-eye-button:hover{background:#edf2ff!important;color:#3155c3!important}
+.ft-password-wrap .ft-eye-button:focus-visible{outline:2px solid #426cf5!important;outline-offset:2px!important}
+.ft-password-wrap .pw-toggle[hidden]{display:none!important}
+.ft-confirm-backdrop{position:fixed;inset:0;z-index:2147482500;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(16,29,53,.65)}
+.ft-confirm-dialog{width:min(100%,475px);max-height:92vh;overflow-y:auto;background:#fff!important;border-radius:18px!important;padding:26px!important;box-shadow:0 25px 80px #10213f50!important}
+.ft-confirm-header{display:flex;gap:15px;align-items:flex-start}
+.ft-confirm-symbol{width:43px;height:43px;border-radius:12px;display:grid;place-items:center;flex-shrink:0;background:#fff0f1;color:#c82d44;font-size:24px;font-weight:850}
+.ft-confirm-header h3{font-size:20px;font-weight:800;color:#1a2b48;margin:1px 0 10px}
+.ft-confirm-message{font-size:13px;line-height:1.65;color:#61728c;margin:0}
+.ft-confirm-password-group{margin:20px 0 0}
+.ft-confirm-password-group label{display:block;font-size:12px;font-weight:800;color:#394e6b;margin-bottom:8px}
+.ft-confirm-password-group input{height:44px;border-radius:9px;border:1px solid #d9e3f2;padding:10px 12px}
+.ft-confirm-warning{font-size:12px;color:#bb2537;margin:10px 0 0;min-height:18px}
+.ft-confirm-warning:empty{min-height:0;margin:0}
+.ft-confirm-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
+.ft-confirm-actions .btn{border-radius:9px;padding:10px 17px;font-size:13px;font-weight:800}
+@media(max-width:440px){.ft-confirm-dialog{padding:20px!important}.ft-confirm-actions .btn{flex:1}}
