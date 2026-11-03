@@ -320,20 +320,76 @@ async function loadRepairs() {
             throw new Error("Unexpected repair list response.");
         }
 
-        repairList.innerHTML = "";
-        const count = document.getElementById("repair-count");
-        if (count) count.textContent = repairs.length + (repairs.length === 1 ? " request" : " requests");
-
-        if (repairs.length === 0) {
-            repairList.textContent = "No repair requests yet.";
-            return;
+        // The device endpoint omits archived/removed devices. Use those IDs to
+        // distinguish current repair requests from preserved repair history.
+        // If that request fails, keep all repairs visible rather than hide data.
+        let visibleDeviceIds = null;
+        try {
+            const devicesResponse = await fetch(DEVICES_API, {
+                headers: { Authorization: `Bearer ${token}` },
+                cache: "no-store"
+            });
+            const devices = await readResponse(devicesResponse);
+            if (!Array.isArray(devices)) {
+                throw new Error("Unexpected device list response.");
+            }
+            visibleDeviceIds = new Set(devices.map(device => Number(device.device_id)));
+        } catch (error) {
+            console.warn("Could not identify archived devices:", error);
         }
 
-        repairs.forEach((repair) => {
-            repairList.appendChild(
-                createRepairCard(repair)
-            );
-        });
+        const currentRepairs = visibleDeviceIds
+            ? repairs.filter(repair => visibleDeviceIds.has(Number(repair.device_id)))
+            : repairs;
+        const archivedRepairs = visibleDeviceIds
+            ? repairs.filter(repair => !visibleDeviceIds.has(Number(repair.device_id)))
+            : [];
+
+        repairList.replaceChildren();
+        const count = document.getElementById("repair-count");
+        if (count) {
+            count.textContent = currentRepairs.length +
+                (currentRepairs.length === 1 ? " request" : " requests");
+        }
+
+        if (currentRepairs.length === 0) {
+            const empty = document.createElement("p");
+            empty.className = "repair-summary-empty";
+            empty.textContent = "No repair requests for your current devices.";
+            repairList.appendChild(empty);
+        } else {
+            currentRepairs.forEach(repair => {
+                repairList.appendChild(createRepairCard(repair));
+            });
+        }
+
+        // Archived devices are not listed as current devices, but their service
+        // records remain accessible to customers, especially for active bills.
+        if (archivedRepairs.length > 0) {
+            const archive = document.createElement("details");
+            archive.className = "repair-archive-group";
+            const archiveToggle = document.createElement("summary");
+            archiveToggle.textContent = "Removed devices · " +
+                archivedRepairs.length +
+                (archivedRepairs.length === 1 ? " past repair" : " past repairs");
+            const explanation = document.createElement("p");
+            explanation.className = "repair-archive-explanation";
+            explanation.textContent =
+                "These devices were removed from My Devices. Their repair and billing records are preserved.";
+            const archiveList = document.createElement("div");
+            archiveList.className = "repair-archive-list";
+            archivedRepairs.forEach(repair => {
+                archiveList.appendChild(createRepairCard(repair));
+            });
+            archive.append(archiveToggle, explanation, archiveList);
+            repairList.appendChild(archive);
+        } else if (!visibleDeviceIds) {
+            const notice = document.createElement("p");
+            notice.className = "repair-archive-explanation";
+            notice.textContent =
+                "Unable to check which devices were removed, so all repair records are displayed.";
+            repairList.prepend(notice);
+        }
 
     } catch (error) {
         console.error("Load repairs error:", error);

@@ -45,3 +45,15 @@
 .customer-repairs-redesign .customer-payment-panel button:disabled{opacity:.5;cursor:not-allowed}
 @media(max-width:1080px){.customer-repairs-redesign .customer-repairs-workspace{grid-template-columns:minmax(0,1fr)!important}.customer-repairs-redesign .customer-repairs-workspace>.device-form-card{position:static}.customer-repairs-redesign .customer-repairs-workspace>.device-form-card,.customer-repairs-redesign .customer-repairs-workspace>.device-list-card{width:100%}}
 @media(max-width:600px){.customer-repairs-redesign .ft-suite-main>main{width:calc(100% - 26px)!important}.customer-repairs-redesign .customer-repairs-workspace>.device-form-card,.customer-repairs-redesign .customer-repairs-workspace>.device-list-card{padding:20px!important}.customer-repairs-redesign .repair-summary-card{padding:16px}.customer-repairs-redesign .repair-summary-top{flex-wrap:wrap}.customer-repairs-redesign .repair-summary-status{margin-left:57px}}
+
+/* Separate current repairs from preserved records of removed devices. */
+.customer-repairs-redesign .repair-summary-empty{padding:26px 18px;border:1px dashed #cbd8eb;border-radius:12px;color:#6b7b94;text-align:center;font-size:13px;background:#f9fbff;margin:0}
+.customer-repairs-redesign .repair-archive-group{border:1px solid #dce4f0;border-radius:13px;background:#f6f8fc;margin-top:12px;overflow:hidden}
+.customer-repairs-redesign .repair-archive-group>summary{cursor:pointer;display:flex;align-items:center;justify-content:space-between;list-style:none;font-size:13px;font-weight:800;color:#485c7b;padding:17px 19px}
+.customer-repairs-redesign .repair-archive-group>summary::-webkit-details-marker{display:none}
+.customer-repairs-redesign .repair-archive-group>summary::after{content:"⌄";font-size:20px;line-height:1;color:#6e80a2}
+.customer-repairs-redesign .repair-archive-group[open]>summary::after{transform:rotate(180deg)}
+.customer-repairs-redesign .repair-archive-group[open]>summary{border-bottom:1px solid #e1e8f2}
+.customer-repairs-redesign .repair-archive-explanation{font-size:12px;line-height:1.6;color:#71829d;margin:13px 18px!important}
+.customer-repairs-redesign .repair-archive-list{display:grid;gap:13px;padding:0 15px 16px}
+.customer-repairs-redesign .repair-archive-list .repair-summary-card{background:white}
