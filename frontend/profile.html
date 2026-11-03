@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FixTrack | My Profile</title>
   <link rel="stylesheet" href="style.css?v=profile-ui-4">
 <link rel="stylesheet" href="dashboard-anim.css?v=1">
 <link rel="stylesheet" href="ft-theme.css?v=1">
+    <link rel="stylesheet" href="fixtrack-bootstrap.css?v=20261103">
 </head>
-<body class="customer-profile-page">
+<body class="customer-profile-page ft-bootstrap">
   <header class="dashboard-header">
     <div><h1>FixTrack</h1><p>Computer Repair Management System</p></div>
     <a class="profile-back-link" href="dashboard.html">← Dashboard</a>
@@ -22,7 +24,7 @@
         <p>View and manage your account information and contact details.</p>
       </div>
       <div class="profile-edit-toolbar">
-        <button id="edit-profile-btn" type="button" disabled>✎ Edit Profile</button>
+        <button id="edit-profile-btn" class="btn btn-primary" type="button" disabled>✎ Edit Profile</button>
       </div>
     </div>
     <p id="message" role="status" aria-live="polite"></p>
@@ -33,11 +35,11 @@
           <div><h3 id="personal-heading">Personal Information</h3><p>Your name, email address and account access.</p></div>
         </div>
         <div class="profile-field-grid">
-          <label for="first_name">First Name <input id="first_name" name="first_name" type="text" maxlength="100" autocomplete="given-name" required readonly></label>
-          <label for="middle_name">Middle Name <input id="middle_name" name="middle_name" type="text" maxlength="100" readonly></label>
-          <label for="last_name">Last Name <input id="last_name" name="last_name" type="text" maxlength="100" autocomplete="family-name" required readonly></label>
-          <label for="email">Email Address <input id="email" name="email" type="email" maxlength="255" autocomplete="email" required readonly></label>
-          <label for="role" class="profile-role-field">Account Role <input id="role" name="role" type="text" value="Customer" readonly aria-readonly="true"><small>Your account role cannot be changed here.</small></label>
+          <label for="first_name">First Name <input class="form-control" id="first_name" name="first_name" type="text" maxlength="100" autocomplete="given-name" required readonly></label>
+          <label for="middle_name">Middle Name <input class="form-control" id="middle_name" name="middle_name" type="text" maxlength="100" readonly></label>
+          <label for="last_name">Last Name <input class="form-control" id="last_name" name="last_name" type="text" maxlength="100" autocomplete="family-name" required readonly></label>
+          <label for="email">Email Address <input class="form-control" id="email" name="email" type="email" maxlength="255" autocomplete="email" required readonly></label>
+          <label for="role" class="profile-role-field">Account Role <input class="form-control" id="role" name="role" type="text" value="Customer" readonly aria-readonly="true"><small>Your account role cannot be changed here.</small></label>
         </div>
       </section>
       <section class="customer-profile-panel" aria-labelledby="phone-heading">
