@@ -5,3 +5,16 @@
 /* Zero-cost repairs are not paid transactions. */
 .ft-repairs-modern .payment-no-charges{background:#edf2f8!important;color:#596b85!important;border-radius:20px;padding:5px 10px;font-size:12px;font-weight:750}
 .ft-repairs-modern .admin-payment-no-charges-notice{font-size:13px;font-weight:650;background:#f2f5fa;border:1px solid #e0e7f1;border-radius:10px;padding:13px 16px;color:#596b85;margin-top:14px}
+
+/* Bootstrap tab controls with small, visible loading indicator. */
+.ft-repairs-modern .repair-modal-tabs{display:flex!important;align-items:center;gap:10px!important;padding:15px 28px!important;background:#fff!important;border-bottom:1px solid #e0e8f4!important}
+.ft-repairs-modern .repair-modal-tabs .repair-tab{display:inline-flex!important;align-items:center;justify-content:center;gap:9px;flex:1!important;max-width:none!important;border-radius:10px!important;font-size:13px!important;font-weight:750!important;padding:12px 15px!important;min-height:46px!important;box-shadow:none!important}
+.ft-repairs-modern .repair-modal-tabs .repair-tab.btn-outline-primary:not(.active){background:#f2f5fa!important;color:#526985!important;border:1px solid #dde6f3!important}
+.ft-repairs-modern .repair-modal-tabs .repair-tab.btn-outline-primary:not(.active):hover{background:#e7eefb!important;color:#3059c5!important}
+.ft-repairs-modern .repair-modal-tabs .repair-tab.btn-primary.active{background:#315bf0!important;color:#fff!important;border:1px solid #315bf0!important}
+.ft-repairs-modern .repair-modal-tabs .repair-tab:focus-visible{outline:3px solid #a6bfff!important;outline-offset:2px!important}
+.ft-repairs-modern .repair-modal-tabs .repair-tab-spinner{width:15px!important;height:15px!important;border-width:2px!important;flex-shrink:0}
+.ft-repairs-modern .repair-modal-tabs .repair-tab-spinner.d-none{display:none!important}
+.ft-repairs-modern .repair-modal-tabs .repair-tab-spinner:not(.d-none){display:inline-block!important;animation:ft-repair-tab-spin .68s linear infinite!important}
+@keyframes ft-repair-tab-spin{to{transform:rotate(360deg)}}
+@media(max-width:550px){.ft-repairs-modern .repair-modal-tabs{gap:5px!important;padding:10px!important}.ft-repairs-modern .repair-modal-tabs .repair-tab{font-size:12px!important;gap:5px;padding:10px 7px!important}.ft-repairs-modern .repair-modal-tabs .repair-tab-spinner{width:12px!important;height:12px!important}}

@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="paymongo-confirm.css?v=1">
 <link rel="stylesheet" href="fixtrack-bootstrap.css?v=20261103">
 <link rel="stylesheet" href="fixtrack-pro.css?v=4"><link rel="stylesheet" href="fixtrack-functional.css?v=20261103-2">
-<link rel="stylesheet" href="fixtrack-suite.css?v=20261103-5"><link rel="stylesheet" href="fixtrack-static.css?v=20261103-1"><link rel="stylesheet" href="admin-repairs-redesign.css?v=nocharges-2">
+<link rel="stylesheet" href="fixtrack-suite.css?v=20261103-5"><link rel="stylesheet" href="fixtrack-static.css?v=20261103-1"><link rel="stylesheet" href="admin-repairs-redesign.css?v=20261103-tabs-2">
 <link rel="stylesheet" href="fixtrack-loading.css?v=2">
 <script src="fixtrack-loading.js?v=2"></script>
 </head>
@@ -62,15 +62,15 @@
                         aria-label="Close">Close</button>
             </div>
 
-            <div class="repair-modal-tabs" role="tablist">
-                <button type="button" class="repair-tab active" data-tab="repair">
-                    Repair
+            <div class="repair-modal-tabs" role="tablist" aria-label="Repair management tabs">
+                <button type="button" class="repair-tab btn btn-primary active" data-tab="repair" role="tab" aria-controls="repair-panel-repair" aria-selected="true">
+                    <span>Repair</span><span class="spinner-border spinner-border-sm repair-tab-spinner d-none" role="status" aria-hidden="true"></span>
                 </button>
-                <button type="button" class="repair-tab" data-tab="billing">
-                    Billing
+                <button type="button" class="repair-tab btn btn-outline-primary" data-tab="billing" role="tab" aria-controls="repair-panel-billing" aria-selected="false">
+                    <span>Billing</span><span class="spinner-border spinner-border-sm repair-tab-spinner d-none" role="status" aria-hidden="true"></span>
                 </button>
-                <button type="button" class="repair-tab" data-tab="payments">
-                    Payments
+                <button type="button" class="repair-tab btn btn-outline-primary" data-tab="payments" role="tab" aria-controls="repair-panel-payments" aria-selected="false">
+                    <span>Payments</span><span class="spinner-border spinner-border-sm repair-tab-spinner d-none" role="status" aria-hidden="true"></span>
                 </button>
             </div>
 
@@ -126,14 +126,22 @@
                 : "—";
         }
 
+        let currentTabRequest = 0;
+        function setTabBusy(button, busy) {
+            const spinner = button.querySelector(".repair-tab-spinner");
+            if (spinner) spinner.classList.toggle("d-none", !busy);
+            button.setAttribute("aria-busy", String(busy));
+        }
+
         function showTab(name) {
             Object.entries(panels).forEach(([key, panel]) => {
                 panel.hidden = key !== name;
             });
-
             modal.querySelectorAll(".repair-tab").forEach(button => {
                 const selected = button.dataset.tab === name;
                 button.classList.toggle("active", selected);
+                button.classList.toggle("btn-primary", selected);
+                button.classList.toggle("btn-outline-primary", !selected);
                 button.setAttribute("aria-selected", String(selected));
             });
         }
@@ -168,7 +176,8 @@
                     if (
                         content.querySelector(".billing-totals") ||
                         content.querySelector(".payment-section") ||
-                        content.querySelector(".billing-entry-form")
+                        content.querySelector(".billing-entry-form") ||
+                        content.textContent.trim().startsWith("Unable to load billing:")
                     ) {
                         billingLoadedFor = card;
                         organizeBillingForms();
@@ -219,6 +228,8 @@
                 billing.hidden = false;
             }
 
+            ++currentTabRequest;
+            modal.querySelectorAll(".repair-tab").forEach(button => setTabBusy(button, false));
             modal.hidden = false;
             document.body.classList.add("repair-modal-open");
             showTab("repair");
@@ -246,6 +257,8 @@
                 card.append(billing);
             }
 
+            ++currentTabRequest;
+            modal.querySelectorAll(".repair-tab").forEach(button => setTabBusy(button, false));
             activeCard = null;
             billingLoadedFor = null;
             billingLoading = null;
@@ -477,18 +490,33 @@
         modal.querySelectorAll(".repair-tab").forEach(button => {
             button.addEventListener("click", async () => {
                 if (!activeCard) return;
-
                 const card = activeCard;
                 const tab = button.dataset.tab;
-
-                if (tab === "billing" || tab === "payments") {
-                    await loadBillingIfNeeded(card);
-                    if (activeCard !== card) return;
-                    organizeBillingForms();
-                    movePaymentSection();
-                }
-
+                const request = ++currentTabRequest;
                 showTab(tab);
+                modal.querySelectorAll(".repair-tab").forEach(item => setTabBusy(item, item === button));
+
+                try {
+                    if (tab === "billing" || tab === "payments") {
+                        await loadBillingIfNeeded(card);
+                        if (card !== activeCard || request !== currentTabRequest) return;
+                        organizeBillingForms();
+                        movePaymentSection();
+                        if (tab === "payments" && !panels.payments.querySelector(".payment-section")) {
+                            const warning = text("p", "Unable to load payment details. Close this repair and try again.", "alert alert-warning");
+                            panels.payments.replaceChildren(warning);
+                        }
+                    } else {
+                        // Repair controls are already in the page; briefly confirm the switch.
+                        await new Promise(resolve => setTimeout(resolve, 250));
+                    }
+                } catch (error) {
+                    if (card === activeCard && request === currentTabRequest) {
+                        panels[tab].prepend(text("p", error.message || "Unable to load this tab.", "alert alert-danger"));
+                    }
+                } finally {
+                    if (request === currentTabRequest) setTabBusy(button, false);
+                }
             });
         });
 
