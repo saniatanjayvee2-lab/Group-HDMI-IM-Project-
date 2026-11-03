@@ -1016,7 +1016,9 @@ async function renderPayments(
             Number(data.remaining_balance) || 0;
 
         const paymentStatus =
-            data.payment_status || "Unpaid";
+            totalAmount <= 0 && totalPaid <= 0
+                ? "No charges yet"
+                : (data.payment_status || "Unpaid");
 
         // =====================================
         // PAYMENT SUMMARY
@@ -1058,6 +1060,8 @@ async function renderPayments(
             statusBadge.classList.add("payment-paid");
         } else if (paymentStatus === "Partially Paid") {
             statusBadge.classList.add("payment-partial");
+        } else if (paymentStatus === "No charges yet") {
+            statusBadge.classList.add("payment-no-charges");
         } else {
             statusBadge.classList.add("payment-unpaid");
         }
@@ -1074,9 +1078,21 @@ async function renderPayments(
                 "admin-payment-customer-notice"
             );
             section.appendChild(customerPaymentNotice);
-        } else {
+        } else if (totalAmount <= 0 && totalPaid <= 0) {
+            section.appendChild(
+                createElement(
+                    "p",
+                    "No charges have been added to this repair yet.",
+                    "admin-payment-no-charges-notice"
+                )
+            );
+        } else if (totalAmount > 0 && totalPaid >= totalAmount) {
             section.appendChild(
                 createElement("p", "Fully paid. No further payment is needed.")
+            );
+        } else {
+            section.appendChild(
+                createElement("p", "No outstanding balance.")
             );
         }
 
