@@ -613,7 +613,7 @@ async function sendResetEmail(to, link) {
     ].join("\n");
 
     await transport.sendMail({
-        from: MAIL_FROM || SMTP_USER,
+        from: `"FixTrack Support" <${MAIL_FROM || SMTP_USER}>`,
         to,
         subject: "Reset your FixTrack password",
         text: emailText
