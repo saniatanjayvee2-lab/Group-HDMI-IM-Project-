@@ -1,0 +1,102 @@
+
+/* FixTrack full application refresh: authentic forms, tables, dialogs, and alignment.
+   Applied AFTER legacy CSS so existing functionality and HTML IDs remain unchanged. */
+:root{--fx-bg:#f3f6fb;--fx-surface:#fff;--fx-text:#17243f;--fx-subtle:#64748b;--fx-line:#e1e8f2;--fx-blue:#355af3;--fx-blue-dark:#2546cc;--fx-radius:16px;--fx-shadow:0 12px 38px rgba(26,48,88,.07)}
+html{scroll-behavior:smooth}
+body.ft-pro{background:var(--fx-bg);color:var(--fx-text);font-family:'DM Sans',system-ui,Arial,sans-serif}
+body.ft-pro *{box-sizing:border-box}
+body.ft-pro h1,body.ft-pro h2,body.ft-pro h3,body.ft-pro h4{letter-spacing:-.035em}
+body.ft-pro .hidden,body.ft-pro [hidden]{display:none!important}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .dashboard-header{padding:20px max(26px,calc((100vw - 1280px)/2));min-height:86px;background:#fff!important;background-image:none!important;overflow:visible}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .dashboard-header>div:first-child{display:flex;flex-direction:column;gap:4px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .dashboard-header h1{font-size:23px;color:#15264b;margin:0;letter-spacing:-1px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .dashboard-header p{font-size:11px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;margin:0;color:#7c89a2}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .dashboard-header :is(button,a){min-height:42px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;padding:10px 16px;background:#f0f4ff;color:#2851c9;border:1px solid #dce5ff;border-radius:10px;font-size:13px;text-decoration:none;box-shadow:none;transform:none}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .dashboard-header :is(button,a):hover{background:#e0e9ff;color:#1c3caa;box-shadow:none}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.dashboard-container,.payments-dashboard,.repairs-dashboard,.reports-container,.customer-profile-layout){width:min(1280px,calc(100% - 52px));max-width:1280px;margin:38px auto 76px;padding:0}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.dashboard-welcome,.repairs-page-heading,.payments-heading,.reports-heading,.profile-intro){background:#fff!important;border:1px solid var(--fx-line);border-radius:18px;padding:30px 34px;margin-bottom:26px;box-shadow:0 5px 22px rgba(26,48,88,.035)}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.dashboard-welcome,.repairs-page-heading,.payments-heading,.reports-heading,.profile-intro) h2{font-size:clamp(23px,2.4vw,30px);font-weight:800;color:var(--fx-text);margin:0 0 10px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.dashboard-welcome,.repairs-page-heading,.payments-heading,.reports-heading,.profile-intro) p{font-size:14px;color:var(--fx-subtle);line-height:1.65;margin-bottom:0}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.device-section,.tw-diag-layout,.reports-chart-grid){gap:22px;align-items:start}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.device-form-card,.device-list-card,.customer-panel,.payments-panel,.reports-panel,.reports-table-panel,.tw-panel,.customer-profile-panel,.history-panel,.repairs-workspace,.payment-section,.admin-repair-card,.registered-device,.tw-card,.payments-stat,.reports-stat-card,.tw-stat){background:#fff;border:1px solid var(--fx-line);border-radius:16px;box-shadow:var(--fx-shadow)}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.device-form-card,.device-list-card,.customer-panel,.payments-panel,.reports-panel,.tw-panel,.customer-profile-panel,.history-panel,.repairs-workspace,.payment-section){padding:clamp(22px,2.5vw,32px)}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.device-form-card,.device-list-card,.customer-panel,.payments-panel,.reports-panel,.tw-panel,.customer-profile-panel,.history-panel,.repairs-workspace,.payment-section)>h3{font-size:18px;font-weight:800;color:#1d2c49;margin-bottom:22px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(form input:not([type="hidden"]),form select,form textarea){width:100%;max-width:100%;background:#fff;color:#1b2b48;border:1px solid #d6dfed;border-radius:10px;padding:12px 14px;font:inherit;font-size:14px;min-height:45px;transition:border-color .16s,box-shadow .16s}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) form textarea{min-height:110px;resize:vertical}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) form :is(input,select,textarea):focus{border-color:#7299fa!important;box-shadow:0 0 0 4px rgba(53,90,243,.11)!important;outline:none}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) form :is(input,textarea)[readonly]{background:#f5f7fb;color:#53627c}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) form label{font-size:13px;font-weight:700;color:#35455e;line-height:1.5}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) form>label{margin:0 0 8px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.device-form-card,.tw-form) form :is(input,select,textarea){margin:0 0 20px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(button,.customer-button,.reports-btn,.tw-btn){font-size:13px;font-weight:700;border-radius:10px;transition:background-color .15s,box-shadow .15s}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) form button[type="submit"]{background:var(--fx-blue);border:1px solid var(--fx-blue);color:#fff;min-height:45px;padding:11px 19px;border-radius:10px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) form button[type="submit"]:hover{background:var(--fx-blue-dark);border-color:var(--fx-blue-dark)}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.edit-device-btn,.save-edit-btn,.customer-button,.tw-btn:not(.light),.reports-btn.primary){background:var(--fx-blue)!important;color:#fff!important;border:1px solid var(--fx-blue)!important;padding:10px 16px;border-radius:10px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.cancel-edit-btn,.profile-secondary-button,.tw-btn.light){background:#eef3ff!important;color:#2846b3!important;border:1px solid #dce6ff!important;border-radius:10px;padding:10px 16px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.remove-device-btn,[class*="delete-btn"]){background:#fff0f1!important;color:#bb2d40!important;border:1px solid #ffd4db!important;border-radius:10px;padding:10px 14px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(table,.customer-table,.payments-table,.reports-table){width:100%;font-size:13px;border-collapse:collapse}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) table :is(th,td){padding:14px 16px;text-align:left;border-bottom:1px solid #e9eef5;vertical-align:middle;overflow-wrap:anywhere}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) table thead th{background:#f3f6fb;color:#5e6c86;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) table tbody tr:hover{background:#f8faff}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.customer-table-wrap,.payments-table-scroll,.reports-table-wrap){overflow-x:auto;border:1px solid #e8edf5;border-radius:12px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.device-actions,.tw-actions,.payments-actions,.reports-actions,.customer-form-actions,.profile-form-actions,.modal-actions){display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.registered-device,.tw-card,.admin-repair-card,.history-item){padding:20px;margin-bottom:14px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.payments-stat,.reports-stat-card,.tw-stat){padding:24px;min-width:0}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.payments-stat strong,.reports-stat-value,.tw-stat strong){font-family:Manrope,sans-serif;color:#172747;font-size:clamp(22px,3vw,32px);font-weight:800}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.reports-stat-label,.tw-stat span){font-size:12px;color:#78869d;font-weight:700}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.customer-toolbar,.history-toolbar){display:flex;align-items:end;gap:12px;flex-wrap:wrap}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .customer-toolbar>div{flex:1;min-width:220px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .customer-toolbar button{min-height:45px;padding:10px 20px;margin:0}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.tw-tabs,.repair-modal-tabs){background:#f2f5fa;padding:5px;border-radius:11px;gap:5px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.tw-tab,.repair-tab){border-radius:8px;background:transparent;color:#62728d;padding:10px 17px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.tw-tab,.repair-tab).active{background:#fff;color:#2447c2;box-shadow:0 2px 9px #20375f12}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.modal-overlay,.repair-modal,.tw-edit-overlay){z-index:1000}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.edit-device-modal,.repair-modal-dialog,.tw-edit-panel){background:#fff;border-radius:18px;border:1px solid #e4e9f3;box-shadow:0 30px 95px #0d173c35;max-height:calc(100vh - 42px);overflow-y:auto}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) dialog#customer-dialog{border:1px solid #e5eaf3;border-radius:18px;max-height:88vh;max-width:min(900px,95vw);box-shadow:0 30px 90px #0d173c30;padding:26px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) dialog#customer-dialog::backdrop{background:rgba(13,24,46,.58);backdrop-filter:blur(3px)}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .customer-profile-layout{max-width:1150px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .profile-intro{display:flex;align-items:center;gap:18px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .profile-intro-copy{flex:1;min-width:0}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .profile-field-grid{gap:18px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .profile-field-grid label{display:flex;flex-direction:column;gap:8px}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .profile-field-grid input{margin:0}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) #profile-actions{justify-content:flex-end}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .reports-bar-fill{background:linear-gradient(90deg,#355af3,#73a2ff)}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .reports-bar-track{background:#ebf0ff}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .repairs-workspace{width:100%;min-width:0}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .repairs-page-heading{max-width:none}
+body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .payments-heading{align-items:center}
+/* LOGIN LAYOUT: grid children must not retain the original 50% widths */
+body.ft-pro.login-page{display:block!important;min-height:100vh;margin:0;background:#0b1731!important}
+body.ft-pro.login-page .auth-container{width:min(1120px,calc(100% - 64px))!important;max-width:1120px!important;min-height:680px;height:auto!important;margin:clamp(30px,6vh,75px) auto!important;padding:0!important;display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;align-items:stretch!important;gap:0!important;border-radius:23px;overflow:hidden;background:#fff;box-shadow:0 35px 100px rgba(0,0,0,.3)}
+body.ft-pro.login-page .brand-section,body.ft-pro.login-page .auth-section{width:100%!important;max-width:100%!important;min-width:0!important;flex:none!important;margin:0!important;border-radius:0}
+body.ft-pro.login-page .brand-section{padding:clamp(30px,5vw,66px)!important;align-items:flex-start;text-align:left;justify-content:center;background:linear-gradient(145deg,#16346c,#0b1936)!important}
+body.ft-pro.login-page .brand-section h1{margin:0 0 13px;font-size:clamp(40px,5vw,65px);line-height:1.05}
+body.ft-pro.login-page .brand-section h2{font-size:clamp(23px,2.5vw,31px);margin:22px 0 16px}
+body.ft-pro.login-page .brand-section p{font-size:14px;max-width:380px;margin:0;line-height:1.8}
+body.ft-pro.login-page .auth-section{padding:clamp(28px,4.5vw,60px)!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:center!important;background:#fff}
+body.ft-pro.login-page .auth-box{display:block;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;min-width:0!important;border:0!important;box-shadow:none!important;animation:none!important;background:transparent!important}
+body.ft-pro.login-page .auth-box.hidden{display:none!important}
+body.ft-pro.login-page .auth-box h2{font-size:28px;color:#182848;margin:0 0 7px}
+body.ft-pro.login-page .auth-box>p{margin:0 0 21px;color:#738097;font-size:13px}
+body.ft-pro.login-page .auth-box form{display:flex!important;flex-direction:column!important;gap:0!important;width:100%;margin:0}
+body.ft-pro.login-page .auth-box form label{display:block;width:100%;margin:0 0 8px!important;font-size:13px;color:#35445e;font-weight:750}
+body.ft-pro.login-page .auth-box form input{display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;height:47px!important;padding:11px 14px!important;margin:0 0 18px!important;border:1px solid #d7e0ed!important;border-radius:10px!important;background:white!important;font-size:14px}
+body.ft-pro.login-page .auth-box form input:focus{border-color:#7198f7!important;box-shadow:0 0 0 4px #355af31a}
+body.ft-pro.login-page #login-form .pw-wrap{width:100%;position:relative;margin:0}
+body.ft-pro.login-page #login-form .pw-wrap input{padding-right:78px!important;margin-bottom:7px!important}
+body.ft-pro.login-page #login-form .pw-toggle{position:absolute!important;right:12px!important;top:23px!important;transform:translateY(-50%)!important;width:auto!important;height:auto!important;padding:5px!important;margin:0!important;background:transparent!important;color:#3457da!important;border:0!important;min-height:unset!important;box-shadow:none!important}
+body.ft-pro.login-page .forgot-row{margin:0 0 16px;text-align:right}
+body.ft-pro.login-page .auth-box form button[type=submit]{width:100%!important;margin:3px 0 0!important;min-height:48px!important;background:#355af3!important;border:0!important;color:#fff!important;border-radius:10px;font-size:14px;font-weight:800}
+body.ft-pro.login-page .auth-box form button[type=submit]:hover{background:#2749d9!important}
+body.ft-pro.login-page .role-tabs{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));width:100%!important;padding:4px!important;margin:18px 0 9px!important;background:#edf1f8!important;border-radius:12px}
+body.ft-pro.login-page .role-tabs button{padding:11px 4px!important;white-space:nowrap;font-size:12px!important;font-weight:750}
+body.ft-pro.login-page .role-hint{min-height:17px!important;margin:3px 0 15px!important;color:#7b879c}
+body.ft-pro.login-page .auth-box > p:has(#show-register),body.ft-pro.login-page .auth-box > p:has(#show-login){margin:21px 0 0!important;text-align:center;font-size:13px}
+body.ft-pro.login-page .auth-box #login-message{margin-top:12px;font-size:13px}
+body.ft-pro.login-page .auth-box #initial-setup-section{margin-top:20px;padding:15px;background:#f4f7fc;border-radius:12px}
+body.ft-pro.login-page .auth-section .auth-box:not(.hidden):only-child{align-self:center}
+@media(max-width:1020px){body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .device-section{grid-template-columns:1fr}}
+@media(max-width:800px){body.ft-pro.login-page .auth-container{width:min(700px,calc(100% - 36px))!important;grid-template-columns:1fr!important;min-height:0!important;margin:18px auto!important}body.ft-pro.login-page .brand-section{padding:29px 35px!important}body.ft-pro.login-page .brand-section:before{margin-bottom:14px!important}body.ft-pro.login-page .brand-section h1{font-size:35px!important}body.ft-pro.login-page .brand-section h2{font-size:20px!important;margin:10px 0!important}body.ft-pro.login-page .brand-section:after{display:none}body.ft-pro.login-page .auth-section{padding:32px 35px!important}body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.dashboard-container,.payments-dashboard,.repairs-dashboard,.reports-container,.customer-profile-layout){width:calc(100% - 30px);margin:20px auto 50px}body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .dashboard-header{padding:17px 18px}body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.dashboard-welcome,.repairs-page-heading,.payments-heading,.reports-heading,.profile-intro){padding:22px}body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .reports-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:540px){body.ft-pro.login-page .auth-container{width:100%!important;min-height:100vh!important;margin:0!important;border-radius:0!important}body.ft-pro.login-page .brand-section{padding:25px 25px!important}body.ft-pro.login-page .auth-section{padding:30px 24px!important}body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .dashboard-header{flex-wrap:wrap;gap:12px}body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .profile-intro{flex-direction:column;align-items:flex-start}body.ft-pro:not(.ft-pro-dashboard):not(.login-page) .reports-stats{grid-template-columns:1fr}body.ft-pro:not(.ft-pro-dashboard):not(.login-page) :is(.device-form-card,.device-list-card,.customer-panel,.payments-panel,.reports-panel,.tw-panel,.customer-profile-panel,.history-panel,.repairs-workspace){padding:20px}}
+@media(prefers-reduced-motion:reduce){body.ft-pro *,body.ft-pro *:before,body.ft-pro *:after{transition:none!important;animation:none!important}}
