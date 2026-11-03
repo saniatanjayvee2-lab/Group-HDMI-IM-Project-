@@ -30,7 +30,7 @@
                     original.style.display = "none";
                 }
             } else {
-                wrapper = document.createElement("span");
+                wrapper = document.createElement("div");
                 field.parentNode.insertBefore(wrapper, field);
                 wrapper.appendChild(field);
             }
@@ -39,9 +39,12 @@
             button.type = "button";
             button.className = "ft-eye-button";
             setVisibility(field, button, false);
-            button.addEventListener("click", () =>
-                setVisibility(field, button, field.type === "password")
-            );
+            button.addEventListener("pointerdown", event => event.preventDefault());
+            button.addEventListener("click", event => {
+                event.preventDefault();
+                event.stopPropagation();
+                setVisibility(field, button, field.type === "password");
+            });
             wrapper.appendChild(button);
             field.form?.addEventListener("reset", () => {
                 setTimeout(() => setVisibility(field, button, false), 0);

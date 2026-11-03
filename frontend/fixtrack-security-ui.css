@@ -19,3 +19,16 @@
 .ft-confirm-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
 .ft-confirm-actions .btn{border-radius:9px;padding:10px 17px;font-size:13px;font-weight:800}
 @media(max-width:440px){.ft-confirm-dialog{padding:20px!important}.ft-confirm-actions .btn{flex:1}}
+
+/* Password-eye alignment: override global form/button rules. */
+body .ft-password-wrap{display:block!important;position:relative!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;min-width:0!important;margin:0!important;padding:0!important;float:none!important}
+body .ft-password-wrap>input,
+body .ft-password-wrap>input[type=password],
+body .ft-password-wrap>input[type=text]{display:block!important;width:100%!important;max-width:100%!important;box-sizing:border-box!important;padding-right:52px!important;margin-left:0!important;margin-right:0!important}
+body .ft-password-wrap>button.ft-eye-button,
+body.ft-pro .ft-password-wrap>button.ft-eye-button,
+body.ft-pro.login-page .auth-box form .ft-password-wrap>button.ft-eye-button{appearance:none!important;position:absolute!important;top:50%!important;right:7px!important;bottom:auto!important;left:auto!important;transform:translateY(-50%)!important;width:36px!important;min-width:36px!important;max-width:36px!important;height:36px!important;min-height:36px!important;max-height:36px!important;box-sizing:border-box!important;padding:0!important;margin:0!important;border:0!important;border-radius:8px!important;display:flex!important;align-items:center!important;justify-content:center!important;line-height:1!important;background:transparent!important;color:#62718c!important;box-shadow:none!important;float:none!important;z-index:5!important;cursor:pointer!important}
+body .ft-password-wrap>button.ft-eye-button:hover{background:#eef2fa!important;color:#3458cb!important}
+body .ft-password-wrap>button.ft-eye-button svg{display:block!important;width:19px!important;height:19px!important;flex-shrink:0!important;position:static!important;transform:none!important;pointer-events:none!important}
+body.ft-pro.login-page #login-form .pw-wrap.ft-password-wrap>button.ft-eye-button{top:calc(50% - 3px)!important}
+body .ft-password-wrap>.pw-toggle[hidden]{display:none!important}
