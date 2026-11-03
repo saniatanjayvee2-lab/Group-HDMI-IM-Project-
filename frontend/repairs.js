@@ -256,6 +256,28 @@ function createRepairCard(repair) {
     problem.append(problemLabel, document.createTextNode(repair.problem_description || "No description provided"));
     card.appendChild(problem);
 
+    // Show the person assigned to this repair using the existing customer API.
+    const technician = document.createElement("div");
+    technician.className = "repair-assigned-technician";
+
+    const technicianLabel = document.createElement("span");
+    technicianLabel.className = "repair-technician-label";
+    technicianLabel.textContent = "Assigned Technician";
+
+    const technicianValue = document.createElement("strong");
+    technicianValue.className = "repair-technician-value";
+    const technicianName = [
+        repair.technician_first_name,
+        repair.technician_last_name
+    ].filter(value => typeof value === "string" && value.trim()).map(value => value.trim()).join(" ");
+
+    technicianValue.textContent = technicianName ||
+        (repair.technician_id ? "Technician details unavailable" : "Not assigned yet");
+    if (!technicianName) technicianValue.classList.add("repair-technician-unassigned");
+
+    technician.append(technicianLabel, technicianValue);
+    card.appendChild(technician);
+
     const details = document.createElement("details");
     details.className = "repair-summary-details";
     const summary = document.createElement("summary");
