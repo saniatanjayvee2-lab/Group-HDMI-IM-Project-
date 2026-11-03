@@ -14,12 +14,12 @@
 <link rel="stylesheet" href="ft-theme.css?v=1">
     <link rel="stylesheet" href="fixtrack-bootstrap.css?v=20261103">
 <link rel="stylesheet" href="fixtrack-pro.css?v=4"><link rel="stylesheet" href="fixtrack-functional.css?v=20261103-2">
-</head>
+<link rel="stylesheet" href="fixtrack-suite.css?v=20261103-5"></head>
 
-<body class="ft-bootstrap ft-pro">
+<body class="ft-bootstrap ft-pro ft-suite-page">
 
     <!-- HEADER -->
-    <header class="dashboard-header">
+    <div class="ft-suite-shell"><aside class="ft-suite-sidebar" aria-label="admin navigation"><a class="ft-suite-brand" href="admin-dashboard.html"><span class="ft-suite-brand-icon"><i data-lucide="monitor-cog"></i></span><span>Fix<span>Track</span><small>REPAIR MANAGEMENT</small></span></a><div class="ft-suite-menu-label">WORKSPACE</div><nav class="ft-suite-nav"><a href="admin-dashboard.html" ><i data-lucide="layout-dashboard"></i><span>Overview</span></a><a href="admin-repairs.html" ><i data-lucide="clipboard-list"></i><span>Repairs</span></a><a href="admin-customers.html" ><i data-lucide="users"></i><span>Customers</span></a><a href="technicians.html" ><i data-lucide="user-cog"></i><span>Technicians</span></a><a href="admin-parts.html" aria-current="page"><i data-lucide="boxes"></i><span>Parts & Inventory</span></a><a href="admin-payments.html" ><i data-lucide="credit-card"></i><span>Payments</span></a><a href="admin-reports.html" ><i data-lucide="bar-chart-3"></i><span>Reports</span></a></nav><div class="ft-suite-sidebar-bottom"><i data-lucide="shield-check"></i><div><strong>Secure workspace</strong><small>FixTrack Service Platform</small></div></div></aside><div class="ft-suite-main"><header class="dashboard-header">
         <div>
             <h1>FixTrack</h1>
             <p>Admin / Parts & Inventory</p>
@@ -35,6 +35,7 @@
 
     <!-- MAIN CONTENT -->
     <main class="dashboard-container">
+<div class="ft-suite-mast"><div class="ft-suite-mast-icon"><i data-lucide="package"></i></div><div class="ft-suite-mast-copy"><div class="ft-suite-breadcrumb">ADMINISTRATION <span>/</span> INVENTORY MANAGEMENT</div><h1>Inventory Management</h1><p>Manage parts, pricing and stock quantities.</p></div><div class="ft-suite-mast-date" id="ftSuiteDate"></div></div>
 
         <section class="dashboard-welcome">
             <h2>Parts & Inventory Management</h2>
@@ -145,12 +146,12 @@
 
         </section>
 
-    </main>
+    </main></div></div>
 
     <script src="admin-parts.js"></script>
 
-<script src="fixtrack-admin-nav.js?v=2"></script>
+
 <script defer src="dashboard-anim.js?v=1"></script>
 <script defer src="ft-theme.js?v=1"></script>
-</body>
+<script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script><script defer src="fixtrack-suite.js?v=20261103-5"></script></body>
 </html>

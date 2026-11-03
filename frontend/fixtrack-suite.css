@@ -1,0 +1,85 @@
+/* FixTrack Suite v5: new structural layout for all functional pages */
+.ft-suite-page{--suite-sidebar:#0d1932;--suite-ink:#182943;--suite-accent:#395bed;--suite-muted:#71809b;background:#f5f7fb!important;color:var(--suite-ink)}
+.ft-suite-page .ft-suite-shell{display:grid;grid-template-columns:252px minmax(0,1fr);min-height:100vh}
+.ft-suite-page .ft-suite-sidebar{background:#0d1932;min-height:100vh;height:100vh;position:sticky;top:0;display:flex;flex-direction:column;padding:28px 16px 20px;z-index:25}
+.ft-suite-page .ft-suite-brand{display:flex;align-items:center;gap:11px;padding:0 10px 36px;color:white;text-decoration:none;font-family:Manrope,system-ui,sans-serif;font-weight:800;font-size:23px;line-height:1;letter-spacing:-1.2px}
+.ft-suite-page .ft-suite-brand>span:last-child>span{color:#86adff}
+.ft-suite-page .ft-suite-brand small{display:block;margin-top:6px;font:800 9px 'DM Sans',Arial,sans-serif;letter-spacing:1.5px;color:#8999bb}
+.ft-suite-page .ft-suite-brand-icon{width:42px;height:42px;border-radius:12px;background:#355cf5;display:grid;place-items:center;color:#fff;flex-shrink:0}
+.ft-suite-page .ft-suite-brand-icon svg{width:23px;height:23px}
+.ft-suite-page .ft-suite-menu-label{color:#7c8bad;font-size:10px;letter-spacing:2px;font-weight:800;margin:0 14px 12px}
+.ft-suite-page .ft-suite-nav{display:flex;flex-direction:column;gap:5px}
+.ft-suite-page .ft-suite-nav a{display:flex;align-items:center;gap:14px;padding:13px 15px;border-radius:11px;color:#b0bfd8;text-decoration:none;font-weight:650;font-size:13px;min-height:46px;transition:background .15s}
+.ft-suite-page .ft-suite-nav a:hover{color:white;background:#1e2f52}
+.ft-suite-page .ft-suite-nav a[aria-current=page]{color:#fff;background:#2645a1}
+.ft-suite-page .ft-suite-nav svg{width:18px;height:18px;flex-shrink:0}
+.ft-suite-page .ft-suite-sidebar-bottom{margin-top:auto;border-top:1px solid #293957;padding:22px 10px 0;color:#b6c5df;display:flex;align-items:center;gap:12px}
+.ft-suite-page .ft-suite-sidebar-bottom svg{width:19px;height:19px;color:#54d4a8}
+.ft-suite-page .ft-suite-sidebar-bottom strong{display:block;font-size:11px}
+.ft-suite-page .ft-suite-sidebar-bottom small{display:block;font-size:10px;color:#788ba9;margin-top:5px}
+.ft-suite-page .ft-suite-main{min-width:0;max-width:100%;overflow:visible}
+.ft-suite-page .ft-suite-main>.dashboard-header{min-height:76px!important;padding:15px clamp(22px,4vw,58px)!important;background:white!important;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e4eaf4;box-shadow:none!important}
+.ft-suite-page .ft-suite-main>.dashboard-header:after{display:none!important}
+.ft-suite-page .ft-suite-main>.dashboard-header h1{font-size:21px!important;color:#152a51!important;font-weight:800}
+.ft-suite-page .ft-suite-main>.dashboard-header p{font-size:10px!important;color:#8d9bb1!important;letter-spacing:1.5px;text-transform:uppercase;font-weight:800}
+.ft-suite-page .ft-suite-main>.dashboard-header :is(button,a){background:#f0f4ff!important;color:#3455c5!important;border:1px solid #dce6fe!important;border-radius:10px;padding:11px 17px;box-shadow:none!important;transform:none!important;font-size:12px;font-weight:800;text-decoration:none}
+.ft-suite-page .ft-suite-main>main{width:min(1280px,calc(100% - 64px))!important;max-width:1280px!important;margin:36px auto 75px!important;padding:0!important}
+.ft-suite-page .ft-suite-mast{display:flex;align-items:center;gap:17px;background:#fff;border:1px solid #e4eaf3;border-radius:18px;padding:26px 30px;margin-bottom:25px;box-shadow:0 5px 24px #182b4908}
+.ft-suite-page .ft-suite-mast-icon{width:58px;height:58px;border-radius:15px;background:#edf1ff;color:#385ce9;display:grid;place-items:center;flex-shrink:0}
+.ft-suite-page .ft-suite-mast-icon svg{width:27px;height:27px}
+.ft-suite-page .ft-suite-mast-copy{flex:1;min-width:0}
+.ft-suite-page .ft-suite-breadcrumb{font-size:10px;letter-spacing:1.2px;font-weight:800;color:#4061dd;margin-bottom:7px}
+.ft-suite-page .ft-suite-breadcrumb span{color:#c1cbd9;margin:0 8px}
+.ft-suite-page .ft-suite-mast h1{font-size:clamp(23px,2.2vw,29px);color:#142543;letter-spacing:-.9px;font-weight:800;margin:0 0 5px}
+.ft-suite-page .ft-suite-mast p{font-size:12.5px;color:#73819b;margin:0}
+.ft-suite-page .ft-suite-mast-date{background:#f5f7fd;border:1px solid #e4eaf3;color:#65748e;padding:10px 14px;border-radius:9px;font-size:11px;font-weight:700;white-space:nowrap}
+.ft-suite-page .ft-suite-main .dashboard-welcome,.ft-suite-page .ft-suite-main .repairs-page-heading{display:none!important}
+.ft-suite-page .ft-suite-main :is(.device-section,.tw-diag-layout){gap:22px}
+.ft-suite-page .ft-suite-main :is(.device-form-card,.device-list-card,.tw-panel,.history-panel,.customer-panel,.customer-profile-panel,.reports-panel,.payments-panel,.repairs-workspace,.reports-table-panel,.payment-section){border:1px solid #e4eaf3!important;border-radius:16px!important;box-shadow:0 9px 30px #122c510b!important;background:#fff!important}
+.ft-suite-page .ft-suite-main :is(.device-form-card,.device-list-card,.customer-panel,.history-panel,.tw-panel,.reports-panel,.payments-panel,.repairs-workspace)>h3{font-size:17px;font-weight:800;border-bottom:1px solid #edf0f6;padding-bottom:18px;margin-bottom:22px;color:#192b49}
+.ft-suite-page .ft-suite-main :is(.device-form-card,.device-list-card){padding:28px}
+.ft-suite-page .ft-suite-main :is(.customer-toolbar,.payments-panel-heading,.history-toolbar,.tw-panel-top){gap:14px;align-items:center}
+.ft-suite-page .ft-suite-main :is(.registered-device,.tw-card,.history-item,.admin-repair-card){border:1px solid #e4eaf4;border-radius:12px;background:#fff;box-shadow:0 3px 12px #22385108;padding:21px}
+.ft-suite-page .ft-suite-main :is(.reports-stat-card,.payments-stat,.tw-stat){border:1px solid #e4eaf4!important;box-shadow:0 5px 22px #22385109!important;border-radius:15px!important;padding:24px}
+.ft-suite-page .ft-suite-main :is(button[type=submit],.save-edit-btn,.tw-btn:not(.light),.customer-button,.reports-btn.primary){background:#355cf0!important;border-color:#355cf0!important;color:white!important;border-radius:10px}
+.ft-suite-page .ft-suite-main :is(button[type=submit],.save-edit-btn,.tw-btn:not(.light)):hover{background:#2647cb!important;border-color:#2647cb!important}
+.ft-suite-page .ft-suite-main :is(input:not([type=checkbox]):not([type=radio]),select,textarea){border:1px solid #d9e2ef;border-radius:10px;background:white;font-size:13px}
+.ft-suite-page .ft-suite-main :is(input,select,textarea):focus{outline:none;border-color:#789bff!important;box-shadow:0 0 0 4px #355cf019!important}
+.ft-suite-page .ft-suite-main table{background:#fff;border-collapse:collapse;min-width:650px}
+.ft-suite-page .ft-suite-main table thead th{background:#f2f5fa!important;color:#65738b;font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:16px}
+.ft-suite-page .ft-suite-main table tbody td{padding:15px;border-bottom:1px solid #e8edf5;font-size:12px}
+.ft-suite-page .ft-suite-main :is(.customer-table-wrap,.reports-table-wrap,.payments-table-scroll){overflow-x:auto;border-radius:10px;border:1px solid #e7ecf3}
+.ft-suite-page .ft-suite-main :is(.profile-intro,.payments-heading,.reports-heading){margin:0 0 23px;border:0;box-shadow:none;background:transparent!important;padding:0}
+.ft-suite-page .ft-suite-main .profile-intro-copy h2,.ft-suite-page .ft-suite-main .payments-heading h2,.ft-suite-page .ft-suite-main .reports-heading h2{font-size:20px}
+.ft-suite-page .ft-suite-main :is(.profile-field-grid,.customer-form-grid){gap:16px}
+.ft-suite-page .ft-suite-main :is(.modal-overlay,.repair-modal,.tw-edit-overlay){z-index:1000}
+.ft-suite-page .ft-suite-main .tw-page{width:min(1280px,calc(100% - 64px));max-width:1280px}
+.ft-suite-page .ft-suite-main .reports-chart-grid{gap:20px}
+.ft-suite-page .ft-suite-main :is(.tw-stats,.payments-stat-grid,.reports-stats){gap:18px}
+.ft-suite-page .ft-suite-main .profile-intro .profile-intro-copy{flex:1}
+.ft-suite-page .ft-suite-main .profile-intro{display:flex;align-items:center}
+.ft-suite-page .ft-suite-main .ft-reveal{opacity:1!important;transform:none!important}
+.ft-suite-page .ft-suite-main .ft-row{opacity:1!important;animation:none!important}
+/* Sign-in: visually separate brand from form; override legacy 50%-width flex layout */
+body.ft-suite-login .auth-container{display:grid!important;grid-template-columns:minmax(0,.94fr) minmax(0,1.06fr)!important;width:min(1120px,calc(100% - 56px))!important;max-width:1120px!important;min-height:670px!important;margin:clamp(25px,5vh,68px) auto!important;overflow:hidden!important;border-radius:24px;background:white;align-items:stretch!important}
+body.ft-suite-login .brand-section,body.ft-suite-login .auth-section{width:100%!important;min-width:0!important;max-width:100%!important;margin:0!important}
+body.ft-suite-login .brand-section{justify-content:center;align-items:flex-start;padding:clamp(34px,5vw,70px)!important;text-align:left!important;background:linear-gradient(140deg,#132e65,#0c1c3e)!important}
+body.ft-suite-login .brand-section:before{display:none}
+body.ft-suite-login .auth-section{display:flex!important;align-items:stretch!important;justify-content:center!important;flex-direction:column;padding:clamp(30px,5vw,62px)!important;overflow:visible}
+body.ft-suite-login .auth-box{padding:0!important;margin:0!important;max-width:none!important;min-width:0!important;width:100%!important;box-shadow:none!important;border:0!important;background:transparent!important}
+body.ft-suite-login .auth-box.hidden{display:none!important}
+body.ft-suite-login .auth-box form input{width:100%!important;max-width:100%!important;min-width:0!important}
+body.ft-suite-login .ft-auth-brand-mark{display:inline-flex;gap:10px;align-items:center;color:#a9c3ff;font-size:11px;font-weight:800;letter-spacing:1.2px;margin-bottom:25px}
+body.ft-suite-login .ft-auth-brand-mark svg{width:23px;height:23px}
+body.ft-suite-login .ft-auth-trust{margin-top:45px;display:flex;flex-direction:column;gap:15px;color:#c5d6f4;font-size:12px;font-weight:650}
+body.ft-suite-login .ft-auth-trust>div{display:flex;align-items:center;gap:11px}
+body.ft-suite-login .ft-auth-trust svg{width:17px;height:17px;color:#80c6ff}
+body.ft-suite-login .brand-section:after{display:none!important}
+body.ft-suite-login .auth-box .role-tabs{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+body.ft-suite-login .auth-box .pw-wrap{width:100%}
+body.ft-suite-login .auth-box .pw-wrap input{padding-right:70px!important}
+body.ft-suite-login .auth-box .pw-toggle{min-height:unset!important;position:absolute!important;right:10px!important;top:23px!important;transform:translateY(-50%)!important;width:auto!important}
+@media(max-width:1060px){.ft-suite-page .ft-suite-shell{grid-template-columns:220px minmax(0,1fr)}.ft-suite-page .ft-suite-sidebar{padding:24px 12px}.ft-suite-page .ft-suite-main>main{width:calc(100% - 40px)!important}.ft-suite-page .ft-suite-mast-date{display:none}}
+@media(max-width:780px){.ft-suite-page .ft-suite-shell{display:block}.ft-suite-page .ft-suite-sidebar{height:auto;min-height:0;position:static;padding:16px}.ft-suite-page .ft-suite-brand{padding:0 6px 13px}.ft-suite-page .ft-suite-menu-label,.ft-suite-page .ft-suite-sidebar-bottom{display:none}.ft-suite-page .ft-suite-nav{flex-direction:row;overflow-x:auto;gap:6px}.ft-suite-page .ft-suite-nav a{white-space:nowrap;min-height:38px;padding:9px 11px}.ft-suite-page .ft-suite-nav svg{width:15px;height:15px}.ft-suite-page .ft-suite-main>.dashboard-header{padding:15px 20px!important}.ft-suite-page .ft-suite-main>main{width:calc(100% - 28px)!important;margin:18px auto 50px!important}.ft-suite-page .ft-suite-mast{padding:21px}.ft-suite-page .ft-suite-mast-icon{width:46px;height:46px}}
+@media(max-width:780px){body.ft-suite-login .auth-container{width:min(680px,calc(100% - 32px))!important;grid-template-columns:1fr!important;margin:16px auto!important;min-height:0!important}body.ft-suite-login .brand-section{padding:28px 34px!important}body.ft-suite-login .brand-section h1{font-size:35px!important}body.ft-suite-login .brand-section h2{font-size:20px!important;margin:10px 0!important}body.ft-suite-login .ft-auth-trust{display:none}body.ft-suite-login .ft-auth-brand-mark{margin-bottom:14px}body.ft-suite-login .auth-section{padding:30px 34px!important}}
+@media(max-width:480px){body.ft-suite-login .auth-container{width:100%!important;margin:0!important;border-radius:0!important;min-height:100vh!important}body.ft-suite-login .brand-section{padding:24px!important}body.ft-suite-login .auth-section{padding:28px 24px!important}.ft-suite-page .ft-suite-mast{gap:12px;padding:17px}.ft-suite-page .ft-suite-mast h1{font-size:21px}.ft-suite-page .ft-suite-main>.dashboard-header{flex-wrap:wrap;gap:10px}.ft-suite-page .ft-suite-mast-icon{display:none}}

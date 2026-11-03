@@ -1,0 +1,1 @@
+(()=>{const run=()=>{if(window.lucide&&window.lucide.createIcons)window.lucide.createIcons();const d=document.getElementById("ftSuiteDate");if(d)d.textContent=new Date().toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});};if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",run);else run();})();
