@@ -58,12 +58,36 @@ function validDeviceId(value) {
     return Number.isSafeInteger(id) && id > 0 && id <= 2147483647;
 }
 
+// Linked devices are archived from the customer's list, preserving repair history.
+let hiddenTableReady;
+async function ensureHiddenDevicesTable() {
+    if (!hiddenTableReady) {
+        hiddenTableReady = pool.query(`
+            CREATE TABLE IF NOT EXISTS customer_hidden_devices (
+                device_id INTEGER PRIMARY KEY REFERENCES devices(device_id) ON DELETE CASCADE,
+                user_id INTEGER NOT NULL REFERENCES users(user_id),
+                hidden_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `).catch(error => {
+            hiddenTableReady = null;
+            throw error;
+        });
+    }
+    await hiddenTableReady;
+}
+
 router.get("/", async (req, res) => {
     try {
+        await ensureHiddenDevicesTable();
         const result = await pool.query(
             `SELECT *
              FROM devices
              WHERE user_id = $1
+               AND NOT EXISTS (
+                   SELECT 1 FROM customer_hidden_devices hidden
+                   WHERE hidden.device_id = devices.device_id
+                     AND hidden.user_id = $1
+               )
              ORDER BY created_at DESC`,
             [req.user.user_id]
         );
@@ -197,6 +221,38 @@ router.delete("/:deviceId", async (req, res) => {
             message: "Device removed successfully."
         });
     } catch (error) {
+        if (error.code === "23503") {
+            try {
+                await ensureHiddenDevicesTable();
+                const archived = await pool.query(
+                    `INSERT INTO customer_hidden_devices (device_id, user_id)
+                     SELECT device_id, user_id FROM devices
+                     WHERE device_id = $1 AND user_id = $2
+                     ON CONFLICT (device_id) DO NOTHING
+                     RETURNING device_id`,
+                    [req.params.deviceId, req.user.user_id]
+                );
+                if (!archived.rows.length) {
+                    const existing = await pool.query(
+                        `SELECT device_id FROM customer_hidden_devices
+                         WHERE device_id = $1 AND user_id = $2`,
+                        [req.params.deviceId, req.user.user_id]
+                    );
+                    if (!existing.rows.length) {
+                        return res.status(404).json({ message: "Device not found." });
+                    }
+                }
+                return res.json({
+                    message: "Device removed from your list. Repair history was preserved.",
+                    archived: true
+                });
+            } catch (archiveError) {
+                console.error("Archive device error:", archiveError);
+                return res.status(500).json({
+                    message: "Unable to remove device from your list."
+                });
+            }
+        }
         console.error("Delete device error:", error);
         return res.status(500).json({
             message: "Unable to remove device."
