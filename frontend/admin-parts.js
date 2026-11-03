@@ -394,9 +394,12 @@ function editPart(part) {
 // =====================================
 
 async function deletePart(part) {
-    const confirmed = window.confirm(
-        `Are you sure you want to delete "${part.name}"?`
-    );
+    const confirmed = await window.FixTrackConfirm.ask({
+        title: "Delete Inventory Part",
+        message: "Delete " + part.name + " from the inventory?",
+        confirmText: "Delete Part",
+        dangerous: true
+    });
 
     if (!confirmed) {
         return;

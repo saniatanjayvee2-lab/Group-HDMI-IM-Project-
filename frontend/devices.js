@@ -371,9 +371,12 @@ editForm.addEventListener(
 // =========================
 
 async function removeDevice(deviceId) {
-    const confirmed = confirm(
-        "Are you sure you want to remove this device?"
-    );
+    const confirmed = await window.FixTrackConfirm.ask({
+        title: "Remove Device",
+        message: "Remove this device from your active list? Existing repair history will be preserved.",
+        confirmText: "Remove Device",
+        dangerous: true
+    });
 
     if (!confirmed) {
         return;

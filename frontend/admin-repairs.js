@@ -539,9 +539,12 @@ async function renderBilling(
                     removeButton.addEventListener(
                         "click",
                         async () => {
-                            if (!confirm(
-                                "Remove this part from the repair?"
-                            )) {
+                            if (!(await window.FixTrackConfirm.ask({
+                                title: "Remove Replacement Part",
+                                message: "Remove this part from the repair bill?",
+                                confirmText: "Remove Part",
+                                dangerous: true
+                            }))) {
                                 return;
                             }
 
@@ -738,9 +741,12 @@ async function renderBilling(
                     removeButton.addEventListener(
                         "click",
                         async () => {
-                            if (!confirm(
-                                "Remove this labor charge?"
-                            )) {
+                            if (!(await window.FixTrackConfirm.ask({
+                                title: "Remove Labor Charge",
+                                message: "Remove this labor charge from the repair bill?",
+                                confirmText: "Remove Charge",
+                                dangerous: true
+                            }))) {
                                 return;
                             }
 

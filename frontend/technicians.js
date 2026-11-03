@@ -514,10 +514,12 @@ async function saveTechnicianEdit(event) {
 // ==========================================
 
 async function removeTechnician(technician, button, card) {
-    const confirmed = confirm(
-        `Remove ${fullName(technician)} from the active technician team?\n\n` +
-        "Existing repair history will be preserved."
-    );
+    const confirmed = await window.FixTrackConfirm.ask({
+        title: "Remove Technician",
+        message: "Remove " + fullName(technician) + " from the active team? Existing repair history will be preserved.",
+        confirmText: "Remove Technician",
+        dangerous: true
+    });
 
     if (!confirmed) return;
 
@@ -611,7 +613,12 @@ async function submitTechnicianReset(event){
     message.className="small text-danger";
     if(!strongPassword(password)){message.textContent=passwordGuidance;return;}
     if(password!==confirmPassword){message.textContent="Passwords do not match.";return;}
-    if(!confirm("Reset this technician password? The previous password will no longer work."))return;
+    if (!(await window.FixTrackConfirm.ask({
+        title: "Reset Technician Password",
+        message: "The technician's existing password will stop working.",
+        confirmText: "Reset Password",
+        dangerous: true
+    }))) return;
     const submit=document.getElementById("tech-reset-submit");
     submit.disabled=true;
     submit.textContent="Resetting...";
