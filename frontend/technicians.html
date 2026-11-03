@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="fixtrack-bootstrap.css?v=20261103">
 <link rel="stylesheet" href="fixtrack-pro.css?v=4"><link rel="stylesheet" href="fixtrack-functional.css?v=20261103-2">
 <link rel="stylesheet" href="fixtrack-suite.css?v=20261103-5"><link rel="stylesheet" href="fixtrack-static.css?v=20261103-1">
-<link rel="stylesheet" href="fixtrack-loading.css?v=3">
+<link rel="stylesheet" href="fixtrack-loading.css?v=3"><link rel="stylesheet" href="technician-password.css?v=2">
 <script src="fixtrack-loading.js?v=2"></script>
 </head>
 
@@ -113,9 +113,11 @@
                         type="password"
                         id="tech-password"
                         minlength="8"
+                        maxlength="72"
                         required
                     >
 
+                    <p class="small text-secondary mt-2">Use 8 or more characters with uppercase and lowercase letters, a number and a special character.</p>
                     <button type="submit">
                         Add Technician
                     </button>
@@ -150,7 +152,7 @@
     </main></div></div>
 
     <!-- TECHNICIAN MANAGEMENT -->
-    <script src="technicians.js?v=5"></script>
+    <script src="technicians.js?v=password-policy-2"></script>
 
 <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script><script defer src="fixtrack-suite.js?v=20261103-5"></script></body>
 </html>

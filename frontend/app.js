@@ -1,5 +1,13 @@
 
 const API_URL = "https://fixtrack-backend.vercel.app/api/auth";
+const passwordGuidance = "Use 8 or more characters with uppercase and lowercase letters, a number and a special character.";
+function strongPassword(password) {
+    return typeof password === "string" && password.length >= 8 &&
+        new TextEncoder().encode(password).length <= 72 &&
+        /[A-Z]/.test(password) && /[a-z]/.test(password) &&
+        /[0-9]/.test(password) && /[^A-Za-z0-9\s]/.test(password);
+}
+
 
 // =========================
 // PAGE ELEMENTS
@@ -161,6 +169,11 @@ registerForm.addEventListener(
         registerMessage.textContent =
             "Creating account...";
 
+        if (!strongPassword(document.getElementById("register-password").value)) {
+            registerMessage.textContent = passwordGuidance;
+            return;
+        }
+
         const customerData = {
             first_name:
                 document
@@ -259,6 +272,11 @@ adminSetupForm.addEventListener(
 
         adminSetupMessage.textContent =
             "Creating administrator account...";
+
+        if (!strongPassword(document.getElementById("admin-password").value)) {
+            adminSetupMessage.textContent = passwordGuidance;
+            return;
+        }
 
         const adminData = {
             first_name:
@@ -593,6 +611,11 @@ if (resetToken) {
 
         if (password !== document.getElementById("reset-confirm").value) {
             setNote("reset-message", "Passwords do not match.", false);
+            return;
+        }
+
+        if (!strongPassword(password)) {
+            setNote("reset-message", passwordGuidance, false);
             return;
         }
 

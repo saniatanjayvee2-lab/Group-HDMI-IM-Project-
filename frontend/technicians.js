@@ -1,5 +1,13 @@
 
 const TECHNICIANS_API = "https://fixtrack-backend.vercel.app/api/technicians";
+const passwordGuidance = "Use 8 or more characters with uppercase and lowercase letters, a number and a special character.";
+function strongPassword(password) {
+    return typeof password === "string" && password.length >= 8 &&
+        new TextEncoder().encode(password).length <= 72 &&
+        /[A-Z]/.test(password) && /[a-z]/.test(password) &&
+        /[0-9]/.test(password) && /[^A-Za-z0-9\s]/.test(password);
+}
+
 
 const token = localStorage.getItem("fixtrack_token");
 const userData = localStorage.getItem("fixtrack_user");
@@ -176,6 +184,12 @@ async function loadTechnicians() {
             });
 
             actions.appendChild(editButton);
+            const resetButton = document.createElement("button");
+            resetButton.type = "button";
+            resetButton.className = "btn btn-outline-primary tech-reset-password-btn";
+            resetButton.textContent = "Reset Password";
+            resetButton.addEventListener("click", () => openTechnicianPasswordReset(technician));
+            actions.appendChild(resetButton);
 
             // REMOVE BUTTON
             const removeButton = document.createElement("button");
@@ -224,10 +238,10 @@ async function createTechnician(event) {
         !technicianData.first_name ||
         !technicianData.last_name ||
         !technicianData.email ||
-        technicianData.password.length < 8
+        !strongPassword(technicianData.password)
     ) {
         showMessage(
-            "Please complete all required fields. Password must have at least 8 characters.",
+            "Please complete all required fields. " + passwordGuidance,
             true
         );
         return;
@@ -544,4 +558,71 @@ async function removeTechnician(technician, button, card) {
         button.disabled = false;
         button.textContent = "Remove";
     }
+}
+
+let technicianResetTarget = null;
+function buildTechnicianResetDialog(){
+    if(document.getElementById("tech-reset-overlay")) return;
+    const overlay=document.createElement("div");
+    overlay.id="tech-reset-overlay";
+    overlay.className="tech-password-overlay";
+    overlay.hidden=true;
+    overlay.innerHTML=`
+        <section class="tech-password-dialog card shadow-lg" role="dialog" aria-modal="true" aria-labelledby="tech-reset-title">
+            <h3 id="tech-reset-title">Reset Technician Password</h3>
+            <p id="tech-reset-person" class="text-secondary small"></p>
+            <form id="tech-reset-form">
+                <label for="tech-reset-new" class="form-label fw-semibold">New Password</label>
+                <input id="tech-reset-new" class="form-control" type="password" minlength="8" maxlength="72" autocomplete="new-password" required>
+                <label for="tech-reset-confirm" class="form-label fw-semibold mt-3">Confirm Password</label>
+                <input id="tech-reset-confirm" class="form-control" type="password" minlength="8" maxlength="72" autocomplete="new-password" required>
+                <p class="small text-secondary mt-2">8 or more characters, uppercase, lowercase, number and special character.</p>
+                <p id="tech-reset-message" role="status"></p>
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                    <button type="button" class="btn btn-outline-secondary" id="tech-reset-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="tech-reset-submit">Reset Password</button>
+                </div>
+            </form>
+        </section>`;
+    document.body.appendChild(overlay);
+    document.getElementById("tech-reset-cancel").addEventListener("click",closeTechnicianResetDialog);
+    document.getElementById("tech-reset-form").addEventListener("submit",submitTechnicianReset);
+}
+function openTechnicianPasswordReset(technician){
+    buildTechnicianResetDialog();
+    technicianResetTarget=technician;
+    document.getElementById("tech-reset-form").reset();
+    document.getElementById("tech-reset-person").textContent="Set a new password for "+fullName(technician)+".";
+    document.getElementById("tech-reset-message").textContent="";
+    document.getElementById("tech-reset-overlay").hidden=false;
+    document.getElementById("tech-reset-new").focus();
+}
+function closeTechnicianResetDialog(){
+    document.getElementById("tech-reset-overlay").hidden=true;
+    document.getElementById("tech-reset-form").reset();
+    technicianResetTarget=null;
+}
+async function submitTechnicianReset(event){
+    event.preventDefault();
+    if(!technicianResetTarget)return;
+    const password=document.getElementById("tech-reset-new").value;
+    const confirmPassword=document.getElementById("tech-reset-confirm").value;
+    const message=document.getElementById("tech-reset-message");
+    message.className="small text-danger";
+    if(!strongPassword(password)){message.textContent=passwordGuidance;return;}
+    if(password!==confirmPassword){message.textContent="Passwords do not match.";return;}
+    if(!confirm("Reset this technician password? The previous password will no longer work."))return;
+    const submit=document.getElementById("tech-reset-submit");
+    submit.disabled=true;
+    submit.textContent="Resetting...";
+    try{
+        const response=await fetch(TECHNICIANS_API+"/"+technicianResetTarget.technician_id+"/reset-password",{
+            method:"POST",headers:apiHeaders(),body:JSON.stringify({password})
+        });
+        const data=await response.json().catch(()=>({}));
+        if(!response.ok)throw new Error(data.message||"Unable to reset technician password.");
+        closeTechnicianResetDialog();
+        showListMessage("Technician password reset successfully. Share the new password securely.");
+    }catch(error){message.textContent=error.message||"Unable to reset password.";}
+    finally{submit.disabled=false;submit.textContent="Reset Password";}
 }

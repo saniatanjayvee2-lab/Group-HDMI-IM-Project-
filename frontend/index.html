@@ -207,6 +207,7 @@
                         type="password"
                         id="register-password"
                         minlength="8"
+                        maxlength="72"
                         required
                     >
 
@@ -305,6 +306,7 @@
                         type="password"
                         id="admin-password"
                         minlength="8"
+                        maxlength="72"
                         required
                     >
 
@@ -350,12 +352,12 @@
             <!-- RESET PASSWORD (opened from the email link) -->
             <div id="reset-box" class="auth-box hidden">
                 <h2>Choose a new password</h2>
-                <p>Use at least 8 characters.</p>
+                <p>Use 8 or more characters with uppercase, lowercase, a number and a special character.</p>
                 <form id="reset-form">
                     <label for="reset-password">New password</label>
-                    <input type="password" id="reset-password" minlength="8" required>
+                    <input type="password" id="reset-password" minlength="8" maxlength="72" required>
                     <label for="reset-confirm">Confirm password</label>
-                    <input type="password" id="reset-confirm" minlength="8" required>
+                    <input type="password" id="reset-confirm" minlength="8" maxlength="72" required>
                     <button type="submit" id="reset-submit">Update password</button>
                 </form>
                 <p id="reset-message" class="auth-note"></p>
@@ -365,7 +367,7 @@
     </main>
 
 
-    <script src="app.js"></script>
+    <script src="app.js?v=password-policy-2"></script>
 
 <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script><script defer src="fixtrack-suite.js?v=20261103-5"></script></body>
 </html>
