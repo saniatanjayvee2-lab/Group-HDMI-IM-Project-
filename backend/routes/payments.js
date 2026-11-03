@@ -1027,6 +1027,7 @@ router.get(
 router.post(
     "/:repairId/checkout",
     authenticateToken,
+    requireRole("customer", "Only the customer who owns this repair may start checkout."),
     async (req, res) => {
         try {
             const repairId = Number(req.params.repairId);
@@ -1081,9 +1082,7 @@ router.post(
                 "https://fixtrack-management.vercel.app"
             ).replace(/\/+$/, "");
 
-            const returnPage = req.user.role === "customer"
-                ? "/repairs.html"
-                : "/admin-repairs.html";
+            const returnPage = "/repairs.html";
             const successUrl = `${frontendUrl}${returnPage}`;
             const cancelUrl = `${frontendUrl}${returnPage}`;
 

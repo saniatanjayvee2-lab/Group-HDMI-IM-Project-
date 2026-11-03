@@ -1066,110 +1066,17 @@ async function renderPayments(
         summary.appendChild(statusRow);
         section.appendChild(summary);
 
-        // =====================================
-        // PAYMONGO CHECKOUT - TEST MODE
-        // =====================================
-
+        // Admin can review balances, but checkout belongs to the customer.
         if (remainingBalance > 0) {
-            section.appendChild(
-                createElement(
-                    "h4",
-                    "Pay Remaining Balance"
-                )
-            );
-
-            const paymongoBox = createElement(
-                "div",
-                "",
-                "paymongo-checkout-box"
-            );
-
-            const paymongoInfo = createElement(
+            const customerPaymentNotice = createElement(
                 "p",
-                `Amount to Pay: ${formatMoney(remainingBalance)}`
+                "Payment pending. The customer can pay through their Repair Requests page.",
+                "admin-payment-customer-notice"
             );
-
-            const paymongoNote = createElement(
-                "p",
-                "Pay through PayMongo using test payment methods. No real money will be charged."
-            );
-
-            const paymongoButton = createElement(
-                "button",
-                "Pay with PayMongo (Test Mode)",
-                "paymongo-checkout-btn"
-            );
-
-            paymongoButton.type = "button";
-
-            paymongoButton.addEventListener(
-                "click",
-                async () => {
-                    const confirmed = await confirmTestCheckout(remainingBalance);
-
-                    if (!confirmed) return;
-
-                    paymongoButton.disabled = true;
-                    paymongoButton.textContent =
-                        "Creating Test Checkout...";
-
-                    showMessage(
-                        notice,
-                        "Connecting to PayMongo..."
-                    );
-
-                    try {
-                        const result = await apiRequest(
-                            `${PAYMENTS_API}/${repairId}/checkout`,
-                            { method: "POST" }
-                        );
-
-                        const checkoutUrl = result.checkout_url;
-
-                        if (
-                            typeof checkoutUrl !== "string" ||
-                            !checkoutUrl.startsWith("https://")
-                        ) {
-                            throw new Error(
-                                "Invalid PayMongo checkout URL."
-                            );
-                        }
-
-                        window.location.assign(checkoutUrl);
-
-                    } catch (error) {
-                        console.error(
-                            "PayMongo checkout error:",
-                            error
-                        );
-
-                        showMessage(
-                            notice,
-                            error.message,
-                            true
-                        );
-
-                        paymongoButton.disabled = false;
-                        paymongoButton.textContent =
-                            "Pay with PayMongo (Test Mode)";
-                    }
-                }
-            );
-
-            paymongoBox.append(
-                paymongoInfo,
-                paymongoNote,
-                paymongoButton
-            );
-
-            section.appendChild(paymongoBox);
-
+            section.appendChild(customerPaymentNotice);
         } else {
             section.appendChild(
-                createElement(
-                    "p",
-                    "Fully paid. No further payment is needed."
-                )
+                createElement("p", "Fully paid. No further payment is needed.")
             );
         }
 
