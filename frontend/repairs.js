@@ -130,20 +130,70 @@ function createText(label, value) {
 function createPaymentPanel(repair) {
     const panel = document.createElement("section");
     panel.className = "customer-payment-panel";
-    panel.style.cssText = "margin-top:16px;padding:16px;border:1px solid #cbd5e1;border-radius:10px";
+
     const title = document.createElement("h4");
-    title.textContent = "Billing & Payment";
+    title.textContent = "Billing and Payment";
     const details = document.createElement("div");
     details.textContent = "Loading billing information...";
-    const pay = document.createElement("button");
-    pay.type = "button";
-    pay.textContent = "Pay Now (Test Mode)";
-    pay.disabled = true;
-    pay.hidden = true; // Only show checkout when a verified balance is due.
-    pay.style.marginTop = "10px";
+
+    const actions = document.createElement("div");
+    actions.className = "customer-payment-actions";
+    actions.hidden = true;
+
+    const payFull = document.createElement("button");
+    payFull.type = "button";
+    payFull.className = "customer-payment-full";
+    payFull.textContent = "Pay Full Balance";
+
+    const payPartial = document.createElement("button");
+    payPartial.type = "button";
+    payPartial.className = "customer-payment-partial";
+    payPartial.textContent = "Pay Partial Amount";
+
+    const partialForm = document.createElement("form");
+    partialForm.className = "customer-partial-form";
+    partialForm.hidden = true;
+
+    const label = document.createElement("label");
+    const amountId = "partial-payment-" + String(repair.repair_id);
+    label.htmlFor = amountId;
+    label.textContent = "Partial payment amount (PHP)";
+
+    const partialInput = document.createElement("input");
+    partialInput.type = "number";
+    partialInput.id = amountId;
+    partialInput.min = "0.01";
+    partialInput.step = "0.01";
+    partialInput.placeholder = "Enter amount";
+    partialInput.inputMode = "decimal";
+    partialInput.required = true;
+
+    const partialHint = document.createElement("p");
+    partialHint.className = "customer-partial-hint";
+
+    const submitPartial = document.createElement("button");
+    submitPartial.type = "submit";
+    submitPartial.textContent = "Continue Partial Payment";
+
+    const cancelPartial = document.createElement("button");
+    cancelPartial.type = "button";
+    cancelPartial.className = "customer-partial-cancel";
+    cancelPartial.textContent = "Cancel";
+    cancelPartial.addEventListener("click", () => {
+        partialForm.hidden = true;
+        partialInput.value = "";
+    });
+
+    const partialButtons = document.createElement("div");
+    partialButtons.className = "customer-partial-buttons";
+    partialButtons.append(submitPartial, cancelPartial);
+    partialForm.append(label, partialInput, partialHint, partialButtons);
+    actions.append(payFull, payPartial);
+
     const message = document.createElement("p");
+    message.className = "customer-payment-message";
     message.setAttribute("role", "status");
-    panel.append(title, details, pay, message);
+    panel.append(title, details, actions, partialForm, message);
 
     const id = Number(repair.repair_id);
     if (!Number.isSafeInteger(id) || id < 1) {
@@ -154,10 +204,39 @@ function createPaymentPanel(repair) {
     const peso = value => Number(value).toLocaleString("en-PH", {
         style: "currency", currency: "PHP"
     });
+    let remainingCents = 0;
+
+    function busy(value) {
+        payFull.disabled = value;
+        payPartial.disabled = value;
+        submitPartial.disabled = value;
+    }
+
+    async function startCheckout(partialAmount = null) {
+        busy(true);
+        message.textContent = "Preparing PayMongo Test Mode checkout...";
+        try {
+            const headers = { Authorization: `Bearer ${token}` };
+            const options = { method: "POST", headers };
+            if (partialAmount !== null) {
+                headers["Content-Type"] = "application/json";
+                options.body = JSON.stringify({ amount_paid: partialAmount });
+            }
+            const response = await fetch(`${PAYMENTS_API}/${id}/checkout`, options);
+            const result = await readResponse(response);
+            const url = new URL(result.checkout_url);
+            if (url.protocol !== "https:") throw new Error("Invalid checkout URL.");
+            window.location.assign(url.href);
+        } catch (error) {
+            message.textContent = error.message || "Unable to start checkout.";
+            busy(false);
+        }
+    }
 
     async function showBill() {
-        pay.disabled = true;
-        pay.hidden = true;
+        busy(true);
+        actions.hidden = true;
+        partialForm.hidden = true;
         try {
             const response = await fetch(`${PAYMENTS_API}/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
@@ -174,40 +253,49 @@ function createPaymentPanel(repair) {
                 createText("Total", peso(total)),
                 createText("Paid", peso(paid)),
                 createText("Balance", peso(remaining)),
-                createText("Status", bill.payment_status)
+                createText("Status", total <= 0 && paid <= 0
+                    ? "No charges yet" : bill.payment_status)
             );
-            if (remaining <= 0) {
+            remainingCents = Math.round(remaining * 100);
+            if (remainingCents <= 0) {
                 message.textContent = total > 0
                     ? "No outstanding balance."
                     : "The administrator has not prepared a bill yet.";
                 return;
             }
-            message.textContent = "PayMongo Test Mode only. No real money is charged.";
-            pay.hidden = false;
-            pay.disabled = false;
+            actions.hidden = false;
+            payPartial.hidden = remainingCents <= 1;
+            partialInput.max = ((remainingCents - 1) / 100).toFixed(2);
+            partialHint.textContent = "Enter an amount below " + peso(remaining) +
+                ". You can pay the rest later.";
+            message.textContent = "PayMongo Test Mode. No real money is charged.";
+            busy(false);
         } catch (error) {
             details.textContent = error.message || "Unable to load billing.";
         }
     }
 
-    pay.addEventListener("click", async () => {
-        pay.disabled = true;
-        message.textContent = "Preparing checkout...";
-        try {
-            const response = await fetch(`${PAYMENTS_API}/${id}/checkout`, {
-                method: "POST",
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await readResponse(response);
-            const url = new URL(data.checkout_url);
-            if (url.protocol !== "https:") throw new Error("Invalid checkout URL.");
-            window.location.assign(url.href);
-        } catch (error) {
-            message.textContent = error.message || "Unable to start checkout.";
-            pay.hidden = false;
-            pay.disabled = false;
-        }
+    payFull.addEventListener("click", () => startCheckout());
+
+    payPartial.addEventListener("click", () => {
+        partialForm.hidden = !partialForm.hidden;
+        if (!partialForm.hidden) partialInput.focus();
     });
+
+    partialForm.addEventListener("submit", event => {
+        event.preventDefault();
+        const amount = Number(partialInput.value);
+        const cents = Math.round(amount * 100);
+        if (!partialInput.value || !Number.isFinite(amount) ||
+            !Number.isSafeInteger(cents) || cents <= 0 ||
+            Math.abs(amount * 100 - cents) > 0.000001 ||
+            cents >= remainingCents) {
+            message.textContent = "Enter a valid amount greater than zero and below the remaining balance.";
+            return;
+        }
+        startCheckout(cents / 100);
+    });
+
     showBill();
     return panel;
 }

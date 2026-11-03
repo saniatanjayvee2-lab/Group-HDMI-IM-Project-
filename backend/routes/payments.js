@@ -1077,6 +1077,20 @@ router.post(
                 });
             }
 
+            // Omitted amount means pay full outstanding balance.
+            // Optional amount_paid allows the repair owner to pay a smaller amount.
+            let checkoutCents = remainingCents;
+            if (req.body?.amount_paid !== undefined) {
+                const requestedCents = toCents(req.body.amount_paid);
+                if (requestedCents === null || requestedCents <= 0 ||
+                    requestedCents > remainingCents) {
+                    return res.status(400).json({
+                        message: "Partial payment must be greater than zero and cannot exceed the remaining balance."
+                    });
+                }
+                checkoutCents = requestedCents;
+            }
+
             const frontendUrl = (
                 process.env.FRONTEND_URL ||
                 "https://fixtrack-management.vercel.app"
@@ -1102,7 +1116,7 @@ router.post(
                                 line_items: [
                                     {
                                         currency: "PHP",
-                                        amount: remainingCents,
+                                        amount: checkoutCents,
                                         name:
                                             `FixTrack Repair #${repairId}`,
                                         quantity: 1
@@ -1169,7 +1183,7 @@ router.post(
                     [
                         session.id,
                         repairId,
-                        remainingCents,
+                        checkoutCents,
                         referenceNumber
                     ]
                 );
@@ -1191,7 +1205,7 @@ router.post(
                 checkout_url:
                     session.attributes.checkout_url,
                 reference_number: referenceNumber,
-                amount: money(remainingCents),
+                amount: money(checkoutCents),
                 mode: "test"
             });
 

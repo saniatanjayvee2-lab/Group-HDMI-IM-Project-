@@ -72,3 +72,21 @@
 }
 .customer-repairs-redesign .repair-technician-unassigned{color:#8692a5;font-weight:650}
 @media(max-width:520px){.customer-repairs-redesign .repair-assigned-technician{align-items:flex-start;flex-direction:column;gap:5px}.customer-repairs-redesign .repair-technician-value{text-align:left}}
+
+/* Customer checkout options: full or partial PayMongo payment. */
+.customer-repairs-redesign .customer-payment-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:17px}
+.customer-repairs-redesign .customer-payment-actions[hidden],.customer-repairs-redesign .customer-partial-form[hidden]{display:none!important}
+.customer-repairs-redesign .customer-payment-actions button{width:auto;flex:1;min-width:145px;border-radius:10px;padding:12px 14px;font-size:12.5px;font-weight:800}
+.customer-repairs-redesign .customer-payment-actions .customer-payment-full{background:#355cf2;color:white;border:1px solid #355cf2}
+.customer-repairs-redesign .customer-payment-actions .customer-payment-partial{background:#eef3ff;color:#3158d0;border:1px solid #cddcff}
+.customer-repairs-redesign .customer-partial-form{margin-top:14px;padding:17px;border:1px solid #dbe5f6;border-radius:12px;background:#fff;display:flex;flex-direction:column;gap:10px}
+.customer-repairs-redesign .customer-partial-form label{font-size:12.5px;font-weight:800;color:#304562}
+.customer-repairs-redesign .customer-partial-form input{width:100%;min-height:44px;padding:11px 12px;border:1px solid #d3dfef;border-radius:9px;color:#172942;background:#fff;font-size:14px}
+.customer-repairs-redesign .customer-partial-form .customer-partial-hint{color:#75849b;font-size:12px;line-height:1.5;margin:0}
+.customer-repairs-redesign .customer-partial-buttons{display:flex;gap:9px;flex-wrap:wrap}
+.customer-repairs-redesign .customer-partial-buttons button{border-radius:9px;padding:11px 13px;font-size:12px;font-weight:800;min-height:41px}
+.customer-repairs-redesign .customer-partial-buttons button[type=submit]{background:#355cf2;color:#fff;border:1px solid #355cf2;flex:1}
+.customer-repairs-redesign .customer-partial-buttons .customer-partial-cancel{background:#f5f7fb;color:#55657e;border:1px solid #d9e2ee}
+.customer-repairs-redesign .customer-payment-message{margin:11px 0 0;color:#677b96;font-size:12px;line-height:1.55}
+.customer-repairs-redesign .customer-payment-actions button:disabled,.customer-repairs-redesign .customer-partial-buttons button:disabled{opacity:.6;cursor:not-allowed}
+@media(max-width:540px){.customer-repairs-redesign .customer-payment-actions{flex-direction:column}.customer-repairs-redesign .customer-payment-actions button{width:100%;min-width:0}}
