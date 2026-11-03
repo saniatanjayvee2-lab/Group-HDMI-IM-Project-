@@ -1,6 +1,7 @@
 
 const REPAIRS_API = "https://fixtrack-backend.vercel.app/api/repairs";
 const DEVICES_API = "https://fixtrack-backend.vercel.app/api/devices";
+const PAYMENTS_API = "https://fixtrack-backend.vercel.app/api/payments";
 
 const token = localStorage.getItem("fixtrack_token");
 const userData = localStorage.getItem("fixtrack_user");
@@ -125,6 +126,88 @@ function createText(label, value) {
 }
 
 // ==================================
+// CUSTOMER PAYMENT PANEL (PAYMONGO TEST MODE)
+function createPaymentPanel(repair) {
+    const panel = document.createElement("section");
+    panel.className = "customer-payment-panel";
+    panel.style.cssText = "margin-top:16px;padding:16px;border:1px solid #cbd5e1;border-radius:10px";
+    const title = document.createElement("h4");
+    title.textContent = "Billing & Payment";
+    const details = document.createElement("div");
+    details.textContent = "Loading billing information...";
+    const pay = document.createElement("button");
+    pay.type = "button";
+    pay.textContent = "Pay Now (Test Mode)";
+    pay.disabled = true;
+    pay.style.marginTop = "10px";
+    const message = document.createElement("p");
+    message.setAttribute("role", "status");
+    panel.append(title, details, pay, message);
+
+    const id = Number(repair.repair_id);
+    if (!Number.isSafeInteger(id) || id < 1) {
+        details.textContent = "Invalid repair number.";
+        return panel;
+    }
+
+    const peso = value => Number(value).toLocaleString("en-PH", {
+        style: "currency", currency: "PHP"
+    });
+
+    async function showBill() {
+        pay.disabled = true;
+        try {
+            const response = await fetch(`${PAYMENTS_API}/${id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+                cache: "no-store"
+            });
+            const bill = await readResponse(response);
+            const total = Number(bill.total_amount);
+            const paid = Number(bill.total_paid);
+            const remaining = Number(bill.remaining_balance);
+            if (![total, paid, remaining].every(Number.isFinite)) {
+                throw new Error("Invalid billing details.");
+            }
+            details.replaceChildren(
+                createText("Total", peso(total)),
+                createText("Paid", peso(paid)),
+                createText("Balance", peso(remaining)),
+                createText("Status", bill.payment_status)
+            );
+            if (remaining <= 0) {
+                message.textContent = total > 0
+                    ? "No outstanding balance."
+                    : "The administrator has not prepared a bill yet.";
+                return;
+            }
+            message.textContent = "PayMongo Test Mode only. No real money is charged.";
+            pay.disabled = false;
+        } catch (error) {
+            details.textContent = error.message || "Unable to load billing.";
+        }
+    }
+
+    pay.addEventListener("click", async () => {
+        pay.disabled = true;
+        message.textContent = "Preparing checkout...";
+        try {
+            const response = await fetch(`${PAYMENTS_API}/${id}/checkout`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = await readResponse(response);
+            const url = new URL(data.checkout_url);
+            if (url.protocol !== "https:") throw new Error("Invalid checkout URL.");
+            window.location.assign(url.href);
+        } catch (error) {
+            message.textContent = error.message || "Unable to start checkout.";
+            pay.disabled = false;
+        }
+    });
+    showBill();
+    return panel;
+}
+
 // DISPLAY CUSTOMER REPAIR CARD
 // ==================================
 
@@ -220,6 +303,7 @@ function createRepairCard(repair) {
     }
 
     card.appendChild(diagnosisBox);
+    card.appendChild(createPaymentPanel(repair));
 
     return card;
 }
