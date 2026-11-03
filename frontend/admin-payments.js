@@ -646,13 +646,18 @@ async function editPayment(payment) {
         return;
     }
 
-    const confirmed = confirm(
+    const confirmed = await window.FixTrackConfirm.ask({
+        title: "Correct Payment",
+        message: (
         `Correct Payment #${payment.payment_id}?\n\n` +
         `Old amount: ${formatMoney(payment.amount_paid)}\n` +
         `New amount: ${formatMoney(amount)}\n` +
         `New method: ${method}\n\n` +
         `Reason: ${reason}`
-    );
+        ),
+        confirmText: "Correct Payment",
+        dangerous: false
+    });
 
     if (!confirmed) return;
 
@@ -704,14 +709,19 @@ async function voidPayment(payment) {
         return;
     }
 
-    const confirmed = confirm(
+    const confirmed = await window.FixTrackConfirm.ask({
+        title: "Void Payment",
+        message: (
         `Void Payment #${payment.payment_id}?\n\n` +
         `Amount: ${formatMoney(payment.amount_paid)}\n` +
         `Method: ${payment.payment_method || "Unknown"}\n\n` +
         `This will exclude the payment from collected totals.\n` +
         `The transaction will remain in history.\n\n` +
         `Reason: ${reason}`
-    );
+        ),
+        confirmText: "Void Payment",
+        dangerous: true
+    });
 
     if (!confirmed) return;
 
