@@ -1,0 +1,54 @@
+/* FixTrack administrator: readable customer details dialog */
+#customer-dialog.customer-details-dialog{width:min(1000px,calc(100vw - 40px))!important;max-width:1000px!important;max-height:min(92vh,960px)!important;padding:0!important;border-radius:20px!important;border:1px solid #e1e8f2!important;background:#f6f8fc!important;color:#192943;overflow-y:auto!important;box-shadow:0 28px 85px #0d20374d!important}
+#customer-dialog.customer-details-dialog:not([open]){display:none!important}
+#customer-dialog.customer-details-dialog .customer-modal-header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:23px 30px;background:#fff;border-bottom:1px solid #e5ebf3}
+#customer-dialog.customer-details-dialog .customer-dialog-heading p{font-size:10px;letter-spacing:1.6px;color:#4671da;font-weight:800;margin:0 0 6px}
+#customer-dialog.customer-details-dialog .customer-dialog-heading h2{font-size:22px;font-weight:800;letter-spacing:-.6px;color:#14233e;margin:0}
+#customer-dialog.customer-details-dialog #customer-close{min-height:38px;border-radius:9px;background:#f1f4fa;border:1px solid #e1e7f1;color:#415575;font-size:12px;font-weight:800;padding:8px 15px}
+#customer-dialog.customer-details-dialog #customer-dialog-message:not(:empty){padding:14px 30px 0}
+#customer-dialog.customer-details-dialog #customer-details{display:flex;flex-direction:column;gap:19px;padding:26px 30px 34px}
+#customer-dialog.customer-details-dialog .customer-view-identity{display:flex;align-items:center;gap:17px;background:white;border:1px solid #e3e9f3;border-radius:15px;padding:22px}
+#customer-dialog.customer-details-dialog .customer-view-avatar{width:66px;height:66px;flex-shrink:0;border-radius:17px;background:linear-gradient(135deg,#dfe8ff,#edf2ff);color:#3053c7;display:grid;place-items:center;font-size:22px;font-weight:800}
+#customer-dialog.customer-details-dialog .customer-view-identity-copy{min-width:0}
+#customer-dialog.customer-details-dialog .customer-view-kicker{color:#5f7bd1;font-size:10px;font-weight:800;letter-spacing:1.6px;margin:0 0 5px}
+#customer-dialog.customer-details-dialog .customer-view-identity h3{font-size:22px;letter-spacing:-.7px;font-weight:800;color:#14243f;margin:0 0 4px;overflow-wrap:anywhere}
+#customer-dialog.customer-details-dialog .customer-view-email{font-size:13px;color:#75839c;margin:0;overflow-wrap:anywhere}
+#customer-dialog.customer-details-dialog .customer-view-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+#customer-dialog.customer-details-dialog .customer-view-summary-stat{background:white;border:1px solid #e3e9f3;border-radius:13px;padding:16px;display:flex;flex-direction:column;gap:7px;min-width:0}
+#customer-dialog.customer-details-dialog .customer-view-summary-stat span{font-size:11px;color:#7d8ba2;font-weight:650}
+#customer-dialog.customer-details-dialog .customer-view-summary-stat strong{font-size:17px;color:#1c335c;font-weight:800;overflow-wrap:anywhere}
+#customer-dialog.customer-details-dialog .customer-view-section{background:#fff;border:1px solid #e3e9f3;border-radius:15px;padding:22px 24px;min-width:0}
+#customer-dialog.customer-details-dialog .customer-view-section-header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ebeff6;padding-bottom:15px;margin-bottom:17px;gap:10px}
+#customer-dialog.customer-details-dialog .customer-view-section-name{display:flex;align-items:center;gap:10px}
+#customer-dialog.customer-details-dialog .customer-view-section-icon{width:31px;height:31px;border-radius:9px;background:#eef2ff;color:#4466df;display:grid;place-items:center;font-size:11px;font-weight:800}
+#customer-dialog.customer-details-dialog .customer-view-section h3{font-size:16px;font-weight:800;color:#1d304f;margin:0}
+#customer-dialog.customer-details-dialog .customer-view-count{padding:5px 10px;background:#eef3ff;border-radius:20px;color:#345ad4;font-size:11px;font-weight:800}
+#customer-dialog.customer-details-dialog .customer-view-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+#customer-dialog.customer-details-dialog .customer-view-field{min-width:0;display:flex;flex-direction:column;gap:5px;padding:0;border:0}
+#customer-dialog.customer-details-dialog .customer-view-label{font-size:11px;font-weight:750;color:#8693a8}
+#customer-dialog.customer-details-dialog .customer-view-value{font-size:13px;font-weight:700;color:#2b3e5c;line-height:1.55;overflow-wrap:anywhere}
+#customer-dialog.customer-details-dialog .customer-view-contact-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+#customer-dialog.customer-details-dialog .customer-view-contact-block{background:#f8faff;border:1px solid #e7ecf5;border-radius:12px;padding:17px;min-width:0}
+#customer-dialog.customer-details-dialog .customer-view-contact-block h4{font-size:13px;font-weight:800;margin:0 0 13px;color:#294066}
+#customer-dialog.customer-details-dialog .customer-view-contact-item{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:9px 0;border-bottom:1px solid #e9eef5}
+#customer-dialog.customer-details-dialog .customer-view-contact-item strong{font-size:13px;color:#304661;overflow-wrap:anywhere}
+#customer-dialog.customer-details-dialog .customer-view-contact-item small{font-size:11px;color:#798ba2}
+#customer-dialog.customer-details-dialog .customer-view-address{color:#304661;font-size:12.5px;line-height:1.65;margin:0 0 10px;overflow-wrap:anywhere}
+#customer-dialog.customer-details-dialog .customer-view-empty{color:#8592a6;font-size:12.5px;margin:4px 0 0}
+#customer-dialog.customer-details-dialog .customer-view-records{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+#customer-dialog.customer-details-dialog .customer-view-record{padding:17px;border:1px solid #e5ebf4;background:#fbfcff;border-radius:12px;min-width:0}
+#customer-dialog.customer-details-dialog .customer-view-record-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:13px}
+#customer-dialog.customer-details-dialog .customer-view-record h4{font-size:14px;color:#203554;font-weight:800;margin:0;overflow-wrap:anywhere}
+#customer-dialog.customer-details-dialog .customer-view-record-id{font-size:11px;font-weight:750;color:#7084a6;background:#eff3fa;border-radius:8px;padding:5px 7px;white-space:nowrap}
+#customer-dialog.customer-details-dialog .customer-view-record .customer-view-field{margin:0 0 10px}
+#customer-dialog.customer-details-dialog .customer-view-repair-name small{font-size:11px;color:#8996a9}
+#customer-dialog.customer-details-dialog .customer-view-status{flex-shrink:0;font-size:11px;border-radius:20px;padding:6px 10px}
+#customer-dialog.customer-details-dialog .customer-view-problem{font-size:12.5px;color:#5c6f88;line-height:1.6;padding:11px 0;border-top:1px solid #e8edf5;border-bottom:1px solid #e8edf5;margin:0 0 13px;overflow-wrap:anywhere}
+#customer-dialog.customer-details-dialog .customer-view-problem strong{color:#2d4363}
+#customer-dialog.customer-details-dialog .customer-view-repair-dates{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#customer-dialog.customer-details-dialog #customer-edit-form{padding:26px 30px 32px;background:#f6f8fc}
+#customer-dialog.customer-details-dialog #customer-edit-form>h3{font-size:16px;font-weight:800;margin:23px 0 12px}
+#customer-dialog.customer-details-dialog #customer-edit-form>.customer-form-grid{padding:20px;border:1px solid #e1e8f2;border-radius:13px;background:#fff}
+#customer-dialog.customer-details-dialog .customer-modern-card{background:white!important}
+#customer-dialog.customer-details-dialog .customer-form-actions{padding-top:22px;justify-content:flex-end}
+@media(max-width:700px){#customer-dialog.customer-details-dialog{width:calc(100vw - 18px)!important;max-height:94vh!important}#customer-dialog.customer-details-dialog #customer-details{padding:17px;gap:13px}#customer-dialog.customer-details-dialog .customer-modal-header{padding:18px}#customer-dialog.customer-details-dialog .customer-view-summary{grid-template-columns:repeat(2,minmax(0,1fr))}#customer-dialog.customer-details-dialog .customer-view-records,#customer-dialog.customer-details-dialog .customer-view-contact-grid{grid-template-columns:1fr}#customer-dialog.customer-details-dialog .customer-view-section{padding:17px}#customer-dialog.customer-details-dialog .customer-view-fields{grid-template-columns:1fr}#customer-dialog.customer-details-dialog #customer-edit-form{padding:17px}}

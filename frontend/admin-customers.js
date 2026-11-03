@@ -503,203 +503,158 @@
         target.replaceChildren();
 
         const display = value =>
-            value === undefined ||
-            value === null ||
-            value === ""
-                ? "Not provided"
-                : String(value);
+            value === undefined || value === null || value === ""
+                ? "Not provided" : String(value);
 
-        function detailRow(parent, label, value) {
-            const row = node(
-                "div",
-                undefined,
-                "customer-detail-row"
-            );
+        const section = (title, count, icon) => {
+            const wrapper = node("section", undefined, "customer-view-section");
+            const header = node("div", undefined, "customer-view-section-header");
+            const heading = node("h3", title);
+            const symbol = node("span", icon, "customer-view-section-icon");
+            symbol.setAttribute("aria-hidden", "true");
+            const headingGroup = node("div", undefined, "customer-view-section-name");
+            headingGroup.append(symbol, heading);
+            header.append(headingGroup);
+            if (count !== null) {
+                header.append(node("span", String(count), "customer-view-count"));
+            }
+            wrapper.append(header);
+            return wrapper;
+        };
 
+        const detail = (parent, label, value) => {
+            const row = node("div", undefined, "customer-view-field");
             row.append(
-                node(
-                    "span",
-                    label,
-                    "customer-detail-label"
-                ),
-                node(
-                    "span",
-                    display(value),
-                    "customer-detail-value"
-                )
+                node("span", label, "customer-view-label"),
+                node("span", display(value), "customer-view-value")
             );
-
             parent.append(row);
+        };
+
+        const name = fullName(customer) || "Customer";
+        const overview = node("div", undefined, "customer-view-identity");
+        const initials = [customer.first_name, customer.last_name]
+            .filter(Boolean).map(value => String(value).trim().charAt(0))
+            .join("").toUpperCase() || "C";
+        const avatar = node("div", initials, "customer-view-avatar");
+        avatar.setAttribute("aria-hidden", "true");
+        const copy = node("div", undefined, "customer-view-identity-copy");
+        copy.append(
+            node("p", "CUSTOMER PROFILE", "customer-view-kicker"),
+            node("h3", name),
+            node("p", customer.email || "Email not provided", "customer-view-email")
+        );
+        overview.append(avatar, copy);
+        target.append(overview);
+
+        const summary = node("div", undefined, "customer-view-summary");
+        for (const [label, value] of [
+            ["Customer ID", "#" + display(customer.user_id)],
+            ["Registered", date(customer.created_at)],
+            ["Devices", String((customer.devices || []).length)],
+            ["Repairs", String((customer.repairs || []).length)]
+        ]) {
+            const item = node("div", undefined, "customer-view-summary-stat");
+            item.append(node("span", label), node("strong", value));
+            summary.append(item);
         }
+        target.append(summary);
 
-        const profile = node(
-            "section",
-            undefined,
-            "customer-profile-card"
-        );
-
-        detailRow(profile, "Customer ID", customer.user_id);
-        detailRow(profile, "Full Name", fullName(customer));
-        detailRow(profile, "Email", customer.email);
-
-        detailRow(
-            profile,
-            "Contact Numbers",
-            (customer.phones || [])
-                .map(phone =>
-                    phone.phone_number +
-                    (phone.type ? ` (${phone.type})` : "")
-                )
-                .join(", ") || "Not provided"
-        );
-
-        detailRow(
-            profile,
-            "Registered Date",
-            date(customer.created_at)
-        );
-
-        detailRow(
-            profile,
-            "Addresses",
-            (customer.addresses || [])
-                .map(address =>
-                    [
-                        address.street_address,
-                        address.city,
-                        address.province,
-                        address.postal_code
-                    ].filter(Boolean).join(", ")
-                )
-                .join("; ") || "Not provided"
-        );
-
+        const profile = section("Personal Information", null, "01");
+        const profileGrid = node("div", undefined, "customer-view-fields");
+        detail(profileGrid, "Full Name", name);
+        detail(profileGrid, "Email Address", customer.email);
+        detail(profileGrid, "Registered Date", date(customer.created_at));
+        profile.append(profileGrid);
         target.append(profile);
 
+        const contact = section("Contact Information", null, "02");
+        const contactGrid = node("div", undefined, "customer-view-contact-grid");
+        const phones = node("div", undefined, "customer-view-contact-block");
+        phones.append(node("h4", "Phone Numbers"));
+        if ((customer.phones || []).length) {
+            customer.phones.forEach(phone => {
+                const line = node("div", undefined, "customer-view-contact-item");
+                line.append(node("strong", display(phone.phone_number)));
+                if (phone.type) line.append(node("small", String(phone.type)));
+                phones.append(line);
+            });
+        } else phones.append(node("p", "No phone numbers saved.", "customer-view-empty"));
+
+        const addresses = node("div", undefined, "customer-view-contact-block");
+        addresses.append(node("h4", "Saved Addresses"));
+        if ((customer.addresses || []).length) {
+            customer.addresses.forEach(address => {
+                const text = [
+                    address.street_address, address.city,
+                    address.province, address.postal_code
+                ].filter(Boolean).join(", ");
+                addresses.append(node("p", text || "Not provided", "customer-view-address"));
+            });
+        } else addresses.append(node("p", "No addresses saved.", "customer-view-empty"));
+
+        contactGrid.append(phones, addresses);
+        contact.append(contactGrid);
+        target.append(contact);
+
         const devices = customer.devices || [];
-
-        target.append(
-            node(
-                "h3",
-                `Registered Devices (${devices.length})`,
-                "customer-section-title"
-            )
-        );
-
-        if (!devices.length) {
-            target.append(
-                node("p", "No registered devices found.")
-            );
-        }
-
+        const deviceSection = section("Registered Devices", devices.length, "03");
+        const deviceGrid = node("div", undefined, "customer-view-records");
+        if (!devices.length) deviceGrid.append(node("p", "No registered devices.", "customer-view-empty"));
         devices.forEach(device => {
-            const card = node(
-                "article",
-                undefined,
-                "customer-record-card"
+            const card = node("article", undefined, "customer-view-record");
+            const top = node("div", undefined, "customer-view-record-top");
+            top.append(
+                node("h4", [device.brand, device.model].filter(Boolean).join(" ") || "Device"),
+                node("span", "#" + display(device.device_id), "customer-view-record-id")
             );
-
-            card.append(
-                node(
-                    "h4",
-                    [device.brand, device.model]
-                        .filter(Boolean)
-                        .join(" ") || "Device",
-                    "customer-record-title"
-                )
-            );
-
-            detailRow(
-                card,
-                "Device ID",
-                `#${device.device_id}`
-            );
-
-            detailRow(card, "Device Type", device.device_type);
-            detailRow(card, "Serial Number", device.serial_number);
-            detailRow(card, "Accessories", device.accessories_included);
-
-            target.append(card);
+            card.append(top);
+            detail(card, "Device Type", device.device_type);
+            detail(card, "Serial Number", device.serial_number);
+            detail(card, "Accessories", device.accessories_included);
+            deviceGrid.append(card);
         });
+        deviceSection.append(deviceGrid);
+        target.append(deviceSection);
 
         const repairs = customer.repairs || [];
-
-        target.append(
-            node(
-                "h3",
-                `Repair Requests (${repairs.length})`,
-                "customer-section-title"
-            )
-        );
-
-        if (!repairs.length) {
-            target.append(
-                node("p", "No repair requests found.")
-            );
-        }
-
+        const repairSection = section("Repair Requests", repairs.length, "04");
+        const repairList = node("div", undefined, "customer-view-records");
+        if (!repairs.length) repairList.append(node("p", "No repair requests.", "customer-view-empty"));
         repairs.forEach(repair => {
-            const card = node(
-                "article",
-                undefined,
-                "customer-record-card"
+            const card = node("article", undefined, "customer-view-record");
+            const top = node("div", undefined, "customer-view-record-top");
+            const name = node("div", undefined, "customer-view-repair-name");
+            name.append(
+                node("h4", [repair.brand, repair.model].filter(Boolean).join(" ") || "Device"),
+                node("small", "Repair #" + display(repair.repair_id))
             );
-
-            const header = node(
-                "div",
-                undefined,
-                "customer-record-header"
-            );
-
-            header.append(
-                node(
-                    "h4",
-                    `Repair #${repair.repair_id}`,
-                    "customer-record-title"
-                )
-            );
-
-            const status = node(
-                "span",
-                display(repair.status),
-                "customer-status-badge"
-            );
-
-            const normalized = String(
-                repair.status || ""
-            ).toLowerCase();
-
+            const normalized = String(repair.status || "Pending").toLowerCase();
+            const status = node("span", display(repair.status || "Pending"),
+                "customer-status-badge customer-view-status");
             status.classList.add(
-                normalized === "completed"
+                normalized === "completed" || normalized === "released"
                     ? "customer-status-completed"
                     : normalized === "cancelled"
                         ? "customer-status-cancelled"
                         : "customer-status-pending"
             );
+            top.append(name, status);
+            card.append(top);
 
-            header.append(status);
-            card.append(header);
+            const description = node("p", undefined, "customer-view-problem");
+            description.append(node("strong", "Reported Issue: "));
+            description.append(document.createTextNode(display(repair.problem_description)));
+            card.append(description);
 
-            detailRow(
-                card,
-                "Device ID",
-                `#${repair.device_id}`
-            );
-
-            detailRow(
-                card,
-                "Device",
-                [repair.brand, repair.model]
-                    .filter(Boolean)
-                    .join(" ")
-            );
-
-            detailRow(card, "Problem", repair.problem_description);
-            detailRow(card, "Submitted", date(repair.date_submitted));
-            detailRow(card, "Completed", date(repair.date_completed));
-
-            target.append(card);
+            const metadata = node("div", undefined, "customer-view-repair-dates");
+            detail(metadata, "Submitted", date(repair.date_submitted));
+            detail(metadata, "Completed", date(repair.date_completed));
+            card.append(metadata);
+            repairList.append(card);
         });
+        repairSection.append(repairList);
+        target.append(repairSection);
     }
 
     // ==========================================

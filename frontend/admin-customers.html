@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="fixtrack-admin-modules.css?v=2">
 <link rel="stylesheet" href="fixtrack-bootstrap.css?v=20261103">
 <link rel="stylesheet" href="fixtrack-pro.css?v=4"><link rel="stylesheet" href="fixtrack-functional.css?v=20261103-2">
-<link rel="stylesheet" href="fixtrack-suite.css?v=20261103-5"><link rel="stylesheet" href="fixtrack-static.css?v=20261103-1">
+<link rel="stylesheet" href="fixtrack-suite.css?v=20261103-5"><link rel="stylesheet" href="fixtrack-static.css?v=20261103-1"><link rel="stylesheet" href="customer-details-pro.css?v=1">
 </head>
 <body class="customer-management ft-bootstrap ft-pro ft-suite-page">
     <div class="ft-suite-shell"><aside class="ft-suite-sidebar" aria-label="admin navigation"><a class="ft-suite-brand" href="admin-dashboard.html"><span class="ft-suite-brand-icon"><i data-lucide="monitor-cog"></i></span><span>Fix<span>Track</span><small>REPAIR MANAGEMENT</small></span></a><div class="ft-suite-menu-label">WORKSPACE</div><nav class="ft-suite-nav"><a href="admin-dashboard.html" ><i data-lucide="layout-dashboard"></i><span>Overview</span></a><a href="admin-repairs.html" ><i data-lucide="clipboard-list"></i><span>Repairs</span></a><a href="admin-customers.html" aria-current="page"><i data-lucide="users"></i><span>Customers</span></a><a href="technicians.html" ><i data-lucide="user-cog"></i><span>Technicians</span></a><a href="admin-parts.html" ><i data-lucide="boxes"></i><span>Parts & Inventory</span></a><a href="admin-payments.html" ><i data-lucide="credit-card"></i><span>Payments</span></a><a href="admin-reports.html" ><i data-lucide="bar-chart-3"></i><span>Reports</span></a></nav><div class="ft-suite-sidebar-bottom"><i data-lucide="shield-check"></i><div><strong>Secure workspace</strong><small>FixTrack Service Platform</small></div></div></aside><div class="ft-suite-main"><header class="dashboard-header">
@@ -34,8 +34,8 @@
             </div>
         </section>
     </main></div></div>
-    <dialog id="customer-dialog" aria-labelledby="customer-dialog-title">
-        <div class="customer-modal-header"><h2 id="customer-dialog-title">Customer Details</h2><button type="button" id="customer-close" aria-label="Close customer dialog">Close</button></div>
+    <dialog id="customer-dialog" class="customer-details-dialog" aria-labelledby="customer-dialog-title">
+        <div class="customer-modal-header"><div class="customer-dialog-heading"><p>ACCOUNT MANAGEMENT</p><h2 id="customer-dialog-title">Customer Details</h2></div><button type="button" id="customer-close" aria-label="Close customer dialog">Close</button></div>
         <p id="customer-dialog-message" role="status" aria-live="polite"></p>
         <div id="customer-details"></div>
         <form id="customer-edit-form" hidden>
@@ -50,7 +50,7 @@
             <div class="customer-form-actions"><button type="submit" id="customer-save">Save Changes</button><button type="button" id="customer-cancel">Cancel</button></div>
         </form>
     </dialog>
-    <script src="admin-customers.js"></script>
+    <script src="admin-customers.js?v=details-pro-1"></script>
 
 <script defer src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script><script defer src="fixtrack-suite.js?v=20261103-5"></script></body>
 </html>
