@@ -58,7 +58,16 @@ function renderAdmins(admins){
         const badge = document.createElement("span");
         badge.className = "badge ft-admin-role";
         badge.textContent = Number(admin.user_id) === Number(user.user_id) ? "Your Account" : "Administrator";
+        const ownAccount = Number(admin.user_id) === Number(user.user_id);
         row.append(avatar,main,badge);
+        if (!ownAccount && admins.length > 1) {
+            const remove = document.createElement("button");
+            remove.type = "button";
+            remove.className = "btn btn-outline-danger ft-admin-remove";
+            remove.textContent = "Remove Admin";
+            remove.addEventListener("click", () => removeAdministrator(admin));
+            row.append(remove);
+        }
         list.append(row);
     }
 }
@@ -71,6 +80,30 @@ async function load(){
         total.textContent = "Unavailable";
     }
 }
+async function removeAdministrator(admin) {
+    const confirmed = await window.FixTrackConfirm.ask({
+        title: "Remove Administrator",
+        message: "Remove administrator access for " +
+            [admin.first_name,admin.last_name].filter(Boolean).join(" ") +
+            "? The account will no longer be able to sign in and its history will be preserved.",
+        confirmText: "Remove Admin",
+        dangerous: true,
+        password: true,
+        passwordLabel: "Your administrator password"
+    });
+    if (!confirmed?.confirmed) return;
+    try {
+        const result = await request(API + "/" + admin.user_id + "/remove", {
+            method: "POST",
+            body: JSON.stringify({ current_password: confirmed.password })
+        });
+        setMessage(result.message || "Administrator removed.", false);
+        await load();
+    } catch(error) {
+        setMessage(error.message, true);
+    }
+}
+
 form.addEventListener("submit",async event=>{
     event.preventDefault();
     setMessage("",false);

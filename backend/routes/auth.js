@@ -150,6 +150,9 @@ router.post("/login", async (req, res) => {
         }
 
         const user = result.rows[0];
+        if (user.role === "inactive") {
+            return res.status(403).json({ message: "This account has been deactivated. Contact the administrator." });
+        }
 
         // Check password
         const passwordMatches =
@@ -428,6 +431,57 @@ router.post("/admins", authenticateToken, requireRole("admin"), async (req, res)
         }
         console.error("Create additional administrator error:", error);
         return res.status(500).json({ message: "Unable to create administrator account." });
+    }
+});
+
+// Revokes an administrator's access without deleting related history.
+router.post("/admins/:id/remove", authenticateToken, requireRole("admin"), async (req, res) => {
+    const targetId = Number(req.params.id);
+    const currentPassword = req.body?.current_password;
+    if (!Number.isSafeInteger(targetId) || targetId <= 0 || targetId > 2147483647)
+        return res.status(400).json({ message: "Invalid administrator ID." });
+    if (targetId === Number(req.user.user_id))
+        return res.status(403).json({ message: "You cannot remove your own administrator account." });
+    if (typeof currentPassword !== "string" || !currentPassword)
+        return res.status(400).json({ message: "Enter your administrator password to confirm removal." });
+
+    let client;
+    try {
+        client = await pool.connect();
+        await client.query("BEGIN");
+        await client.query("SELECT pg_advisory_xact_lock($1)", [827422]);
+
+        const requester = await client.query(
+            "SELECT password_hash FROM users WHERE user_id = $1 AND role = 'admin'",
+            [req.user.user_id]
+        );
+        if (!requester.rows.length || !(await bcrypt.compare(currentPassword, requester.rows[0].password_hash))) {
+            await client.query("ROLLBACK");
+            return res.status(403).json({ message: "Administrator password is incorrect." });
+        }
+
+        const adminCount = await client.query("SELECT COUNT(*)::integer AS count FROM users WHERE role = 'admin'");
+        if (adminCount.rows[0].count <= 1) {
+            await client.query("ROLLBACK");
+            return res.status(409).json({ message: "The last remaining administrator cannot be removed." });
+        }
+
+        const result = await client.query(
+            "UPDATE users SET role = 'inactive' WHERE user_id = $1 AND role = 'admin' RETURNING user_id",
+            [targetId]
+        );
+        if (!result.rows.length) {
+            await client.query("ROLLBACK");
+            return res.status(404).json({ message: "Administrator account not found." });
+        }
+        await client.query("COMMIT");
+        return res.json({ message: "Administrator access removed. Account history was preserved." });
+    } catch (error) {
+        if(client)await client.query("ROLLBACK").catch(()=>{});
+        console.error("Remove administrator error:", error);
+        return res.status(500).json({ message: "Unable to remove administrator access." });
+    } finally {
+        if(client)client.release();
     }
 });
 
